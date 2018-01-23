@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,13 @@
 
 package com.liferay.mongodb.util;
 
+import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.expando.model.ExpandoTable;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -153,7 +153,7 @@ public class MongoDBUtil {
 	}
 
 	private List<ServerAddress> _getServerAddresses() throws Exception {
-		List<ServerAddress> serverAddresses = new ArrayList<ServerAddress>();
+		List<ServerAddress> serverAddresses = new ArrayList<>();
 
 		for (String hostname : PortletPropsValues.SERVER_HOSTNAMES) {
 			ServerAddress serverAddress = new ServerAddress(

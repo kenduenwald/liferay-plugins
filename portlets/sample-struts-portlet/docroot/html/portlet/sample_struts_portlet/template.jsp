@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,18 +16,18 @@
 
 <%@ include file="/html/portlet/sample_struts_portlet/init.jsp" %>
 
-<tiles:useAttribute id="tilesPortletContent" name="portlet_content" classname="java.lang.String" ignore="true" />
+<tiles:useAttribute classname="java.lang.String" id="tilesPortletContent" ignore="true" name="portlet_content" />
 
 <div>
-	<jsp:include page='<%= "/html" + tilesPortletContent %>' flush="true" />
+	<jsp:include flush="true" page='<%= "/html" + tilesPortletContent %>' />
 </div>
 
 <div class="separator"></div>
 
 <div>
-	<jsp:include page="/html/portlet/sample_struts_portlet/nav.jsp" flush="true" />
+	<jsp:include flush="true" page="/html/portlet/sample_struts_portlet/nav.jsp" />
 </div>
 
 <br />
 
-<img hspace="0" src="<%= request.getContextPath() %>/html/image/struts-power.gif" vspace="0">
+<img hspace="0" src="<%= PortalUtil.getPathContext(request) %>/html/image/struts-power.gif" vspace="0">

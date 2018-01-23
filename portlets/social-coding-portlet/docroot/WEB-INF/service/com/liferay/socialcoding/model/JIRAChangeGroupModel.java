@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,14 @@
 
 package com.liferay.socialcoding.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -37,6 +40,7 @@ import java.util.Date;
  * @see com.liferay.socialcoding.model.impl.JIRAChangeGroupModelImpl
  * @generated
  */
+@ProviderType
 public interface JIRAChangeGroupModel extends BaseModel<JIRAChangeGroup> {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -115,35 +119,61 @@ public interface JIRAChangeGroupModel extends BaseModel<JIRAChangeGroup> {
 	 */
 	public void setJiraIssueId(long jiraIssueId);
 
+	@Override
 	public boolean isNew();
 
+	@Override
 	public void setNew(boolean n);
 
+	@Override
 	public boolean isCachedModel();
 
+	@Override
 	public void setCachedModel(boolean cachedModel);
 
+	@Override
 	public boolean isEscapedModel();
 
-	public void setEscapedModel(boolean escapedModel);
-
+	@Override
 	public Serializable getPrimaryKeyObj();
 
+	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj);
 
+	@Override
 	public ExpandoBridge getExpandoBridge();
 
+	@Override
+	public void setExpandoBridgeAttributes(BaseModel<?> baseModel);
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge);
+
+	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
+	@Override
 	public Object clone();
 
-	public int compareTo(JIRAChangeGroup jiraChangeGroup);
+	@Override
+	public int compareTo(
+		com.liferay.socialcoding.model.JIRAChangeGroup jiraChangeGroup);
 
+	@Override
 	public int hashCode();
 
-	public JIRAChangeGroup toEscapedModel();
+	@Override
+	public CacheModel<com.liferay.socialcoding.model.JIRAChangeGroup> toCacheModel();
 
+	@Override
+	public com.liferay.socialcoding.model.JIRAChangeGroup toEscapedModel();
+
+	@Override
+	public com.liferay.socialcoding.model.JIRAChangeGroup toUnescapedModel();
+
+	@Override
 	public String toString();
 
+	@Override
 	public String toXmlString();
 }

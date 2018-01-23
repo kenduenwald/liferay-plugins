@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,13 +21,13 @@ import java.sql.Types;
  */
 public class SVNRepositoryTable {
 
-	public static final String TABLE_NAME = "SC_SVNRepository";
-
 	public static final Object[][] TABLE_COLUMNS = {
-		{"svnRepositoryId", new Integer(Types.BIGINT)},
-		{"url", new Integer(Types.VARCHAR)},
-		{"revisionNumber", new Integer(Types.BIGINT)}
+		{"svnRepositoryId", Integer.valueOf(Types.BIGINT)},
+		{"url", Integer.valueOf(Types.VARCHAR)},
+		{"revisionNumber", Integer.valueOf(Types.BIGINT)}
 	};
+
+	public static final String TABLE_NAME = "SC_SVNRepository";
 
 	public static final String TABLE_SQL_CREATE = "create table SC_SVNRepository (svnRepositoryId LONG not null primary key,url VARCHAR(200) null,revisionNumber LONG)";
 

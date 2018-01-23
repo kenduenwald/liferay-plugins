@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,8 @@
 
 package com.liferay.chat.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -22,9 +24,10 @@ import java.util.List;
 /**
  * This class is used by SOAP remote services.
  *
- * @author    Brian Wing Shun Chan
+ * @author Brian Wing Shun Chan
  * @generated
  */
+@ProviderType
 public class StatusSoap implements Serializable {
 	public static StatusSoap toSoapModel(Status model) {
 		StatusSoap soapModel = new StatusSoap();
@@ -34,7 +37,7 @@ public class StatusSoap implements Serializable {
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setOnline(model.getOnline());
 		soapModel.setAwake(model.getAwake());
-		soapModel.setActivePanelId(model.getActivePanelId());
+		soapModel.setActivePanelIds(model.getActivePanelIds());
 		soapModel.setMessage(model.getMessage());
 		soapModel.setPlaySound(model.getPlaySound());
 
@@ -137,12 +140,12 @@ public class StatusSoap implements Serializable {
 		_awake = awake;
 	}
 
-	public String getActivePanelId() {
-		return _activePanelId;
+	public String getActivePanelIds() {
+		return _activePanelIds;
 	}
 
-	public void setActivePanelId(String activePanelId) {
-		_activePanelId = activePanelId;
+	public void setActivePanelIds(String activePanelIds) {
+		_activePanelIds = activePanelIds;
 	}
 
 	public String getMessage() {
@@ -170,7 +173,7 @@ public class StatusSoap implements Serializable {
 	private long _modifiedDate;
 	private boolean _online;
 	private boolean _awake;
-	private String _activePanelId;
+	private String _activePanelIds;
 	private String _message;
 	private boolean _playSound;
 }

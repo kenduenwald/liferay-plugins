@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,24 +20,10 @@
 	<c:when test="<%= Validator.isNotNull(link) %>">
 
 		<%
-		String iframeURL = "http://nvmodules.netvibes.com/widget/frame?uwaUrl=" + HttpUtil.encodeURL(link) + "&id=" + HttpUtil.encodeURL(PortalUtil.getPortletId(renderRequest)) + "&ifproxyUrl=" + HttpUtil.encodeURL(request.getContextPath() + "/proxy.jsp");
+		String iframeURL = "http://uwa.netvibes.com/widget/frame?uwaUrl=" + HttpUtil.encodeURL(link) + "&id=" + HttpUtil.encodeURL(PortalUtil.getPortletId(renderRequest));
 		%>
 
 		<iframe alt="<%= alt %>" height="<%= windowState.equals(WindowState.MAXIMIZED) ? heightMaximized : heightNormal %>" id="<portlet:namespace />iframe" name="<portlet:namespace />iframe" src="<%= iframeURL %>" width="<%= width %>"></iframe>
-
-		<liferay-util:html-bottom>
-			<script src="http://www.netvibes.com/js/UWA/Utils/IFrameMessaging.js" type="text/javascript"></script>
-		</liferay-util:html-bottom>
-
-		<aui:script position="inline">
-			UWA.MessageHandler = new UWA.iFrameMessaging;
-
-			UWA.MessageHandler.init(
-				{
-					'trustedOrigin': 'nvmodules.netvibes.com'
-				}
-			);
-		</aui:script>
 	</c:when>
 	<c:otherwise>
 
@@ -45,7 +31,7 @@
 		renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.TRUE);
 		%>
 
-		<div class="portlet-msg-info">
+		<div class="alert alert-info">
 			<liferay-ui:message key="please-configure-this-portlet-to-make-it-visible-to-all-users" />
 		</div>
 	</c:otherwise>

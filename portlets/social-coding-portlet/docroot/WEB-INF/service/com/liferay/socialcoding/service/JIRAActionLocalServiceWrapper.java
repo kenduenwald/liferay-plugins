@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,19 +14,55 @@
 
 package com.liferay.socialcoding.service;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.service.ServiceWrapper;
+
 /**
- * <p>
- * This class is a wrapper for {@link JIRAActionLocalService}.
- * </p>
+ * Provides a wrapper for {@link JIRAActionLocalService}.
  *
- * @author    Brian Wing Shun Chan
- * @see       JIRAActionLocalService
+ * @author Brian Wing Shun Chan
+ * @see JIRAActionLocalService
  * @generated
  */
-public class JIRAActionLocalServiceWrapper implements JIRAActionLocalService {
+@ProviderType
+public class JIRAActionLocalServiceWrapper implements JIRAActionLocalService,
+	ServiceWrapper<JIRAActionLocalService> {
 	public JIRAActionLocalServiceWrapper(
 		JIRAActionLocalService jiraActionLocalService) {
 		_jiraActionLocalService = jiraActionLocalService;
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return _jiraActionLocalService.getActionableDynamicQuery();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return _jiraActionLocalService.dynamicQuery();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return _jiraActionLocalService.getIndexableActionableDynamicQuery();
+	}
+
+	/**
+	* @throws PortalException
+	*/
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.kernel.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _jiraActionLocalService.deletePersistedModel(persistedModel);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _jiraActionLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -34,11 +70,10 @@ public class JIRAActionLocalServiceWrapper implements JIRAActionLocalService {
 	*
 	* @param jiraAction the j i r a action
 	* @return the j i r a action that was added
-	* @throws SystemException if a system exception occurred
 	*/
+	@Override
 	public com.liferay.socialcoding.model.JIRAAction addJIRAAction(
-		com.liferay.socialcoding.model.JIRAAction jiraAction)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.socialcoding.model.JIRAAction jiraAction) {
 		return _jiraActionLocalService.addJIRAAction(jiraAction);
 	}
 
@@ -48,105 +83,42 @@ public class JIRAActionLocalServiceWrapper implements JIRAActionLocalService {
 	* @param jiraActionId the primary key for the new j i r a action
 	* @return the new j i r a action
 	*/
+	@Override
 	public com.liferay.socialcoding.model.JIRAAction createJIRAAction(
 		long jiraActionId) {
 		return _jiraActionLocalService.createJIRAAction(jiraActionId);
 	}
 
 	/**
-	* Deletes the j i r a action with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param jiraActionId the primary key of the j i r a action
-	* @throws PortalException if a j i r a action with the primary key could not be found
-	* @throws SystemException if a system exception occurred
-	*/
-	public void deleteJIRAAction(long jiraActionId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		_jiraActionLocalService.deleteJIRAAction(jiraActionId);
-	}
-
-	/**
 	* Deletes the j i r a action from the database. Also notifies the appropriate model listeners.
 	*
 	* @param jiraAction the j i r a action
-	* @throws SystemException if a system exception occurred
+	* @return the j i r a action that was removed
 	*/
-	public void deleteJIRAAction(
-		com.liferay.socialcoding.model.JIRAAction jiraAction)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_jiraActionLocalService.deleteJIRAAction(jiraAction);
+	@Override
+	public com.liferay.socialcoding.model.JIRAAction deleteJIRAAction(
+		com.liferay.socialcoding.model.JIRAAction jiraAction) {
+		return _jiraActionLocalService.deleteJIRAAction(jiraAction);
 	}
 
 	/**
-	* Performs a dynamic query on the database and returns the matching rows.
+	* Deletes the j i r a action with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the matching rows
-	* @throws SystemException if a system exception occurred
+	* @param jiraActionId the primary key of the j i r a action
+	* @return the j i r a action that was removed
+	* @throws PortalException if a j i r a action with the primary key could not be found
 	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _jiraActionLocalService.dynamicQuery(dynamicQuery);
+	@Override
+	public com.liferay.socialcoding.model.JIRAAction deleteJIRAAction(
+		long jiraActionId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _jiraActionLocalService.deleteJIRAAction(jiraActionId);
 	}
 
-	/**
-	* Performs a dynamic query on the database and returns a range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @return the range of matching rows
-	* @throws SystemException if a system exception occurred
-	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException {
-		return _jiraActionLocalService.dynamicQuery(dynamicQuery, start, end);
-	}
-
-	/**
-	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching rows
-	* @throws SystemException if a system exception occurred
-	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _jiraActionLocalService.dynamicQuery(dynamicQuery, start, end,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the number of rows that match the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
-	*/
-	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _jiraActionLocalService.dynamicQueryCount(dynamicQuery);
+	@Override
+	public com.liferay.socialcoding.model.JIRAAction fetchJIRAAction(
+		long jiraActionId) {
+		return _jiraActionLocalService.fetchJIRAAction(jiraActionId);
 	}
 
 	/**
@@ -155,95 +127,158 @@ public class JIRAActionLocalServiceWrapper implements JIRAActionLocalService {
 	* @param jiraActionId the primary key of the j i r a action
 	* @return the j i r a action
 	* @throws PortalException if a j i r a action with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
+	@Override
 	public com.liferay.socialcoding.model.JIRAAction getJIRAAction(
 		long jiraActionId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _jiraActionLocalService.getJIRAAction(jiraActionId);
 	}
 
 	/**
-	* Returns a range of all the j i r a actions.
+	* Updates the j i r a action in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param start the lower bound of the range of j i r a actions
-	* @param end the upper bound of the range of j i r a actions (not inclusive)
-	* @return the range of j i r a actions
-	* @throws SystemException if a system exception occurred
+	* @param jiraAction the j i r a action
+	* @return the j i r a action that was updated
 	*/
-	public java.util.List<com.liferay.socialcoding.model.JIRAAction> getJIRAActions(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _jiraActionLocalService.getJIRAActions(start, end);
+	@Override
+	public com.liferay.socialcoding.model.JIRAAction updateJIRAAction(
+		com.liferay.socialcoding.model.JIRAAction jiraAction) {
+		return _jiraActionLocalService.updateJIRAAction(jiraAction);
 	}
 
 	/**
 	* Returns the number of j i r a actions.
 	*
 	* @return the number of j i r a actions
-	* @throws SystemException if a system exception occurred
 	*/
-	public int getJIRAActionsCount()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	@Override
+	public int getJIRAActionsCount() {
 		return _jiraActionLocalService.getJIRAActionsCount();
 	}
 
-	/**
-	* Updates the j i r a action in the database. Also notifies the appropriate model listeners.
-	*
-	* @param jiraAction the j i r a action
-	* @return the j i r a action that was updated
-	* @throws SystemException if a system exception occurred
-	*/
-	public com.liferay.socialcoding.model.JIRAAction updateJIRAAction(
-		com.liferay.socialcoding.model.JIRAAction jiraAction)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _jiraActionLocalService.updateJIRAAction(jiraAction);
+	@Override
+	public java.lang.Object invokeMethod(java.lang.String name,
+		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
+		throws java.lang.Throwable {
+		return _jiraActionLocalService.invokeMethod(name, parameterTypes,
+			arguments);
 	}
 
 	/**
-	* Updates the j i r a action in the database. Also notifies the appropriate model listeners.
+	* Returns the OSGi service identifier.
 	*
-	* @param jiraAction the j i r a action
-	* @param merge whether to merge the j i r a action with the current session. See {@link com.liferay.portal.service.persistence.BatchSession#update(com.liferay.portal.kernel.dao.orm.Session, com.liferay.portal.model.BaseModel, boolean)} for an explanation.
-	* @return the j i r a action that was updated
-	* @throws SystemException if a system exception occurred
+	* @return the OSGi service identifier
 	*/
-	public com.liferay.socialcoding.model.JIRAAction updateJIRAAction(
-		com.liferay.socialcoding.model.JIRAAction jiraAction, boolean merge)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _jiraActionLocalService.updateJIRAAction(jiraAction, merge);
+	@Override
+	public java.lang.String getOSGiServiceIdentifier() {
+		return _jiraActionLocalService.getOSGiServiceIdentifier();
 	}
 
 	/**
-	* Returns the Spring bean ID for this bean.
+	* Performs a dynamic query on the database and returns the matching rows.
 	*
-	* @return the Spring bean ID for this bean
+	* @param dynamicQuery the dynamic query
+	* @return the matching rows
 	*/
-	public java.lang.String getBeanIdentifier() {
-		return _jiraActionLocalService.getBeanIdentifier();
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return _jiraActionLocalService.dynamicQuery(dynamicQuery);
 	}
 
 	/**
-	* Sets the Spring bean ID for this bean.
+	* Performs a dynamic query on the database and returns a range of the matching rows.
 	*
-	* @param beanIdentifier the Spring bean ID for this bean
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.JIRAActionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param dynamicQuery the dynamic query
+	* @param start the lower bound of the range of model instances
+	* @param end the upper bound of the range of model instances (not inclusive)
+	* @return the range of matching rows
 	*/
-	public void setBeanIdentifier(java.lang.String beanIdentifier) {
-		_jiraActionLocalService.setBeanIdentifier(beanIdentifier);
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
+		int end) {
+		return _jiraActionLocalService.dynamicQuery(dynamicQuery, start, end);
 	}
 
-	public JIRAActionLocalService getWrappedJIRAActionLocalService() {
+	/**
+	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.JIRAActionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param dynamicQuery the dynamic query
+	* @param start the lower bound of the range of model instances
+	* @param end the upper bound of the range of model instances (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching rows
+	*/
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		return _jiraActionLocalService.dynamicQuery(dynamicQuery, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns a range of all the j i r a actions.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.JIRAActionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of j i r a actions
+	* @param end the upper bound of the range of j i r a actions (not inclusive)
+	* @return the range of j i r a actions
+	*/
+	@Override
+	public java.util.List<com.liferay.socialcoding.model.JIRAAction> getJIRAActions(
+		int start, int end) {
+		return _jiraActionLocalService.getJIRAActions(start, end);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	@Override
+	public long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return _jiraActionLocalService.dynamicQueryCount(dynamicQuery);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	@Override
+	public long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		return _jiraActionLocalService.dynamicQueryCount(dynamicQuery,
+			projection);
+	}
+
+	@Override
+	public JIRAActionLocalService getWrappedService() {
 		return _jiraActionLocalService;
 	}
 
-	public void setWrappedJIRAActionLocalService(
-		JIRAActionLocalService jiraActionLocalService) {
+	@Override
+	public void setWrappedService(JIRAActionLocalService jiraActionLocalService) {
 		_jiraActionLocalService = jiraActionLocalService;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -23,7 +23,6 @@ import java.io.Serializable;
 public class Book implements Serializable {
 
 	public Book() {
-		super();
 	}
 
 	public Book(String isbn, String title) {
@@ -31,32 +30,32 @@ public class Book implements Serializable {
 		_title = title;
 	}
 
-	public String getIsbn() {
-		return _isbn;
+	public File getCover() {
+		return _cover;
 	}
 
-	public void setIsbn(String isbn) {
-		_isbn = isbn;
+	public String getIsbn() {
+		return _isbn;
 	}
 
 	public String getTitle() {
 		return _title;
 	}
 
-	public void setTitle(String title) {
-		_title = title;
-	}
-
-	public File getCover() {
-		return _cover;
-	}
-
 	public void setCover(File cover) {
 		_cover = cover;
 	}
 
+	public void setIsbn(String isbn) {
+		_isbn = isbn;
+	}
+
+	public void setTitle(String title) {
+		_title = title;
+	}
+
+	private File _cover;
 	private String _isbn;
 	private String _title;
-	private File _cover;
 
 }

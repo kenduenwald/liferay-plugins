@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,22 +30,10 @@ import org.apache.tapestry.html.BasePage;
 public abstract class AddBook
 	extends BasePage implements PageBeginRenderListener {
 
-	public abstract Book getBook();
+	public IPage doCancel(IRequestCycle cycle) {
+		View view = getView();
 
-	public abstract void setBook(Book book);
-
-	public abstract BookList getBookList();
-
-	public abstract void setBookList(BookList bookList);
-
-	public abstract View getView();
-
-	public abstract IEngineService getPageService();
-
-	public void pageBeginRender(PageEvent event) {
-		Book book = new Book();
-
-		setBook(book);
+		return view;
 	}
 
 	public IPage doSubmit(IRequestCycle cycle) {
@@ -60,13 +48,24 @@ public abstract class AddBook
 		view.setBooks(bookList.getBooks());
 
 		return view;
-
 	}
 
-	public IPage doCancel(IRequestCycle cycle) {
-		View view = getView();
+	public abstract Book getBook();
 
-		return view;
+	public abstract BookList getBookList();
+
+	public abstract IEngineService getPageService();
+
+	public abstract View getView();
+
+	public void pageBeginRender(PageEvent event) {
+		Book book = new Book();
+
+		setBook(book);
 	}
+
+	public abstract void setBook(Book book);
+
+	public abstract void setBookList(BookList bookList);
 
 }

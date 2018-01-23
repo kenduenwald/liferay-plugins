@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,21 @@
 
 package com.liferay.testtransaction.service;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
+import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.util.ClassLoaderObjectInputStream;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.BaseModel;
 
 import com.liferay.testtransaction.model.BarClp;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import java.lang.reflect.Method;
 
@@ -30,6 +38,7 @@ import java.util.List;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class ClpSerializer {
 	public static String getServletContextName() {
 		if (Validator.isNotNull(_servletContextName)) {
@@ -58,9 +67,9 @@ public class ClpSerializer {
 				}
 			}
 			catch (Throwable t) {
-				if (_log.isWarnEnabled()) {
-					_log.warn("Unable to locate deployment context from portlet properties",
-						t);
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						"Unable to locate deployment context from portlet properties");
 				}
 			}
 
@@ -74,9 +83,9 @@ public class ClpSerializer {
 					}
 				}
 				catch (Throwable t) {
-					if (_log.isWarnEnabled()) {
-						_log.warn("Unable to locate deployment context from portal properties",
-							t);
+					if (_log.isInfoEnabled()) {
+						_log.info(
+							"Unable to locate deployment context from portal properties");
 					}
 				}
 			}
@@ -87,10 +96,6 @@ public class ClpSerializer {
 
 			return _servletContextName;
 		}
-	}
-
-	public static void setClassLoader(ClassLoader classLoader) {
-		_classLoader = classLoader;
 	}
 
 	public static Object translateInput(BaseModel<?> oldModel) {
@@ -118,46 +123,13 @@ public class ClpSerializer {
 	}
 
 	public static Object translateInputBar(BaseModel<?> oldModel) {
-		BarClp oldCplModel = (BarClp)oldModel;
+		BarClp oldClpModel = (BarClp)oldModel;
 
-		Thread currentThread = Thread.currentThread();
+		BaseModel<?> newModel = oldClpModel.getBarRemoteModel();
 
-		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+		newModel.setModelAttributes(oldClpModel.getModelAttributes());
 
-		try {
-			currentThread.setContextClassLoader(_classLoader);
-
-			try {
-				Class<?> newModelClass = Class.forName("com.liferay.testtransaction.model.impl.BarImpl",
-						true, _classLoader);
-
-				Object newModel = newModelClass.newInstance();
-
-				Method method0 = newModelClass.getMethod("setBarId",
-						new Class[] { Long.TYPE });
-
-				Long value0 = new Long(oldCplModel.getBarId());
-
-				method0.invoke(newModel, value0);
-
-				Method method1 = newModelClass.getMethod("setText",
-						new Class[] { String.class });
-
-				String value1 = oldCplModel.getText();
-
-				method1.invoke(newModel, value1);
-
-				return newModel;
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-		}
-		finally {
-			currentThread.setContextClassLoader(contextClassLoader);
-		}
-
-		return oldModel;
+		return newModel;
 	}
 
 	public static Object translateInput(Object obj) {
@@ -180,6 +152,38 @@ public class ClpSerializer {
 		if (oldModelClassName.equals(
 					"com.liferay.testtransaction.model.impl.BarImpl")) {
 			return translateOutputBar(oldModel);
+		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
 		}
 
 		return oldModel;
@@ -209,45 +213,78 @@ public class ClpSerializer {
 		}
 	}
 
-	public static Object translateOutputBar(BaseModel<?> oldModel) {
-		Thread currentThread = Thread.currentThread();
-
-		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
-
-		try {
-			currentThread.setContextClassLoader(_classLoader);
-
+	public static Throwable translateThrowable(Throwable throwable) {
+		if (_useReflectionToTranslateThrowable) {
 			try {
-				BarClp newModel = new BarClp();
+				UnsyncByteArrayOutputStream unsyncByteArrayOutputStream = new UnsyncByteArrayOutputStream();
+				ObjectOutputStream objectOutputStream = new ObjectOutputStream(unsyncByteArrayOutputStream);
 
-				Class<?> oldModelClass = oldModel.getClass();
+				objectOutputStream.writeObject(throwable);
 
-				Method method0 = oldModelClass.getMethod("getBarId");
+				objectOutputStream.flush();
+				objectOutputStream.close();
 
-				Long value0 = (Long)method0.invoke(oldModel, (Object[])null);
+				UnsyncByteArrayInputStream unsyncByteArrayInputStream = new UnsyncByteArrayInputStream(unsyncByteArrayOutputStream.unsafeGetByteArray(),
+						0, unsyncByteArrayOutputStream.size());
 
-				newModel.setBarId(value0);
+				Thread currentThread = Thread.currentThread();
 
-				Method method1 = oldModelClass.getMethod("getText");
+				ClassLoader contextClassLoader = currentThread.getContextClassLoader();
 
-				String value1 = (String)method1.invoke(oldModel, (Object[])null);
+				ObjectInputStream objectInputStream = new ClassLoaderObjectInputStream(unsyncByteArrayInputStream,
+						contextClassLoader);
 
-				newModel.setText(value1);
+				throwable = (Throwable)objectInputStream.readObject();
 
-				return newModel;
+				objectInputStream.close();
+
+				return throwable;
 			}
-			catch (Exception e) {
-				_log.error(e, e);
+			catch (ClassNotFoundException cnfe) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Do not use reflection to translate throwable");
+				}
+
+				_useReflectionToTranslateThrowable = false;
+			}
+			catch (SecurityException se) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Do not use reflection to translate throwable");
+				}
+
+				_useReflectionToTranslateThrowable = false;
+			}
+			catch (Throwable throwable2) {
+				_log.error(throwable2, throwable2);
+
+				return throwable2;
 			}
 		}
-		finally {
-			currentThread.setContextClassLoader(contextClassLoader);
+
+		Class<?> clazz = throwable.getClass();
+
+		String className = clazz.getName();
+
+		if (className.equals(
+					"com.liferay.testtransaction.exception.NoSuchBarException")) {
+			return new com.liferay.testtransaction.exception.NoSuchBarException(throwable.getMessage(),
+				throwable.getCause());
 		}
 
-		return oldModel;
+		return throwable;
+	}
+
+	public static Object translateOutputBar(BaseModel<?> oldModel) {
+		BarClp newModel = new BarClp();
+
+		newModel.setModelAttributes(oldModel.getModelAttributes());
+
+		newModel.setBarRemoteModel(oldModel);
+
+		return newModel;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(ClpSerializer.class);
-	private static ClassLoader _classLoader;
 	private static String _servletContextName;
+	private static boolean _useReflectionToTranslateThrowable = true;
 }

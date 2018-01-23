@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,14 @@
 
 package com.liferay.chat.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -36,6 +38,7 @@ import java.io.Serializable;
  * @see com.liferay.chat.model.impl.StatusModelImpl
  * @generated
  */
+@ProviderType
 public interface StatusModel extends BaseModel<Status> {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -89,9 +92,8 @@ public interface StatusModel extends BaseModel<Status> {
 	 * Returns the user uuid of this status.
 	 *
 	 * @return the user uuid of this status
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this status.
@@ -122,7 +124,7 @@ public interface StatusModel extends BaseModel<Status> {
 	public boolean getOnline();
 
 	/**
-	 * Determines if this status is online.
+	 * Returns <code>true</code> if this status is online.
 	 *
 	 * @return <code>true</code> if this status is online; <code>false</code> otherwise
 	 */
@@ -143,7 +145,7 @@ public interface StatusModel extends BaseModel<Status> {
 	public boolean getAwake();
 
 	/**
-	 * Determines if this status is awake.
+	 * Returns <code>true</code> if this status is awake.
 	 *
 	 * @return <code>true</code> if this status is awake; <code>false</code> otherwise
 	 */
@@ -157,19 +159,19 @@ public interface StatusModel extends BaseModel<Status> {
 	public void setAwake(boolean awake);
 
 	/**
-	 * Returns the active panel ID of this status.
+	 * Returns the active panel IDs of this status.
 	 *
-	 * @return the active panel ID of this status
+	 * @return the active panel IDs of this status
 	 */
 	@AutoEscape
-	public String getActivePanelId();
+	public String getActivePanelIds();
 
 	/**
-	 * Sets the active panel ID of this status.
+	 * Sets the active panel IDs of this status.
 	 *
-	 * @param activePanelId the active panel ID of this status
+	 * @param activePanelIds the active panel IDs of this status
 	 */
-	public void setActivePanelId(String activePanelId);
+	public void setActivePanelIds(String activePanelIds);
 
 	/**
 	 * Returns the message of this status.
@@ -194,7 +196,7 @@ public interface StatusModel extends BaseModel<Status> {
 	public boolean getPlaySound();
 
 	/**
-	 * Determines if this status is play sound.
+	 * Returns <code>true</code> if this status is play sound.
 	 *
 	 * @return <code>true</code> if this status is play sound; <code>false</code> otherwise
 	 */
@@ -207,35 +209,60 @@ public interface StatusModel extends BaseModel<Status> {
 	 */
 	public void setPlaySound(boolean playSound);
 
+	@Override
 	public boolean isNew();
 
+	@Override
 	public void setNew(boolean n);
 
+	@Override
 	public boolean isCachedModel();
 
+	@Override
 	public void setCachedModel(boolean cachedModel);
 
+	@Override
 	public boolean isEscapedModel();
 
-	public void setEscapedModel(boolean escapedModel);
-
+	@Override
 	public Serializable getPrimaryKeyObj();
 
+	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj);
 
+	@Override
 	public ExpandoBridge getExpandoBridge();
 
+	@Override
+	public void setExpandoBridgeAttributes(BaseModel<?> baseModel);
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge);
+
+	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
+	@Override
 	public Object clone();
 
-	public int compareTo(Status status);
+	@Override
+	public int compareTo(com.liferay.chat.model.Status status);
 
+	@Override
 	public int hashCode();
 
-	public Status toEscapedModel();
+	@Override
+	public CacheModel<com.liferay.chat.model.Status> toCacheModel();
 
+	@Override
+	public com.liferay.chat.model.Status toEscapedModel();
+
+	@Override
+	public com.liferay.chat.model.Status toUnescapedModel();
+
+	@Override
 	public String toString();
 
+	@Override
 	public String toXmlString();
 }

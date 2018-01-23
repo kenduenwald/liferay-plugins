@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,53 +14,75 @@
  */
 --%>
 
-<%@ page import="com.liferay.client.soap.portal.model.OrganizationSoap" %>
-<%@ page import="com.liferay.client.soap.portal.service.http.OrganizationServiceSoap" %>
-<%@ page import="com.liferay.client.soap.portal.service.http.OrganizationServiceSoapServiceLocator" %>
-<%@ page import="com.liferay.portal.kernel.util.GetterUtil" %>
+<%@ page import="com.liferay.client.soap.portal.model.OrganizationSoap" %><%@
+page import="com.liferay.client.soap.portal.service.http.OrganizationServiceSoap" %><%@
+page import="com.liferay.client.soap.portal.service.http.OrganizationServiceSoapServiceLocator" %><%@
+page import="com.liferay.portal.kernel.model.Company" %><%@
+page import="com.liferay.portal.kernel.model.CompanyConstants" %><%@
+page import="com.liferay.portal.kernel.model.User" %><%@
+page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %>
 
 <%@ page import="java.net.URL" %>
+
+<%@ page import="javax.xml.rpc.Stub" %>
 
 You belong to the following organizations:
 
 <br /><br />
 
 <%
-String remoteUser = request.getRemoteUser();
+OrganizationServiceSoap organizationServiceSoap = _getOrganizationServiceSoap(request);
 
-long userId = GetterUtil.getLong(remoteUser);
+OrganizationSoap[] organizationSoaps = organizationServiceSoap.getUserOrganizations(_getUserId(request));
 
-OrganizationServiceSoapServiceLocator locator = new OrganizationServiceSoapServiceLocator();
-
-OrganizationServiceSoap soap = locator.getPortal_OrganizationService(_getURL(remoteUser, "Portal_OrganizationService"));
-
-OrganizationSoap[] organizations = soap.getUserOrganizations(userId);
-
-for (int i = 0; i < organizations.length; i++) {
-	OrganizationSoap organization = organizations[i];
+for (OrganizationSoap organizationSoap : organizationSoaps) {
 %>
 
-	<%= organization.getName() %><br />
+	<%= organizationSoap.getName() %><br />
 
 <%
 }
 %>
 
 <%!
-private URL _getURL(String remoteUser, String serviceName) throws Exception {
+private OrganizationServiceSoap _getOrganizationServiceSoap(HttpServletRequest request) throws Exception {
+	OrganizationServiceSoapServiceLocator organizationServiceSoapServiceLocator = new OrganizationServiceSoapServiceLocator();
 
-	// Unathenticated url
+	OrganizationServiceSoap organizationServiceSoap = organizationServiceSoapServiceLocator.getPortal_OrganizationService(new URL("http://localhost:8080/api/axis/Portal_OrganizationService"));
 
-	String url = "http://localhost:8080/tunnel-web/axis/" + serviceName;
+	Stub stub = (Stub)organizationServiceSoap;
 
-	// Authenticated url
+	stub._setProperty(Stub.PASSWORD_PROPERTY, "test");
+	stub._setProperty(Stub.USERNAME_PROPERTY, _getUserName(request));
 
-	if (true) {
-		String password = "test";
+	return organizationServiceSoap;
+}
 
-		url = "http://" + remoteUser + ":" + password + "@localhost:8080/tunnel-web/secure/axis/" + serviceName;
+private long _getUserId(HttpServletRequest request) throws Exception {
+	String remoteUser = request.getRemoteUser();
+
+	return GetterUtil.getLong(remoteUser);
+}
+
+private String _getUserName(HttpServletRequest request) throws Exception {
+	long userId = _getUserId(request);
+
+	User user = UserLocalServiceUtil.getUserById(userId);
+
+	Company company = PortalUtil.getCompany(request);
+
+	String authType = company.getAuthType();
+
+	if (authType.equals(CompanyConstants.AUTH_TYPE_EA)) {
+		return user.getEmailAddress();
 	}
-
-	return new URL(url);
+	else if (authType.equals(CompanyConstants.AUTH_TYPE_SN)) {
+		return user.getScreenName();
+	}
+	else {
+		return String.valueOf(userId);
+	}
 }
 %>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,8 +33,8 @@ public class XAction extends Action {
 
 	@Override
 	public ActionForward execute(
-			ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response)
+			ActionMapping actionMapping, ActionForm actionForm,
+			HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
 
 		if (_log.isInfoEnabled()) {
@@ -43,11 +43,11 @@ public class XAction extends Action {
 
 		String exception = request.getParameter("render_exception");
 
-		if ((exception != null) && (exception.equals("true"))) {
+		if ((exception != null) && exception.equals("true")) {
 			throw new SampleException();
 		}
 
-		return mapping.findForward("portlet.sample_struts_portlet.x");
+		return actionMapping.findForward("portlet.sample_struts_portlet.x");
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(XAction.class);

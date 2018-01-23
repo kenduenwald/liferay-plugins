@@ -7,28 +7,30 @@
 <head>
 	<title>${the_title} - ${company_name}</title>
 
+	<meta content="initial-scale=1.0, width=device-width" name="viewport" />
+
 	${theme.include(top_head_include)}
 </head>
 
 <body class="${css_class}">
+
+<a href="#main-content" id="skip-to-content"><@liferay.language key="skip-to-content" /></a>
 
 <#if is_signed_in>
 	<@liferay.dockbar />
 </#if>
 
 <div id="wrapper">
-	<a href="#main-content" id="skip-to-content"><@liferay.language key="skip-to-content" /></a>
-
 	<div id="banner" role="banner">
 		<div id="heading">
 			<h1 class="company-title">
-				<a class="logo" href="${company_url}" title="<@liferay.language key="go-to" /> ${company_name}">
+				<a class="${logo_css_class}" href="${company_url}" title="<@liferay.language_format arguments="${company_name}" key="go-to-x" />">
 					<span>${company_name}</span>
 				</a>
 			</h1>
 
 			<h2 class="community-title">
-				<a href="${community_default_url}" title="<@liferay.language key="go-to" /> ${community_name}">
+				<a href="${community_default_url}" title="<@liferay.language_format arguments="${community_name}" key="go-to-x" />">
 					<span>${community_name}</span>
 				</a>
 			</h2>
@@ -40,12 +42,6 @@
 
 		<#if !is_signed_in>
 			<a href="${sign_in_url}" id="sign-in" rel="nofollow">${sign_in_text}</a>
-		</#if>
-
-		<#if update_available_url??>
-			<div class="popup-alert-notice">
-				<a class="update-available" href="${update_available_url}"><@liferay.language key="updates-are-available-for-liferay" /></a>
-			</div>
 		</#if>
 
 		<#if has_navigation>
@@ -80,8 +76,8 @@
 	</div>
 </div>
 
-</body>
-
 ${theme.include(bottom_include)}
+
+</body>
 
 </html>

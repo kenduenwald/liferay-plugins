@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
+<!DOCTYPE hook PUBLIC "-//Liferay//DTD Hook 6.2.0//EN" "http://www.liferay.com/dtd/liferay-hook_6_2_0.dtd">
 
 <hook>
 	<language-properties>com/liferay/testlocalized/resources/Language.properties</language-properties>
 	<language-properties>com/liferay/testlocalized/resources/Language_en.properties</language-properties>
 	<language-properties>com/liferay/testlocalized/resources/Language_es.properties</language-properties>
 	<language-properties>com/liferay/testlocalized/resources/Language_fr_FR.properties</language-properties>
+	<language-properties>com/liferay/testlocalized/resources/Language2.properties</language-properties>
 </hook>

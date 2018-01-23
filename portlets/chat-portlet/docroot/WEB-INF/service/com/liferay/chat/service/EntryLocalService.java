@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,18 +14,36 @@
 
 package com.liferay.chat.service;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.chat.model.Entry;
+
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.service.BaseLocalService;
+import com.liferay.portal.kernel.service.InvokableLocalService;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
+import com.liferay.portal.kernel.util.OrderByComparator;
+
+import java.io.Serializable;
+
+import java.util.List;
 
 /**
- * The interface for the entry local service.
- *
- * <p>
- * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
- * </p>
+ * Provides the local service interface for Entry. Methods of this
+ * service will not have security checks based on the propagated JAAS
+ * credentials because this service can only be accessed from within the same
+ * VM.
  *
  * @author Brian Wing Shun Chan
  * @see EntryLocalServiceUtil
@@ -33,9 +51,11 @@ import com.liferay.portal.kernel.transaction.Transactional;
  * @see com.liferay.chat.service.impl.EntryLocalServiceImpl
  * @generated
  */
+@ProviderType
 @Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
 	PortalException.class, SystemException.class})
-public interface EntryLocalService {
+public interface EntryLocalService extends BaseLocalService,
+	InvokableLocalService, PersistedModelLocalService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -47,11 +67,15 @@ public interface EntryLocalService {
 	*
 	* @param entry the entry
 	* @return the entry that was added
-	* @throws SystemException if a system exception occurred
 	*/
-	public com.liferay.chat.model.Entry addEntry(
-		com.liferay.chat.model.Entry entry)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	@Indexable(type = IndexableType.REINDEX)
+	public Entry addEntry(Entry entry);
+
+	public Entry addEntry(long createDate, long fromUserId, long toUserId,
+		java.lang.String content);
+
+	public Entry addEntry(long fromUserId, long toUserId,
+		java.lang.String content);
 
 	/**
 	* Creates a new entry with the primary key. Does not add the entry to the database.
@@ -59,89 +83,29 @@ public interface EntryLocalService {
 	* @param entryId the primary key for the new entry
 	* @return the new entry
 	*/
-	public com.liferay.chat.model.Entry createEntry(long entryId);
-
-	/**
-	* Deletes the entry with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param entryId the primary key of the entry
-	* @throws PortalException if a entry with the primary key could not be found
-	* @throws SystemException if a system exception occurred
-	*/
-	public void deleteEntry(long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+	public Entry createEntry(long entryId);
 
 	/**
 	* Deletes the entry from the database. Also notifies the appropriate model listeners.
 	*
 	* @param entry the entry
-	* @throws SystemException if a system exception occurred
+	* @return the entry that was removed
 	*/
-	public void deleteEntry(com.liferay.chat.model.Entry entry)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	@Indexable(type = IndexableType.DELETE)
+	public Entry deleteEntry(Entry entry);
 
 	/**
-	* Performs a dynamic query on the database and returns the matching rows.
+	* Deletes the entry with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the matching rows
-	* @throws SystemException if a system exception occurred
+	* @param entryId the primary key of the entry
+	* @return the entry that was removed
+	* @throws PortalException if a entry with the primary key could not be found
 	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	@Indexable(type = IndexableType.DELETE)
+	public Entry deleteEntry(long entryId) throws PortalException;
 
-	/**
-	* Performs a dynamic query on the database and returns a range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @return the range of matching rows
-	* @throws SystemException if a system exception occurred
-	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException;
-
-	/**
-	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching rows
-	* @throws SystemException if a system exception occurred
-	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException;
-
-	/**
-	* Returns the number of rows that match the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
-	*/
-	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Entry fetchEntry(long entryId);
 
 	/**
 	* Returns the entry with the primary key.
@@ -149,94 +113,136 @@ public interface EntryLocalService {
 	* @param entryId the primary key of the entry
 	* @return the entry
 	* @throws PortalException if a entry with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.chat.model.Entry getEntry(long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+	public Entry getEntry(long entryId) throws PortalException;
 
 	/**
-	* Returns a range of all the entries.
+	* Updates the entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param start the lower bound of the range of entries
-	* @param end the upper bound of the range of entries (not inclusive)
-	* @return the range of entries
-	* @throws SystemException if a system exception occurred
+	* @param entry the entry
+	* @return the entry that was updated
 	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public Entry updateEntry(Entry entry);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.chat.model.Entry> getEntries(int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException;
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	public DynamicQuery dynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* @throws PortalException
+	*/
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException;
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
 
 	/**
 	* Returns the number of entries.
 	*
 	* @return the number of entries
-	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getEntriesCount()
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public int getEntriesCount();
+
+	@Override
+	public java.lang.Object invokeMethod(java.lang.String name,
+		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
+		throws java.lang.Throwable;
 
 	/**
-	* Updates the entry in the database. Also notifies the appropriate model listeners.
+	* Returns the OSGi service identifier.
 	*
-	* @param entry the entry
-	* @return the entry that was updated
-	* @throws SystemException if a system exception occurred
+	* @return the OSGi service identifier
 	*/
-	public com.liferay.chat.model.Entry updateEntry(
-		com.liferay.chat.model.Entry entry)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public java.lang.String getOSGiServiceIdentifier();
 
 	/**
-	* Updates the entry in the database. Also notifies the appropriate model listeners.
+	* Performs a dynamic query on the database and returns the matching rows.
 	*
-	* @param entry the entry
-	* @param merge whether to merge the entry with the current session. See {@link com.liferay.portal.service.persistence.BatchSession#update(com.liferay.portal.kernel.dao.orm.Session, com.liferay.portal.model.BaseModel, boolean)} for an explanation.
-	* @return the entry that was updated
-	* @throws SystemException if a system exception occurred
+	* @param dynamicQuery the dynamic query
+	* @return the matching rows
 	*/
-	public com.liferay.chat.model.Entry updateEntry(
-		com.liferay.chat.model.Entry entry, boolean merge)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery);
 
 	/**
-	* Returns the Spring bean ID for this bean.
+	* Performs a dynamic query on the database and returns a range of the matching rows.
 	*
-	* @return the Spring bean ID for this bean
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.chat.model.impl.EntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param dynamicQuery the dynamic query
+	* @param start the lower bound of the range of model instances
+	* @param end the upper bound of the range of model instances (not inclusive)
+	* @return the range of matching rows
 	*/
-	public java.lang.String getBeanIdentifier();
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end);
 
 	/**
-	* Sets the Spring bean ID for this bean.
+	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	*
-	* @param beanIdentifier the Spring bean ID for this bean
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.chat.model.impl.EntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param dynamicQuery the dynamic query
+	* @param start the lower bound of the range of model instances
+	* @param end the upper bound of the range of model instances (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching rows
 	*/
-	public void setBeanIdentifier(java.lang.String beanIdentifier);
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator);
 
-	public com.liferay.chat.model.Entry addEntry(long fromUserId,
-		long toUserId, java.lang.String content)
-		throws com.liferay.portal.kernel.exception.SystemException;
-
-	public com.liferay.chat.model.Entry addEntry(long createDate,
-		long fromUserId, long toUserId, java.lang.String content)
-		throws com.liferay.portal.kernel.exception.SystemException;
-
-	public void deleteEntries(long userId)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	/**
+	* Returns a range of all the entries.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.chat.model.impl.EntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of entries
+	* @param end the upper bound of the range of entries (not inclusive)
+	* @return the range of entries
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Entry> getEntries(int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.chat.model.Entry> getNewEntries(
-		long userId, long createDate, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public List<Entry> getNewEntries(long userId, long createDate, int start,
+		int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.chat.model.Entry> getOldEntries(
-		long createDate, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public List<Entry> getOldEntries(long createDate, int start, int end);
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery,
+		Projection projection);
+
+	public void deleteEntries(long userId);
 }

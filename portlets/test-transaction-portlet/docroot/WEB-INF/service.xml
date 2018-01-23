@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_0_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
 
 <service-builder package-path="com.liferay.testtransaction">
-	<namespace>TT</namespace>
-	<entity name="Bar" local-service="true" remote-service="false">
+	<namespace>TestTransaction</namespace>
+	<entity local-service="true" name="Bar" remote-service="false">
 
 		<!-- PK fields -->
 
-		<column name="barId" type="long" primary="true" />
+		<column name="barId" primary="true" type="long" />
 
 		<!-- Other fields -->
 
@@ -24,9 +24,9 @@
 		<finder name="Text" return-type="Collection">
 			<finder-column name="text" />
 		</finder>
-		
+
 		<!-- References -->
 
-		<reference package-path="com.liferay.portal" entity="ClassName" />
+		<reference entity="ClassName" package-path="com.liferay.portal" />
 	</entity>
 </service-builder>

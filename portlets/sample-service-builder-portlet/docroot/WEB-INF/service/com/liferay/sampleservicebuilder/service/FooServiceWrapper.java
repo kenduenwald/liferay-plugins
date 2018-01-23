@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,25 +14,65 @@
 
 package com.liferay.sampleservicebuilder.service;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.service.ServiceWrapper;
+
 /**
- * <p>
- * This class is a wrapper for {@link FooService}.
- * </p>
+ * Provides a wrapper for {@link FooService}.
  *
- * @author    Brian Wing Shun Chan
- * @see       FooService
+ * @author Brian Wing Shun Chan
+ * @see FooService
  * @generated
  */
-public class FooServiceWrapper implements FooService {
+@ProviderType
+public class FooServiceWrapper implements FooService,
+	ServiceWrapper<FooService> {
 	public FooServiceWrapper(FooService fooService) {
 		_fooService = fooService;
 	}
 
-	public FooService getWrappedFooService() {
+	@Override
+	public com.liferay.portal.kernel.model.User getUser(long userId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _fooService.getUser(userId);
+	}
+
+	@Override
+	public java.lang.Object invokeMethod(java.lang.String name,
+		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
+		throws java.lang.Throwable {
+		return _fooService.invokeMethod(name, parameterTypes, arguments);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public java.lang.String getOSGiServiceIdentifier() {
+		return _fooService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public java.util.List<com.liferay.sampleservicebuilder.model.Foo> getFoos() {
+		return _fooService.getFoos();
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.Group> getUserSitesGroups()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _fooService.getUserSitesGroups();
+	}
+
+	@Override
+	public FooService getWrappedService() {
 		return _fooService;
 	}
 
-	public void setWrappedFooService(FooService fooService) {
+	@Override
+	public void setWrappedService(FooService fooService) {
 		_fooService = fooService;
 	}
 

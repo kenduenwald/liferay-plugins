@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,13 @@
 
 package com.liferay.samplestruts.servlet;
 
+import com.liferay.portal.kernel.util.ContentTypes;
+
 import java.io.IOException;
 
 import java.util.Enumeration;
 
-import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +34,7 @@ public class TestSessionServlet extends HttpServlet {
 	@Override
 	public void service(
 			HttpServletRequest request, HttpServletResponse response)
-		throws IOException, ServletException {
+		throws IOException {
 
 		HttpSession session = request.getSession();
 
@@ -54,23 +56,27 @@ public class TestSessionServlet extends HttpServlet {
 
 		sb.append("<b>Servlet Session Attributes:</b><br /><br />");
 
-		Enumeration enu = session.getAttributeNames();
+		Enumeration<String> enu = session.getAttributeNames();
 
 		while (enu.hasMoreElements()) {
-			String attrName = (String)enu.nextElement();
+			String attrName = enu.nextElement();
 
 			Object attrValue = session.getAttribute(attrName);
 
 			sb.append(attrName);
+
 			sb.append("=");
 			sb.append(attrValue);
 			sb.append("<br />");
 		}
 
-		response.setContentType("text/html");
+		response.setContentType(ContentTypes.TEXT_HTML);
 
-		response.getOutputStream().print(sb.toString());
-		response.getOutputStream().flush();
+		ServletOutputStream servletOutputStream = response.getOutputStream();
+
+		servletOutputStream.print(sb.toString());
+
+		servletOutputStream.flush();
 	}
 
 }

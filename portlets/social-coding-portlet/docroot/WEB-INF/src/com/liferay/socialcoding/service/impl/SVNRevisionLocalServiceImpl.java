@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,14 +14,13 @@
 
 package com.liferay.socialcoding.service.impl;
 
-import com.liferay.portal.NoSuchUserException;
+import com.liferay.portal.kernel.exception.NoSuchUserException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.User;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.social.service.SocialActivityLocalServiceUtil;
-import com.liferay.socialcoding.NoSuchSVNRevisionException;
+import com.liferay.social.kernel.service.SocialActivityLocalServiceUtil;
+import com.liferay.socialcoding.exception.NoSuchSVNRevisionException;
 import com.liferay.socialcoding.model.SVNRevision;
 import com.liferay.socialcoding.service.base.SVNRevisionLocalServiceBaseImpl;
 import com.liferay.socialcoding.svn.social.SVNActivityKeys;
@@ -38,7 +37,7 @@ public class SVNRevisionLocalServiceImpl
 	public SVNRevision addSVNRevision(
 			String svnUserId, Date createDate, long svnRepositoryId,
 			long revisionNumber, String comments)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// SVN revision
 
@@ -52,7 +51,7 @@ public class SVNRevisionLocalServiceImpl
 		svnRevision.setRevisionNumber(revisionNumber);
 		svnRevision.setComments(comments);
 
-		svnRevisionPersistence.update(svnRevision, false);
+		svnRevisionPersistence.update(svnRevision);
 
 		// Social
 
@@ -87,14 +86,14 @@ public class SVNRevisionLocalServiceImpl
 	}
 
 	public SVNRevision getFirstSVNRevision(String svnUserId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		int count = svnRevisionPersistence.countBySVNUserId(svnUserId);
 
 		List<SVNRevision> svnRevisions = svnRevisionPersistence.findBySVNUserId(
 			svnUserId, count - 1, count);
 
-		if (svnRevisions.size() > 0) {
+		if (!svnRevisions.isEmpty()) {
 			return svnRevisions.get(0);
 		}
 		else {
@@ -103,12 +102,12 @@ public class SVNRevisionLocalServiceImpl
 	}
 
 	public SVNRevision getLastSVNRevision(String svnUserId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<SVNRevision> svnRevisions = svnRevisionPersistence.findBySVNUserId(
 			svnUserId, 0, 1);
 
-		if (svnRevisions.size() > 0) {
+		if (!svnRevisions.isEmpty()) {
 			return svnRevisions.get(0);
 		}
 		else {
@@ -118,47 +117,40 @@ public class SVNRevisionLocalServiceImpl
 
 	@Override
 	public SVNRevision getSVNRevision(long svnRevisionId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return svnRevisionPersistence.findByPrimaryKey(svnRevisionId);
 	}
 
 	public List<SVNRevision> getSVNRevisions(
-			String svnUserId, int start, int end)
-		throws SystemException {
-
-		return svnRevisionPersistence.findBySVNUserId(svnUserId, start, end);
-	}
-
-	public List<SVNRevision> getSVNRevisions(
-			long svnRepositoryId, int start, int end)
-		throws SystemException {
+		long svnRepositoryId, int start, int end) {
 
 		return svnRevisionPersistence.findBySVNRepositoryId(
 			svnRepositoryId, start, end);
 	}
 
 	public List<SVNRevision> getSVNRevisions(
-			String svnUserId, long svnRepositoryId, int start, int end)
-		throws SystemException {
+		String svnUserId, int start, int end) {
+
+		return svnRevisionPersistence.findBySVNUserId(svnUserId, start, end);
+	}
+
+	public List<SVNRevision> getSVNRevisions(
+		String svnUserId, long svnRepositoryId, int start, int end) {
 
 		return svnRevisionPersistence.findBySVNU_SVNR(
 			svnUserId, svnRepositoryId, start, end);
 	}
 
-	public int getSVNRevisionsCount(String svnUserId) throws SystemException {
-		return svnRevisionPersistence.countBySVNUserId(svnUserId);
-	}
-
-	public int getSVNRevisionsCount(long svnRepositoryId)
-		throws SystemException {
-
+	public int getSVNRevisionsCount(long svnRepositoryId) {
 		return svnRevisionPersistence.countBySVNRepositoryId(svnRepositoryId);
 	}
 
-	public int getSVNRevisionsCount(String svnUserId, long svnRepositoryId)
-		throws SystemException {
+	public int getSVNRevisionsCount(String svnUserId) {
+		return svnRevisionPersistence.countBySVNUserId(svnUserId);
+	}
 
+	public int getSVNRevisionsCount(String svnUserId, long svnRepositoryId) {
 		return svnRevisionPersistence.countBySVNU_SVNR(
 			svnUserId, svnRepositoryId);
 	}

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE look-and-feel PUBLIC "-//Liferay//DTD Look and Feel 7.0.0//EN" "http://www.liferay.com/dtd/liferay-look-and-feel_7_0_0.dtd">
+
+<look-and-feel>
+	<compatibility>
+		<version>7.0.0+</version>
+		<version>7.1.0+</version>
+	</compatibility>
+	<theme id="zoe-tech" name="Zoe Tech">
+		<template-extension>vm</template-extension>
+		<settings>
+			<setting configurable="true" key="display-company-logo" type="checkbox" value="false" />
+			<setting configurable="true" key="display-footer" type="checkbox" value="true" />
+			<setting configurable="true" key="footer-nav-title" type="text" value="Site Pages" />
+			<setting configurable="true" key="footer-section-1-article-id" type="text" />
+			<setting configurable="true" key="footer-section-2-article-id" type="text" />
+			<setting configurable="true" key="footer-section-3-article-id" type="text" />
+			<setting configurable="true" key="footer-section-4-article-id" type="text" />
+			<setting configurable="false" key="show-site-name-default"  type="checkbox" value="false" />
+		</settings>
+	</theme>
+</look-and-feel>

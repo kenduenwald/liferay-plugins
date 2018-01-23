@@ -1,6 +1,8 @@
+include_class 'com.liferay.portal.kernel.util.WebKeys'
+
 $renderResponse.setContentType "text/html"
 
-themeDisplay = $renderRequest.getAttribute("THEME_DISPLAY");
+themeDisplay = $renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
 namespace = $renderResponse.getNamespace
 
@@ -22,13 +24,14 @@ html = <<-EOF
 <script type="text/javascript">
 	// <![CDATA[
 		function #{namespace}execute() {
-			var content = #{namespace}consoleInput.getCode();
+			var content = $('textarea##{namespace}consoleInput').val();
 
-			jQuery.get(
+			jQuery.post(
 				'#{$renderResponse.createResourceURL}',
 				{
 					#{namespace}cmd: "exec",
-					#{namespace}consoleInput: content
+					#{namespace}consoleInput: content,
+					p_auth: Liferay.authToken
 				},
 				function(data) {
 					if (!data.match(/^@ERROR@$/m) && document.#{namespace}fm.#{namespace}outputMode.checked) {
@@ -50,7 +53,7 @@ html = <<-EOF
 
 	<br />
 
-	<textarea class="codepress ruby" id="#{namespace}consoleInput" name="#{namespace}consoleInput" style="height: 300px; width: 98%;" wrap="off">
+	<textarea id="#{namespace}consoleInput" name="#{namespace}consoleInput" style="height: 300px; width: 98%;" wrap="off">
 \$resourceResponse.setContentType "text/html"
 
 out = $resourceResponse.getPortletOutputStream
@@ -75,7 +78,6 @@ out.println `date`
 	<pre id="#{namespace}consoleOutput"><!--//--></pre>
 </form>
 
-<script src="#{themeDisplay.getPathContext}/html/js/editor/codepress/codepress.js" type="text/javascript"></script>
 EOF
 
 out.print html

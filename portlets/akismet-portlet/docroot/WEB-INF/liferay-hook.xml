@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hook PUBLIC "-//Liferay//DTD Hook 6.2.0//EN" "http://www.liferay.com/dtd/liferay-hook_6_2_0.dtd">
+
+<hook>
+	<portal-properties>portal.properties</portal-properties>
+	<language-properties>content/Language*.properties</language-properties>
+	<custom-jsp-dir>/META-INF/custom_jsps</custom-jsp-dir>
+	<service>
+		<service-type>com.liferay.message.boards.kernel.service.MBMessageLocalService</service-type>
+		<service-impl>com.liferay.akismet.hook.service.impl.AkismetMBMessageLocalServiceImpl</service-impl>
+	</service>
+	<service>
+		<service-type>com.liferay.portlet.wiki.service.WikiPageLocalService</service-type>
+		<service-impl>com.liferay.akismet.hook.service.impl.AkismetWikiPageLocalServiceImpl</service-impl>
+	</service>
+	<struts-action>
+		<struts-action-path>/message_boards/akismet_edit_message</struts-action-path>
+		<struts-action-impl>com.liferay.akismet.hook.action.AkismetEditMessageAction</struts-action-impl>
+	</struts-action>
+	<struts-action>
+		<struts-action-path>/message_boards_admin/akismet_edit_message</struts-action-path>
+		<struts-action-impl>com.liferay.akismet.hook.action.AkismetEditMessageAction</struts-action-impl>
+	</struts-action>
+	<struts-action>
+		<struts-action-path>/portal/akismet_edit_discussion</struts-action-path>
+		<struts-action-impl>com.liferay.akismet.hook.action.AkismetEditDiscussionAction</struts-action-impl>
+	</struts-action>
+	<struts-action>
+		<struts-action-path>/wiki/edit_page</struts-action-path>
+		<struts-action-impl>com.liferay.akismet.hook.action.AkismetEditPageAction</struts-action-impl>
+	</struts-action>
+	<struts-action>
+		<struts-action-path>/wiki_admin/edit_page</struts-action-path>
+		<struts-action-impl>com.liferay.akismet.hook.action.AkismetEditPageAction</struts-action-impl>
+	</struts-action>
+	<struts-action>
+		<struts-action-path>/wiki_display/edit_page</struts-action-path>
+		<struts-action-impl>com.liferay.akismet.hook.action.AkismetEditPageAction</struts-action-impl>
+	</struts-action>
+</hook>

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,43 +24,46 @@ symbols = StringUtil.split(ParamUtil.getString(request, "symbols", symbolsString
 symbolsString = StringUtil.merge(symbols, StringPool.SPACE);
 %>
 
-<form action="<portlet:actionURL />" method="post" name="<portlet:namespace />fm">
-<input name="<portlet:namespace /><%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
+<portlet:actionURL var="portletURL" />
 
-<liferay-ui:error exception="<%= ValidatorException.class %>">
+<aui:form action="<%= portletURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveForm();" %>'>
+	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 
-	<%
-	ValidatorException ve = (ValidatorException)errorException;
-	%>
+	<liferay-ui:error exception="<%= ValidatorException.class %>">
 
-	<liferay-ui:message key="the-following-are-invalid-symbols" />
+		<%
+		ValidatorException ve = (ValidatorException)errorException;
+		%>
 
-	<%
-	Enumeration enu = ve.getFailedKeys();
+		<liferay-ui:message key="the-following-are-invalid-symbols" />
 
-	while (enu.hasMoreElements()) {
-		String symbol = (String)enu.nextElement();
-	%>
+		<%
+		Enumeration enu = ve.getFailedKeys();
 
-		<strong><%= symbol %></strong><%= (enu.hasMoreElements()) ? ", " : "." %>
+		while (enu.hasMoreElements()) {
+			String symbol = (String)enu.nextElement();
+		%>
 
-	<%
+			<strong><%= symbol %></strong><%= (enu.hasMoreElements()) ? ", " : "." %>
+
+		<%
+		}
+		%>
+
+	</liferay-ui:error>
+
+	<aui:input label="add-all-ticker-symbols-separated-by-spaces" name="symbols" type="textarea" value="<%= symbolsString %>" />
+
+	<aui:button-row>
+		<aui:button type="submit" />
+	</aui:button-row>
+</aui:form>
+
+<aui:script>
+	function <portlet:namespace />saveForm() {
+		submitForm(document.<portlet:namespace />fm);
 	}
-	%>
-
-</liferay-ui:error>
-
-<liferay-ui:message key="add-all-ticker-symbols-separated-by-spaces" />
-
-<br /><br />
-
-<textarea class="lfr-textarea" name="<portlet:namespace />symbols" wrap="soft"><%= symbolsString %></textarea>
-
-<br /><br />
-
-<input type="button" value="<liferay-ui:message key="save" />" onClick="submitForm(document.<portlet:namespace />fm);" />
-
-</form>
+</aui:script>
 
 <c:if test="<%= windowState.equals(WindowState.MAXIMIZED) %>">
 	<aui:script>

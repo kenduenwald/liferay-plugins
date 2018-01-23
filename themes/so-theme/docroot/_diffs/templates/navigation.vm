@@ -1,73 +1,96 @@
-#if ($page_group.isUser() && ($page_group.getClassPK() == $user_id))
-	<nav id="navigation">
-		<h1>
-			<span>#language("navigation")</span>
-		</h1>
+<div class="so-navigation" id="navigation">
+	#if ($is_profile_page)
+		<div class="taglib-logo-selector" id="${themeNamespace}taglibLogoSelector">
+			<div class="taglib-logo-selector-content" id="${themeNamespace}taglibLogoSelectorContent">
+				<img alt="$htmlUtil.escape($current_user.getFullName())" class="avatar" id="${themeNamespace}avatar" src="$current_user_profile_portrait_url" />
 
-		<ul>
-			#if ($layout.isPrivateLayout())
-				<li class="home selected">
-			#else
-				<li class="home">
-			#end
-				<a href="$community_default_private_url"><span>Home</span></a>
+				#if ($show_edit_profile_button)
+					<div class="portrait-icons">
+						<div class="btn-group">
+							<button class="btn edit-logo">
+								<i class="icon-picture"></i>
 
-				<ul class="child-menu">
-					#set ($layoutLocalService = $serviceLocator.findService("com.liferay.portal.service.LayoutLocalService"))
+								$languageUtil.get($locale, "change")
+							</button>
+						</div>
 
-					#set ($layouts = $layoutLocalService.getLayouts($page_group.getGroupId(), true, 0))
+						<input id="${my_account_portletNamespace}deleteLogo" type="hidden" value="false" />
+					</div>
+				#end
+			</div>
+		</div>
+	#end
 
-					#foreach ($cur_layout in $layouts)
-						#if ($cur_layout.getRegularURL($request) == $theme_display.getURLCurrent())
-							<li class="selected">
-						#else
-							<li>
-						#end
-							<a href="$portalUtil.getLayoutFullURL($cur_layout, $theme_display)" $cur_layout.getTarget()>$cur_layout.getName()</a>
-						</li>
-					#end
-				</ul>
-			</li>
+	<h1>
+		<span>#language("navigation")</span>
+	</h1>
 
-			#if ($layout.isPublicLayout())
+	<ul>
+		#foreach ($navItem in $navItems)
+			#if ($layout.getPlid() == $navItem.layout.getPlid())
 				<li class="selected">
 			#else
 				<li>
 			#end
-				<a href="$community_default_public_url"><span>Profile</span></a>
-			</li>
-		</ul>
-	</nav>
-#else
-	<nav class="sort-pages modify-pages" id="navigation">
-		<h1>
-			<span>#language("navigation")</span>
-		</h1>
 
-		<ul>
-			#foreach ($nav_item in $nav_items)
-				#if ($nav_item.isSelected())
-					<li class="selected">
-				#else
-					<li>
-				#end
-					<a href="$nav_item.getURL()" $nav_item.getTarget()><span>$nav_item.icon() $nav_item.getName()</span></a>
+				<a href="$navItem.getURL()" $navItem.getTarget()><span>$navItem.icon() $navItem.getName()</span></a>
 
-					#if ($nav_item.hasChildren())
-						<ul class="child-menu">
-							#foreach ($nav_child in $nav_item.getChildren())
-								#if ($nav_child.isSelected())
-									<li class="selected">
-								#else
-									<li>
-								#end
-									<a href="$nav_child.getURL()" $nav_child.getTarget()>$nav_child.getName()</a>
-								</li>
+				#if ($navItem.hasChildren())
+					<ul class="child-menu">
+						#foreach ($nav_child in $navItem.getChildren())
+							#if ($nav_child.isSelected())
+								<li class="selected">
+							#else
+								<li>
 							#end
-						</ul>
-					#end
-				</li>
-			#end
-		</ul>
-	</nav>
+								<a href="$nav_child.getURL()" $nav_child.getTarget()>$nav_child.getName()</a>
+							</li>
+						#end
+					</ul>
+				#end
+			</li>
+		#end
+	</ul>
+</div>
+
+#if ($show_edit_profile_button)
+	<script type="text/javascript">
+		AUI().use(
+			'liferay-logo-selector',
+			'aui-base',
+			function(A) {
+				new Liferay.LogoSelector(
+					{
+						boundingBox: '#${themeNamespace}taglibLogoSelector',
+						contentBox: '#${themeNamespace}taglibLogoSelectorContent',
+						defaultLogoURL: '$default_user_profile_portrait_url',
+						editLogoURL: '$current_user_edit_profile_portrait_url',
+						logoDisplaySelector: '#${themeNamespace}avatar',
+						portletNamespace: '${my_account_portletNamespace}',
+						randomNamespace: '${themeNamespace}'
+					}
+				).render();
+
+				window['${my_account_portletNamespace}changeLogo'] = function(logoURL) {
+					var avatarDialog = A.all('.avatar img');
+
+					if (avatarDialog) {
+						avatarDialog.attr('src', logoURL);
+					}
+
+					var avatarDockbar = A.one('.nav-account-controls .user-avatar-image');
+
+					if (avatarDockbar) {
+						avatarDockbar.attr('src', logoURL);
+					}
+
+					var avatarSidebar = A.one('.avatar');
+
+					if (avatarSidebar) {
+						avatarSidebar.attr('src', logoURL);
+					}
+				}
+			}
+		);
+	</script>
 #end

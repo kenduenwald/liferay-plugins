@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,17 +14,19 @@
 
 package com.liferay.socialcoding.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
-import com.liferay.portal.kernel.util.ClassLoaderProxy;
-import com.liferay.portal.kernel.util.MethodCache;
+import com.liferay.portal.kernel.service.InvokableLocalService;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 
 /**
- * The utility for the j i r a change item local service. This utility wraps {@link com.liferay.socialcoding.service.impl.JIRAChangeItemLocalServiceImpl} and is the primary access point for service operations in application layer code running on the local server.
- *
- * <p>
- * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
- * </p>
+ * Provides the local service utility for JIRAChangeItem. This utility wraps
+ * {@link com.liferay.socialcoding.service.impl.JIRAChangeItemLocalServiceImpl} and is the
+ * primary access point for service operations in application layer code running
+ * on the local server. Methods of this service will not have security checks
+ * based on the propagated JAAS credentials because this service can only be
+ * accessed from within the same VM.
  *
  * @author Brian Wing Shun Chan
  * @see JIRAChangeItemLocalService
@@ -32,23 +34,48 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
  * @see com.liferay.socialcoding.service.impl.JIRAChangeItemLocalServiceImpl
  * @generated
  */
+@ProviderType
 public class JIRAChangeItemLocalServiceUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.socialcoding.service.impl.JIRAChangeItemLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return getService().getActionableDynamicQuery();
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return getService().dynamicQuery();
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return getService().getIndexableActionableDynamicQuery();
+	}
+
+	/**
+	* @throws PortalException
+	*/
+	public static com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.kernel.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deletePersistedModel(persistedModel);
+	}
+
+	public static com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPersistedModel(primaryKeyObj);
+	}
 
 	/**
 	* Adds the j i r a change item to the database. Also notifies the appropriate model listeners.
 	*
 	* @param jiraChangeItem the j i r a change item
 	* @return the j i r a change item that was added
-	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.socialcoding.model.JIRAChangeItem addJIRAChangeItem(
-		com.liferay.socialcoding.model.JIRAChangeItem jiraChangeItem)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.socialcoding.model.JIRAChangeItem jiraChangeItem) {
 		return getService().addJIRAChangeItem(jiraChangeItem);
 	}
 
@@ -64,99 +91,32 @@ public class JIRAChangeItemLocalServiceUtil {
 	}
 
 	/**
-	* Deletes the j i r a change item with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param jiraChangeItemId the primary key of the j i r a change item
-	* @throws PortalException if a j i r a change item with the primary key could not be found
-	* @throws SystemException if a system exception occurred
-	*/
-	public static void deleteJIRAChangeItem(long jiraChangeItemId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		getService().deleteJIRAChangeItem(jiraChangeItemId);
-	}
-
-	/**
 	* Deletes the j i r a change item from the database. Also notifies the appropriate model listeners.
 	*
 	* @param jiraChangeItem the j i r a change item
-	* @throws SystemException if a system exception occurred
+	* @return the j i r a change item that was removed
 	*/
-	public static void deleteJIRAChangeItem(
-		com.liferay.socialcoding.model.JIRAChangeItem jiraChangeItem)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		getService().deleteJIRAChangeItem(jiraChangeItem);
+	public static com.liferay.socialcoding.model.JIRAChangeItem deleteJIRAChangeItem(
+		com.liferay.socialcoding.model.JIRAChangeItem jiraChangeItem) {
+		return getService().deleteJIRAChangeItem(jiraChangeItem);
 	}
 
 	/**
-	* Performs a dynamic query on the database and returns the matching rows.
+	* Deletes the j i r a change item with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the matching rows
-	* @throws SystemException if a system exception occurred
+	* @param jiraChangeItemId the primary key of the j i r a change item
+	* @return the j i r a change item that was removed
+	* @throws PortalException if a j i r a change item with the primary key could not be found
 	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().dynamicQuery(dynamicQuery);
+	public static com.liferay.socialcoding.model.JIRAChangeItem deleteJIRAChangeItem(
+		long jiraChangeItemId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deleteJIRAChangeItem(jiraChangeItemId);
 	}
 
-	/**
-	* Performs a dynamic query on the database and returns a range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @return the range of matching rows
-	* @throws SystemException if a system exception occurred
-	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().dynamicQuery(dynamicQuery, start, end);
-	}
-
-	/**
-	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching rows
-	* @throws SystemException if a system exception occurred
-	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService()
-				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
-	}
-
-	/**
-	* Returns the number of rows that match the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
-	*/
-	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().dynamicQueryCount(dynamicQuery);
+	public static com.liferay.socialcoding.model.JIRAChangeItem fetchJIRAChangeItem(
+		long jiraChangeItemId) {
+		return getService().fetchJIRAChangeItem(jiraChangeItemId);
 	}
 
 	/**
@@ -165,94 +125,141 @@ public class JIRAChangeItemLocalServiceUtil {
 	* @param jiraChangeItemId the primary key of the j i r a change item
 	* @return the j i r a change item
 	* @throws PortalException if a j i r a change item with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.socialcoding.model.JIRAChangeItem getJIRAChangeItem(
 		long jiraChangeItemId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getJIRAChangeItem(jiraChangeItemId);
 	}
 
 	/**
-	* Returns a range of all the j i r a change items.
+	* Updates the j i r a change item in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param start the lower bound of the range of j i r a change items
-	* @param end the upper bound of the range of j i r a change items (not inclusive)
-	* @return the range of j i r a change items
-	* @throws SystemException if a system exception occurred
+	* @param jiraChangeItem the j i r a change item
+	* @return the j i r a change item that was updated
 	*/
-	public static java.util.List<com.liferay.socialcoding.model.JIRAChangeItem> getJIRAChangeItems(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().getJIRAChangeItems(start, end);
+	public static com.liferay.socialcoding.model.JIRAChangeItem updateJIRAChangeItem(
+		com.liferay.socialcoding.model.JIRAChangeItem jiraChangeItem) {
+		return getService().updateJIRAChangeItem(jiraChangeItem);
 	}
 
 	/**
 	* Returns the number of j i r a change items.
 	*
 	* @return the number of j i r a change items
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int getJIRAChangeItemsCount()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int getJIRAChangeItemsCount() {
 		return getService().getJIRAChangeItemsCount();
 	}
 
-	/**
-	* Updates the j i r a change item in the database. Also notifies the appropriate model listeners.
-	*
-	* @param jiraChangeItem the j i r a change item
-	* @return the j i r a change item that was updated
-	* @throws SystemException if a system exception occurred
-	*/
-	public static com.liferay.socialcoding.model.JIRAChangeItem updateJIRAChangeItem(
-		com.liferay.socialcoding.model.JIRAChangeItem jiraChangeItem)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().updateJIRAChangeItem(jiraChangeItem);
+	public static java.lang.Object invokeMethod(java.lang.String name,
+		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
+		throws java.lang.Throwable {
+		return getService().invokeMethod(name, parameterTypes, arguments);
 	}
 
 	/**
-	* Updates the j i r a change item in the database. Also notifies the appropriate model listeners.
+	* Returns the OSGi service identifier.
 	*
-	* @param jiraChangeItem the j i r a change item
-	* @param merge whether to merge the j i r a change item with the current session. See {@link com.liferay.portal.service.persistence.BatchSession#update(com.liferay.portal.kernel.dao.orm.Session, com.liferay.portal.model.BaseModel, boolean)} for an explanation.
-	* @return the j i r a change item that was updated
-	* @throws SystemException if a system exception occurred
+	* @return the OSGi service identifier
 	*/
-	public static com.liferay.socialcoding.model.JIRAChangeItem updateJIRAChangeItem(
-		com.liferay.socialcoding.model.JIRAChangeItem jiraChangeItem,
-		boolean merge)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().updateJIRAChangeItem(jiraChangeItem, merge);
+	public static java.lang.String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
 	}
 
 	/**
-	* Returns the Spring bean ID for this bean.
+	* Performs a dynamic query on the database and returns the matching rows.
 	*
-	* @return the Spring bean ID for this bean
+	* @param dynamicQuery the dynamic query
+	* @return the matching rows
 	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
+	public static <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return getService().dynamicQuery(dynamicQuery);
 	}
 
 	/**
-	* Sets the Spring bean ID for this bean.
+	* Performs a dynamic query on the database and returns a range of the matching rows.
 	*
-	* @param beanIdentifier the Spring bean ID for this bean
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.JIRAChangeItemModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param dynamicQuery the dynamic query
+	* @param start the lower bound of the range of model instances
+	* @param end the upper bound of the range of model instances (not inclusive)
+	* @return the range of matching rows
 	*/
-	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
-		getService().setBeanIdentifier(beanIdentifier);
+	public static <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
+		int end) {
+		return getService().dynamicQuery(dynamicQuery, start, end);
+	}
+
+	/**
+	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.JIRAChangeItemModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param dynamicQuery the dynamic query
+	* @param start the lower bound of the range of model instances
+	* @param end the upper bound of the range of model instances (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching rows
+	*/
+	public static <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		return getService()
+				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns a range of all the j i r a change items.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.JIRAChangeItemModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of j i r a change items
+	* @param end the upper bound of the range of j i r a change items (not inclusive)
+	* @return the range of j i r a change items
+	*/
+	public static java.util.List<com.liferay.socialcoding.model.JIRAChangeItem> getJIRAChangeItems(
+		int start, int end) {
+		return getService().getJIRAChangeItems(start, end);
 	}
 
 	public static java.util.List<com.liferay.socialcoding.model.JIRAChangeItem> getJIRAChangeItems(
-		long jiraChangeGroupId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long jiraChangeGroupId) {
 		return getService().getJIRAChangeItems(jiraChangeGroupId);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public static long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return getService().dynamicQueryCount(dynamicQuery);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public static long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static void clearService() {
@@ -261,35 +268,21 @@ public class JIRAChangeItemLocalServiceUtil {
 
 	public static JIRAChangeItemLocalService getService() {
 		if (_service == null) {
-			Object object = PortletBeanLocatorUtil.locate(ClpSerializer.getServletContextName(),
+			InvokableLocalService invokableLocalService = (InvokableLocalService)PortletBeanLocatorUtil.locate(ClpSerializer.getServletContextName(),
 					JIRAChangeItemLocalService.class.getName());
-			ClassLoader portletClassLoader = (ClassLoader)PortletBeanLocatorUtil.locate(ClpSerializer.getServletContextName(),
-					"portletClassLoader");
 
-			ClassLoaderProxy classLoaderProxy = new ClassLoaderProxy(object,
-					JIRAChangeItemLocalService.class.getName(),
-					portletClassLoader);
-
-			_service = new JIRAChangeItemLocalServiceClp(classLoaderProxy);
-
-			ClpSerializer.setClassLoader(portletClassLoader);
+			if (invokableLocalService instanceof JIRAChangeItemLocalService) {
+				_service = (JIRAChangeItemLocalService)invokableLocalService;
+			}
+			else {
+				_service = new JIRAChangeItemLocalServiceClp(invokableLocalService);
+			}
 
 			ReferenceRegistry.registerReference(JIRAChangeItemLocalServiceUtil.class,
 				"_service");
-			MethodCache.remove(JIRAChangeItemLocalService.class);
 		}
 
 		return _service;
-	}
-
-	public void setService(JIRAChangeItemLocalService service) {
-		MethodCache.remove(JIRAChangeItemLocalService.class);
-
-		_service = service;
-
-		ReferenceRegistry.registerReference(JIRAChangeItemLocalServiceUtil.class,
-			"_service");
-		MethodCache.remove(JIRAChangeItemLocalService.class);
 	}
 
 	private static JIRAChangeItemLocalService _service;

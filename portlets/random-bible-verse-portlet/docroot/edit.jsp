@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,43 +17,37 @@
 <%@ include file="/init.jsp" %>
 
 <%
-Map bibles = RBVUtil.getBibles();
+Map<String, Bible> bibles = RBVUtil.getBibles();
 %>
 
-<form action="<portlet:actionURL />" method="post" name="<portlet:namespace />fm">
-<input name="<portlet:namespace /><%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
+<portlet:actionURL var="updateURL" />
 
-<table class="lfr-table">
-<tr>
-	<td>
-		<liferay-ui:message key="language" />
-	</td>
-	<td>
-		<select name="<portlet:namespace />language">
-			<option <%= language.equals("") ? "selected" : "" %> value=""><liferay-ui:message key="default-language" /></option>
+<aui:form action="<%= updateURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveForm();" %>'>
+	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 
-			<%
-			Iterator itr = bibles.entrySet().iterator();
+	<aui:select inlineLabel="true" name="language">
+		<aui:option label="default-language" selected='<%= language.equals("") %>' value="" />
 
-			while (itr.hasNext()) {
-				Map.Entry entry = (Map.Entry)itr.next();
+		<%
+		for (Map.Entry<String, Bible> entry : bibles.entrySet()) {
+			Bible bible = entry.getValue();
+		%>
 
-				Bible bible = (Bible)entry.getValue();
-			%>
+			<aui:option label="<%= StringUtil.toLowerCase(bible.getLanguageName()) %>" selected="<%= language.equals(bible.getLanguage()) %>" value="<%= bible.getLanguage() %>" />
 
-				<option <%= language.equals(bible.getLanguage()) ? "selected" : "" %> value="<%= bible.getLanguage() %>"><%= LanguageUtil.get(pageContext, bible.getLanguageName().toLowerCase()) %></option>
+		<%
+		}
+		%>
 
-			<%
-			}
-			%>
+	</aui:select>
 
-		</select>
-	</td>
-</tr>
-</table>
+	<aui:button-row>
+		<aui:button type="submit" value="save" />
+	</aui:button-row>
+</aui:form>
 
-<br />
-
-<input type="button" value="<liferay-ui:message key="save" />" onClick="submitForm(document.<portlet:namespace />fm);" />
-
-</form>
+<aui:script>
+	function <portlet:namespace />saveForm() {
+		submitForm(document.<portlet:namespace />fm);
+	}
+</aui:script>

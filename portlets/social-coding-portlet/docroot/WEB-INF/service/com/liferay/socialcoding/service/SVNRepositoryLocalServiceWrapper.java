@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,20 +14,56 @@
 
 package com.liferay.socialcoding.service;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.service.ServiceWrapper;
+
 /**
- * <p>
- * This class is a wrapper for {@link SVNRepositoryLocalService}.
- * </p>
+ * Provides a wrapper for {@link SVNRepositoryLocalService}.
  *
- * @author    Brian Wing Shun Chan
- * @see       SVNRepositoryLocalService
+ * @author Brian Wing Shun Chan
+ * @see SVNRepositoryLocalService
  * @generated
  */
+@ProviderType
 public class SVNRepositoryLocalServiceWrapper
-	implements SVNRepositoryLocalService {
+	implements SVNRepositoryLocalService,
+		ServiceWrapper<SVNRepositoryLocalService> {
 	public SVNRepositoryLocalServiceWrapper(
 		SVNRepositoryLocalService svnRepositoryLocalService) {
 		_svnRepositoryLocalService = svnRepositoryLocalService;
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return _svnRepositoryLocalService.getActionableDynamicQuery();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return _svnRepositoryLocalService.dynamicQuery();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return _svnRepositoryLocalService.getIndexableActionableDynamicQuery();
+	}
+
+	/**
+	* @throws PortalException
+	*/
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.kernel.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _svnRepositoryLocalService.deletePersistedModel(persistedModel);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _svnRepositoryLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -35,11 +71,10 @@ public class SVNRepositoryLocalServiceWrapper
 	*
 	* @param svnRepository the s v n repository
 	* @return the s v n repository that was added
-	* @throws SystemException if a system exception occurred
 	*/
+	@Override
 	public com.liferay.socialcoding.model.SVNRepository addSVNRepository(
-		com.liferay.socialcoding.model.SVNRepository svnRepository)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.socialcoding.model.SVNRepository svnRepository) {
 		return _svnRepositoryLocalService.addSVNRepository(svnRepository);
 	}
 
@@ -49,105 +84,49 @@ public class SVNRepositoryLocalServiceWrapper
 	* @param svnRepositoryId the primary key for the new s v n repository
 	* @return the new s v n repository
 	*/
+	@Override
 	public com.liferay.socialcoding.model.SVNRepository createSVNRepository(
 		long svnRepositoryId) {
 		return _svnRepositoryLocalService.createSVNRepository(svnRepositoryId);
 	}
 
 	/**
-	* Deletes the s v n repository with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param svnRepositoryId the primary key of the s v n repository
-	* @throws PortalException if a s v n repository with the primary key could not be found
-	* @throws SystemException if a system exception occurred
-	*/
-	public void deleteSVNRepository(long svnRepositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		_svnRepositoryLocalService.deleteSVNRepository(svnRepositoryId);
-	}
-
-	/**
 	* Deletes the s v n repository from the database. Also notifies the appropriate model listeners.
 	*
 	* @param svnRepository the s v n repository
-	* @throws SystemException if a system exception occurred
+	* @return the s v n repository that was removed
 	*/
-	public void deleteSVNRepository(
-		com.liferay.socialcoding.model.SVNRepository svnRepository)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_svnRepositoryLocalService.deleteSVNRepository(svnRepository);
+	@Override
+	public com.liferay.socialcoding.model.SVNRepository deleteSVNRepository(
+		com.liferay.socialcoding.model.SVNRepository svnRepository) {
+		return _svnRepositoryLocalService.deleteSVNRepository(svnRepository);
 	}
 
 	/**
-	* Performs a dynamic query on the database and returns the matching rows.
+	* Deletes the s v n repository with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the matching rows
-	* @throws SystemException if a system exception occurred
+	* @param svnRepositoryId the primary key of the s v n repository
+	* @return the s v n repository that was removed
+	* @throws PortalException if a s v n repository with the primary key could not be found
 	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _svnRepositoryLocalService.dynamicQuery(dynamicQuery);
+	@Override
+	public com.liferay.socialcoding.model.SVNRepository deleteSVNRepository(
+		long svnRepositoryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _svnRepositoryLocalService.deleteSVNRepository(svnRepositoryId);
 	}
 
-	/**
-	* Performs a dynamic query on the database and returns a range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @return the range of matching rows
-	* @throws SystemException if a system exception occurred
-	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException {
-		return _svnRepositoryLocalService.dynamicQuery(dynamicQuery, start, end);
+	@Override
+	public com.liferay.socialcoding.model.SVNRepository fetchSVNRepository(
+		long svnRepositoryId) {
+		return _svnRepositoryLocalService.fetchSVNRepository(svnRepositoryId);
 	}
 
-	/**
-	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching rows
-	* @throws SystemException if a system exception occurred
-	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _svnRepositoryLocalService.dynamicQuery(dynamicQuery, start,
-			end, orderByComparator);
-	}
-
-	/**
-	* Returns the number of rows that match the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
-	*/
-	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _svnRepositoryLocalService.dynamicQueryCount(dynamicQuery);
+	@Override
+	public com.liferay.socialcoding.model.SVNRepository getSVNRepository(
+		java.lang.String url)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _svnRepositoryLocalService.getSVNRepository(url);
 	}
 
 	/**
@@ -156,109 +135,164 @@ public class SVNRepositoryLocalServiceWrapper
 	* @param svnRepositoryId the primary key of the s v n repository
 	* @return the s v n repository
 	* @throws PortalException if a s v n repository with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
+	@Override
 	public com.liferay.socialcoding.model.SVNRepository getSVNRepository(
 		long svnRepositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _svnRepositoryLocalService.getSVNRepository(svnRepositoryId);
 	}
 
 	/**
-	* Returns a range of all the s v n repositories.
+	* Updates the s v n repository in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
-	* </p>
-	*
-	* @param start the lower bound of the range of s v n repositories
-	* @param end the upper bound of the range of s v n repositories (not inclusive)
-	* @return the range of s v n repositories
-	* @throws SystemException if a system exception occurred
+	* @param svnRepository the s v n repository
+	* @return the s v n repository that was updated
 	*/
-	public java.util.List<com.liferay.socialcoding.model.SVNRepository> getSVNRepositories(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _svnRepositoryLocalService.getSVNRepositories(start, end);
+	@Override
+	public com.liferay.socialcoding.model.SVNRepository updateSVNRepository(
+		com.liferay.socialcoding.model.SVNRepository svnRepository) {
+		return _svnRepositoryLocalService.updateSVNRepository(svnRepository);
 	}
 
 	/**
 	* Returns the number of s v n repositories.
 	*
 	* @return the number of s v n repositories
-	* @throws SystemException if a system exception occurred
 	*/
-	public int getSVNRepositoriesCount()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	@Override
+	public int getSVNRepositoriesCount() {
 		return _svnRepositoryLocalService.getSVNRepositoriesCount();
 	}
 
-	/**
-	* Updates the s v n repository in the database. Also notifies the appropriate model listeners.
-	*
-	* @param svnRepository the s v n repository
-	* @return the s v n repository that was updated
-	* @throws SystemException if a system exception occurred
-	*/
-	public com.liferay.socialcoding.model.SVNRepository updateSVNRepository(
-		com.liferay.socialcoding.model.SVNRepository svnRepository)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _svnRepositoryLocalService.updateSVNRepository(svnRepository);
+	@Override
+	public java.lang.Object invokeMethod(java.lang.String name,
+		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
+		throws java.lang.Throwable {
+		return _svnRepositoryLocalService.invokeMethod(name, parameterTypes,
+			arguments);
 	}
 
 	/**
-	* Updates the s v n repository in the database. Also notifies the appropriate model listeners.
+	* Returns the OSGi service identifier.
 	*
-	* @param svnRepository the s v n repository
-	* @param merge whether to merge the s v n repository with the current session. See {@link com.liferay.portal.service.persistence.BatchSession#update(com.liferay.portal.kernel.dao.orm.Session, com.liferay.portal.model.BaseModel, boolean)} for an explanation.
-	* @return the s v n repository that was updated
-	* @throws SystemException if a system exception occurred
+	* @return the OSGi service identifier
 	*/
-	public com.liferay.socialcoding.model.SVNRepository updateSVNRepository(
-		com.liferay.socialcoding.model.SVNRepository svnRepository,
-		boolean merge)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _svnRepositoryLocalService.updateSVNRepository(svnRepository,
-			merge);
+	@Override
+	public java.lang.String getOSGiServiceIdentifier() {
+		return _svnRepositoryLocalService.getOSGiServiceIdentifier();
 	}
 
 	/**
-	* Returns the Spring bean ID for this bean.
+	* Performs a dynamic query on the database and returns the matching rows.
 	*
-	* @return the Spring bean ID for this bean
+	* @param dynamicQuery the dynamic query
+	* @return the matching rows
 	*/
-	public java.lang.String getBeanIdentifier() {
-		return _svnRepositoryLocalService.getBeanIdentifier();
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return _svnRepositoryLocalService.dynamicQuery(dynamicQuery);
 	}
 
 	/**
-	* Sets the Spring bean ID for this bean.
+	* Performs a dynamic query on the database and returns a range of the matching rows.
 	*
-	* @param beanIdentifier the Spring bean ID for this bean
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.SVNRepositoryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param dynamicQuery the dynamic query
+	* @param start the lower bound of the range of model instances
+	* @param end the upper bound of the range of model instances (not inclusive)
+	* @return the range of matching rows
 	*/
-	public void setBeanIdentifier(java.lang.String beanIdentifier) {
-		_svnRepositoryLocalService.setBeanIdentifier(beanIdentifier);
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
+		int end) {
+		return _svnRepositoryLocalService.dynamicQuery(dynamicQuery, start, end);
 	}
 
-	public com.liferay.socialcoding.model.SVNRepository getSVNRepository(
-		java.lang.String url)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return _svnRepositoryLocalService.getSVNRepository(url);
+	/**
+	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.SVNRepositoryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param dynamicQuery the dynamic query
+	* @param start the lower bound of the range of model instances
+	* @param end the upper bound of the range of model instances (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching rows
+	*/
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		return _svnRepositoryLocalService.dynamicQuery(dynamicQuery, start,
+			end, orderByComparator);
 	}
 
+	/**
+	* Returns a range of all the s v n repositories.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.socialcoding.model.impl.SVNRepositoryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of s v n repositories
+	* @param end the upper bound of the range of s v n repositories (not inclusive)
+	* @return the range of s v n repositories
+	*/
+	@Override
+	public java.util.List<com.liferay.socialcoding.model.SVNRepository> getSVNRepositories(
+		int start, int end) {
+		return _svnRepositoryLocalService.getSVNRepositories(start, end);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	@Override
+	public long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return _svnRepositoryLocalService.dynamicQueryCount(dynamicQuery);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	@Override
+	public long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		return _svnRepositoryLocalService.dynamicQueryCount(dynamicQuery,
+			projection);
+	}
+
+	@Override
 	public void updateSVNRepository(java.lang.String url)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		_svnRepositoryLocalService.updateSVNRepository(url);
 	}
 
-	public SVNRepositoryLocalService getWrappedSVNRepositoryLocalService() {
+	@Override
+	public SVNRepositoryLocalService getWrappedService() {
 		return _svnRepositoryLocalService;
 	}
 
-	public void setWrappedSVNRepositoryLocalService(
+	@Override
+	public void setWrappedService(
 		SVNRepositoryLocalService svnRepositoryLocalService) {
 		_svnRepositoryLocalService = svnRepositoryLocalService;
 	}

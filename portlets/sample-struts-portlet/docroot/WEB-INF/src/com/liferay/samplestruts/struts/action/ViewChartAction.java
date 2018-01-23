@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -49,8 +49,8 @@ public class ViewChartAction extends Action {
 
 	@Override
 	public ActionForward execute(
-			ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response)
+			ActionMapping actionMapping, ActionForm actionForm,
+			HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
 
 		try {
@@ -58,7 +58,6 @@ public class ViewChartAction extends Action {
 				_log.info("execute");
 			}
 
-			String portletName = "sample_struts_portlet";
 			String attrName = "chart_name";
 
 			// Application scoped session attributes can be fetched from the
@@ -67,9 +66,8 @@ public class ViewChartAction extends Action {
 
 			HttpSession session = request.getSession();
 
-			String chartName =
-				(String)session.getAttribute(attrName);
-				//(String)_getAttribute(request, attrName);
+			String chartName = (String)session.getAttribute(attrName);
+			//(String)_getAttribute(request, attrName);
 
 			// Chart
 
@@ -84,8 +82,8 @@ public class ViewChartAction extends Action {
 
 			if (chartType.equals("area")) {
 				chart = ChartFactory.createAreaChart(
-					chartName, xName, yName, dataset,
-					PlotOrientation.VERTICAL, true, false, false);
+					chartName, xName, yName, dataset, PlotOrientation.VERTICAL,
+					true, false, false);
 			}
 			else if (chartType.equals("horizontal_bar")) {
 				chart = ChartFactory.createBarChart(
@@ -94,17 +92,17 @@ public class ViewChartAction extends Action {
 			}
 			else if (chartType.equals("line")) {
 				chart = ChartFactory.createLineChart(
-					chartName, xName, yName, dataset,
-					PlotOrientation.VERTICAL, true, false, false);
+					chartName, xName, yName, dataset, PlotOrientation.VERTICAL,
+					true, false, false);
 			}
 			else if (chartType.equals("vertical_bar")) {
 				chart = ChartFactory.createBarChart(
-					chartName, xName, yName, dataset,
-					PlotOrientation.VERTICAL, true, false, false);
+					chartName, xName, yName, dataset, PlotOrientation.VERTICAL,
+					true, false, false);
 			}
 			else {
-				PieDataset pieData =
-					DatasetUtilities.createPieDatasetForRow(dataset, 0);
+				PieDataset pieData = DatasetUtilities.createPieDatasetForRow(
+					dataset, 0);
 
 				chart = ChartFactory.createPieChart(
 					chartName, pieData, true, false, false);
@@ -116,12 +114,12 @@ public class ViewChartAction extends Action {
 
 			ChartUtilities.writeChartAsJPEG(out, chart, 400, 400);
 
-			return mapping.findForward("/common/null.jsp");
+			return actionMapping.findForward("/common/null.jsp");
 		}
 		catch (Exception e) {
 			request.setAttribute(PageContext.EXCEPTION, e);
 
-			return mapping.findForward("/common/error.jsp");
+			return actionMapping.findForward("/common/error.jsp");
 		}
 	}
 
@@ -132,13 +130,13 @@ public class ViewChartAction extends Action {
 
 		HttpSession session = request.getSession();
 
-		Enumeration enu = session.getAttributeNames();
+		Enumeration<String> enu = session.getAttributeNames();
 
 		while (enu.hasMoreElements()) {
-			String encodedAttrName = (String)enu.nextElement();
+			String encodedAttrName = enu.nextElement();
 
-			String decodedAttrName =
-				PortletSessionUtil.decodeAttributeName(encodedAttrName);
+			String decodedAttrName = PortletSessionUtil.decodeAttributeName(
+				encodedAttrName);
 
 			if (decodedAttrName.equals(attrName)) {
 				return session.getAttribute(encodedAttrName);
@@ -153,8 +151,8 @@ public class ViewChartAction extends Action {
 
 		String seriesName = "";
 
-		dataset.addValue(new Integer(9), seriesName, "Coke");
-		dataset.addValue(new Integer(21), seriesName, "Pepsi");
+		dataset.addValue(Integer.valueOf(9), seriesName, "Coke");
+		dataset.addValue(Integer.valueOf(21), seriesName, "Pepsi");
 
 		return dataset;
 	}

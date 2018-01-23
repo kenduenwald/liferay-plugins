@@ -1,9 +1,18 @@
 <?xml version="1.0"?>
+<!DOCTYPE project>
 
-<project name="ext" basedir="." default="deploy" xmlns:antelope="antlib:ise.antelope.tasks">
-	<property name="project.dir" value=".." />
-
+<project basedir="." default="deploy" name="ext" xmlns:antelope="antlib:ise.antelope.tasks">
 	<import file="../build-common-plugins.xml" />
+
+	<target name="clean">
+		<antcall target="loop-exts">
+			<param name="loop.exts.cmd" value="clean-ext" />
+		</antcall>
+	</target>
+
+	<target name="clean-ext">
+		<ant dir="${ext.name}" inheritAll="false" target="clean" />
+	</target>
 
 	<target name="create">
 		<if>
@@ -11,38 +20,72 @@
 				<isset property="ext.name" />
 			</not>
 			<then>
-				<fail message="This task must be called by create.bat." />
+				<fail>This task must be called by the create script.</fail>
 			</then>
-			<else>
-				<if>
-					<not>
-						<isset property="ext.parent.dir" />
-					</not>
-					<then>
-						<property name="ext.parent.dir" value="${basedir}" />
-					</then>
-				</if>
+		</if>
 
-				<property name="ext.plugin.dir" value="${ext.parent.dir}/${ext.name}-ext" />
+		<property name="ext.parent.dir" value="${user.dir}" />
+		<property name="ext.plugin.dir" value="${ext.parent.dir}/${ext.name}-ext" />
 
-				<if>
-					<available file="${ext.plugin.dir}" />
-					<then>
-						<fail message="${ext.name}-ext already exists." />
-					</then>
-				</if>
+		<if>
+			<available file="${ext.plugin.dir}" />
+			<then>
+				<fail>${ext.name}-ext already exists.</fail>
+			</then>
+		</if>
 
-				<copy todir="${ext.plugin.dir}">
-					<fileset
-						dir="${project.dir}/tools/ext_tmpl"
-					/>
-				</copy>
+		<copy todir="${ext.plugin.dir}">
+			<fileset
+				dir="${sdk.dir}/tools/templates/ext_tmpl"
+			/>
+		</copy>
 
-				<replace dir="${ext.plugin.dir}">
-					<replacefilter token="@ext.name@" value="${ext.name}" />
-					<replacefilter token="@ext.display.name@" value="${ext.display.name}" />
-				</replace>
-			</else>
+		<mkdir dir="${ext.plugin.dir}/docroot/WEB-INF/ext-impl/src" />
+		<mkdir dir="${ext.plugin.dir}/docroot/WEB-INF/ext-kernel/src" />
+		<mkdir dir="${ext.plugin.dir}/docroot/WEB-INF/ext-lib/global" />
+		<mkdir dir="${ext.plugin.dir}/docroot/WEB-INF/ext-lib/portal" />
+		<mkdir dir="${ext.plugin.dir}/docroot/WEB-INF/ext-util-bridges/src" />
+		<mkdir dir="${ext.plugin.dir}/docroot/WEB-INF/ext-util-java/src" />
+		<mkdir dir="${ext.plugin.dir}/docroot/WEB-INF/ext-util-taglib/src" />
+
+		<replace dir="${ext.plugin.dir}">
+			<replacefilter token="@ext.display.name@" value="${ext.display.name}" />
+			<replacefilter token="@ext.name@" value="${ext.name}" />
+			<replacefilter token="@plugin.type.dir@" value="${plugin.type.dir}" />
+		</replace>
+	</target>
+
+	<target name="deploy">
+		<antcall target="loop-exts">
+			<param name="loop.exts.cmd" value="deploy-ext" />
+		</antcall>
+	</target>
+
+	<target name="deploy-ext">
+		<ant dir="${ext.name}" inheritAll="false" target="deploy" />
+	</target>
+
+	<target name="loop-exts">
+		<if>
+			<not>
+				<equals arg1="${plugins.includes}" arg2="" />
+			</not>
+			<then>
+				<for param="ext.name">
+					<path>
+						<dirset dir="." excludes="${plugins.excludes}" includes="${plugins.includes}" />
+					</path>
+					<sequential>
+						<antelope:stringutil property="ext.name.unix" string="@{ext.name}">
+							<antelope:replace regex="\\" replacement="/" />
+						</antelope:stringutil>
+
+						<antelope:grep group="2" in="${ext.name.unix}" property="ext.name" regex="(.*/)(.*)" />
+
+						<antcall target="${loop.exts.cmd}" />
+					</sequential>
+				</for>
+			</then>
 		</if>
 	</target>
 
@@ -72,32 +115,32 @@ exist.
 		<if>
 			<available file="${ext.name}-ext" />
 			<then>
-				<fail message="${ext.name}-ext already exists." />
+				<fail>${ext.name}-ext already exists.</fail>
 			</then>
 		</if>
 
 		<antcall target="create">
-			<param name="ext.name" value="${ext.name}" />
 			<param name="ext.display.name" value="${ext.display.name}" />
+			<param name="ext.name" value="${ext.name}" />
 		</antcall>
 
-		<copy todir="${ext.name}-ext/docroot/WEB-INF/ext-impl/src" failonerror="false">
+		<copy failonerror="false" todir="${ext.name}-ext/docroot/WEB-INF/ext-impl/src">
 			<fileset dir="${ext.dir}/ext-impl/src" />
 		</copy>
 
-		<copy todir="${ext.name}-ext/docroot/WEB-INF/ext-lib/global" failonerror="false">
+		<copy failonerror="false" todir="${ext.name}-ext/docroot/WEB-INF/ext-lib/global">
 			<fileset dir="${ext.dir}/ext-lib/global" />
 		</copy>
 
-		<copy todir="${ext.name}-ext/docroot/WEB-INF/ext-lib/portal" failonerror="false">
+		<copy failonerror="false" todir="${ext.name}-ext/docroot/WEB-INF/ext-lib/portal">
 			<fileset dir="${ext.dir}/ext-lib/portal" />
 		</copy>
 
-		<copy todir="${ext.name}-ext/docroot/WEB-INF/ext-service/src" failonerror="false">
-			<fileset dir="${ext.dir}/ext-service/src" />
+		<copy failonerror="false" todir="${ext.name}-ext/docroot/WEB-INF/ext-kernel/src">
+			<fileset dir="${ext.dir}/ext-kernel/src" />
 		</copy>
 
-		<copy todir="${ext.name}-ext/docroot/WEB-INF/ext-web/docroot" failonerror="false" overwrite="true">
+		<copy failonerror="false" overwrite="true" todir="${ext.name}-ext/docroot/WEB-INF/ext-web/docroot">
 			<fileset
 				dir="${ext.dir}/ext-web/docroot"
 				excludes="**/struts-config.xml,**/tiles-defs.xml"
@@ -114,7 +157,7 @@ exist.
 			tofile="${ext.name}-ext/docroot/WEB-INF/ext-web/docroot/WEB-INF/tiles-defs-ext.xml"
 		/>
 
-		<copy todir="${ext.name}-ext/docroot/WEB-INF/sql" failonerror="false">
+		<copy failonerror="false" todir="${ext.name}-ext/docroot/WEB-INF/sql">
 			<fileset dir="${ext.dir}/sql" />
 		</copy>
 	</target>

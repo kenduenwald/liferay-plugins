@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,35 +24,35 @@ import org.apache.struts.validator.ValidatorForm;
  */
 public class UnsubscribeForm extends ValidatorForm {
 
-	public String getFirstName() {
-		return _firstName;
+	public String getEmailAddress() {
+		return _emailAddress;
 	}
 
-	public void setFirstName(String firstName) {
-		_firstName = firstName;
+	public String getFirstName() {
+		return _firstName;
 	}
 
 	public String getLastName() {
 		return _lastName;
 	}
 
-	public void setLastName(String lastName) {
-		_lastName = lastName;
-	}
-
-	public String getEmailAddress() {
-		return _emailAddress;
+	@Override
+	public void reset(ActionMapping actionMapping, HttpServletRequest req) {
+		_firstName = null;
+		_lastName = null;
+		_emailAddress = null;
 	}
 
 	public void setEmailAddress(String emailAddress) {
 		_emailAddress = emailAddress;
 	}
 
-	@Override
-	public void reset(ActionMapping mapping, HttpServletRequest req) {
-		_firstName = null;
-		_lastName = null;
-		_emailAddress = null;
+	public void setFirstName(String firstName) {
+		_firstName = firstName;
+	}
+
+	public void setLastName(String lastName) {
+		_lastName = lastName;
 	}
 
 	@Override
@@ -60,8 +60,8 @@ public class UnsubscribeForm extends ValidatorForm {
 		return _firstName + " " + _lastName + " " + _emailAddress;
 	}
 
+	private String _emailAddress;
 	private String _firstName;
 	private String _lastName;
-	private String _emailAddress;
 
 }

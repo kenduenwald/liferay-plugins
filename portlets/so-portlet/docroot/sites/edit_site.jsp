@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This file is part of Liferay Social Office. Liferay Social Office is free
  * software: you can redistribute it and/or modify it under the terms of the GNU
@@ -9,7 +9,7 @@
  *
  * Liferay Social Office is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -24,7 +24,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 
 portletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
 
-portletURL.setParameter("jspPage", "/sites/edit_site.jsp");
+portletURL.setParameter("mvcPath", "/sites/edit_site.jsp");
 %>
 
 <portlet:actionURL name="addSite" var="addSiteURL" />
@@ -32,18 +32,16 @@ portletURL.setParameter("jspPage", "/sites/edit_site.jsp");
 <aui:form action="<%= addSiteURL %>" method="post" name="dialogFm">
 	<aui:model-context model="<%= Group.class %>" />
 
-	<div class="portlet-msg-success aui-helper-hidden">
+	<div class="hide portlet-msg-success">
 		<liferay-ui:message key="your-request-processed-successfully" />
 	</div>
 
-	<div class="portlet-msg-error aui-helper-hidden">
+	<div class="hide portlet-msg-error">
 		<liferay-ui:message key="your-request-failed-to-complete" />
 	</div>
 
 	<div class="section-container">
-		<div class="section site-information">
-			<liferay-ui:header title="information" />
-
+		<div class="section site-information" data-step="<%= LanguageUtil.format(request, "step-x-of-x", new String[] {"1", "2"}, false) %>" data-title="<%= LanguageUtil.get(request, "add-site-information") %>">
 			<aui:fieldset>
 				<aui:input name="name" />
 
@@ -55,135 +53,145 @@ portletURL.setParameter("jspPage", "/sites/edit_site.jsp");
 		LayoutSetPrototype defaultLayoutSetPrototype = null;
 		%>
 
-		<div class="section site-settings aui-helper-hidden">
-			<liferay-ui:header title="settings" />
-
-			<aui:column columnWidth="<%= 50 %>" first="<%= true %>">
+		<div class="hide section site-settings" data-step="<%= LanguageUtil.format(request, "step-x-of-x", new String[] {"2", "2"}, false) %>" data-title="<%= LanguageUtil.get(request, "add-site-settings") %>">
+			<div class="site-options">
 
 				<%
 				List<LayoutSetPrototype> layoutSetPrototypes = LayoutSetPrototypeServiceUtil.search(company.getCompanyId(), Boolean.TRUE, null);
 				%>
 
-				<aui:fieldset>
-					<aui:select id="layoutSetPrototypeSelect" label="default-pages" name="layoutSetPrototypeId">
-						<aui:option label="none" selected="<%= true %>" value="0" />
-
-						<%
-						for (LayoutSetPrototype layoutSetPrototype : layoutSetPrototypes) {
-							UnicodeProperties settingsProperties = layoutSetPrototype.getSettingsProperties();
-
-							String customJspServletContextName = settingsProperties.getProperty("customJspServletContextName", StringPool.BLANK);
-
-							if (!customJspServletContextName.equals("so-hook")) {
-								continue;
-							}
-
-							Boolean socialOfficeDefault = (Boolean)layoutSetPrototype.getExpandoBridge().getAttribute("socialOfficeDefault");
-
-							if (socialOfficeDefault.booleanValue()) {
-								defaultLayoutSetPrototype = layoutSetPrototype;
-							}
-						%>
-
-							<aui:option selected="<%= socialOfficeDefault %>" value="<%= layoutSetPrototype.getLayoutSetPrototypeId() %>"><%= layoutSetPrototype.getName(user.getLanguageId()) %></aui:option>
-
-						<%
-						}
-						%>
-
-					</aui:select>
-
-					<aui:select name="type">
-						<aui:option label="open" value="<%= GroupConstants.TYPE_SITE_OPEN %>" />
-						<aui:option label="restricted" value="<%= GroupConstants.TYPE_SITE_RESTRICTED %>" />
-						<aui:option label="private" value="<%= GroupConstants.TYPE_SITE_PRIVATE %>" />
-					</aui:select>
-				</aui:fieldset>
-			</aui:column>
-
-			<aui:column columnWidth="<%= 50 %>">
-				<div class="template-details">
-					<c:if test="<%= defaultLayoutSetPrototype != null %>">
-						<h3 class="name"><%= defaultLayoutSetPrototype.getName(locale) %></h3>
-
-						<p class="description">
-							<%= defaultLayoutSetPrototype.getDescription() %>
-						</p>
-
-						<span>
-							<liferay-ui:message key="included-pages" />
-						</span>
-
-						<ul class="pages">
-
-							<%
-							Group layoutSetPrototypeGroup = defaultLayoutSetPrototype.getGroup();
-
-							List<Layout> prototypeLayouts = LayoutLocalServiceUtil.getLayouts(layoutSetPrototypeGroup.getGroupId(), true, 0);
-
-							for (Layout prototypeLayout : prototypeLayouts) {
-							%>
-
-								<li><%= prototypeLayout.getName(locale) %></li>
-
-							<%
-							}
-							%>
-
-						</ul>
-					</c:if>
-
-					<div style="clear: both;"></div>
-				</div>
-			</aui:column>
-		</div>
-
-		<div class="section site-customization aui-helper-hidden">
-			<liferay-ui:header title="customization" />
-
-			<div class="set-label">
-				<liferay-ui:message key="included-pages" />
-			</div>
-
-			<div class="tip">
-				<liferay-ui:message key="uncheck-the-pages-to-exclude-from-your-site" />
-			</div>
-
-			<aui:input name="deleteLayoutIds" type="hidden" />
-
-			<div class="delete-layouts-container">
-				<c:if test="<%= defaultLayoutSetPrototype != null %>">
+				<aui:select id="layoutSetPrototypeSelect" label="default-pages" name="layoutSetPrototypeId">
+					<aui:option label="none" selected="<%= true %>" value="0" />
 
 					<%
-					Group layoutSetPrototypeGroup = defaultLayoutSetPrototype.getGroup();
+					for (LayoutSetPrototype layoutSetPrototype : layoutSetPrototypes) {
+						UnicodeProperties settingsProperties = layoutSetPrototype.getSettingsProperties();
 
-					List<Layout> prototypeLayouts = LayoutLocalServiceUtil.getLayouts(layoutSetPrototypeGroup.getGroupId(), true, 0);
+						String customJspServletContextName = settingsProperties.getProperty("customJspServletContextName", StringPool.BLANK);
 
-					for (Layout prototypeLayout : prototypeLayouts) {
+						if (!customJspServletContextName.equals("so-hook")) {
+							continue;
+						}
+
+						String layoutSetPrototypeKey = (String)layoutSetPrototype.getExpandoBridge().getAttribute(SocialOfficeConstants.LAYOUT_SET_PROTOTYPE_KEY);
+
+						boolean layoutSetPrototypeSite = layoutSetPrototypeKey.equals(SocialOfficeConstants.LAYOUT_SET_PROTOTYPE_KEY_SITE);
+
+						if (layoutSetPrototypeSite) {
+							defaultLayoutSetPrototype = layoutSetPrototype;
+						}
 					%>
 
-						<span class="page">
-							<input checked data-layoutId="<%= prototypeLayout.getLayoutId() %>" id="layout<%= prototypeLayout.getLayoutId() %>" type="checkbox" />
-
-							<label for="layout<%= prototypeLayout.getLayoutId() %>"><%= prototypeLayout.getName(locale) %></label>
-						</span>
+						<aui:option selected="<%= layoutSetPrototypeSite %>" value="<%= layoutSetPrototype.getLayoutSetPrototypeId() %>"><%= layoutSetPrototype.getName(user.getLanguageId()) %></aui:option>
 
 					<%
 					}
 					%>
 
-				</c:if>
+				</aui:select>
+
+				<aui:select id="typeSelect" label="type" name="type">
+					<c:if test="<%= enableOpenSites %>">
+						<aui:option label="<%= GroupConstants.getTypeLabel(GroupConstants.TYPE_SITE_OPEN) %>" value="<%= GroupConstants.TYPE_SITE_OPEN %>" />
+					</c:if>
+
+					<c:if test="<%= enablePublicRestrictedSites %>">
+						<aui:option label="<%= GroupConstants.getTypeLabel(GroupConstants.TYPE_SITE_PUBLIC_RESTRICTED) %>" value="<%= GroupConstants.TYPE_SITE_PUBLIC_RESTRICTED %>" />
+					</c:if>
+
+					<c:if test="<%= enablePrivateRestrictedSites %>">
+						<aui:option label="<%= GroupConstants.getTypeLabel(GroupConstants.TYPE_SITE_PRIVATE_RESTRICTED) %>" value="<%= GroupConstants.TYPE_SITE_PRIVATE_RESTRICTED %>" />
+					</c:if>
+
+					<c:if test="<%= enablePrivateSites %>">
+						<aui:option label="<%= GroupConstants.getTypeLabel(GroupConstants.TYPE_SITE_PRIVATE) %>" value="<%= GroupConstants.TYPE_SITE_PRIVATE %>" />
+					</c:if>
+				</aui:select>
+			</div>
+
+			<div class="template-details">
+				<h3 class="name"><%= defaultLayoutSetPrototype.getName(locale) %></h3>
+
+				<p class="description">
+					<%= defaultLayoutSetPrototype.getDescription() %>
+				</p>
+
+				<aui:row>
+					<aui:col width="<%= 30 %>">
+						<span class="included-pages"><liferay-ui:message key="included-pages" />:</span>
+
+						<aui:input name="deleteLayoutIds" type="hidden" />
+
+						<div class="delete-layouts-container">
+							<c:if test="<%= defaultLayoutSetPrototype != null %>">
+
+								<%
+								Group layoutSetPrototypeGroup = defaultLayoutSetPrototype.getGroup();
+
+								List<Layout> prototypeLayouts = LayoutLocalServiceUtil.getLayouts(layoutSetPrototypeGroup.getGroupId(), true, 0);
+
+								for (Layout prototypeLayout : prototypeLayouts) {
+								%>
+
+									<div class="page">
+										<input checked data-layoutId="<%= prototypeLayout.getLayoutId() %>" id="layout<%= prototypeLayout.getLayoutId() %>" type="checkbox" />
+
+										<label for="layout<%= prototypeLayout.getLayoutId() %>"><%= prototypeLayout.getName(locale) %></label>
+									</div>
+
+								<%
+								}
+								%>
+
+							</c:if>
+						</div>
+					</aui:col>
+
+					<aui:col width="<%= 70 %>">
+						<div class="type-details">
+							<div class="permission">
+								<liferay-ui:message key="permissions" />:
+							</div>
+
+							<div class="message">
+
+								<%
+								String description = StringPool.BLANK;
+
+								if (enableOpenSites) {
+									description = "open-sites-are-listed-pages-are-public-and-users-are-free-to-join-and-collaborate";
+								}
+								else if (enablePublicRestrictedSites) {
+									description = "public-restricted-sites-are-listed-pages-are-public-and-users-must-request-to-join-and-collaborate";
+								}
+								else if (enablePrivateRestrictedSites) {
+									description = "private-restricted-sites-are-listed-pages-are-private-and-users-must-request-to-join-and-collaborate";
+								}
+								else if (enablePrivateSites) {
+									description = "private-sites-are-not-listed-pages-are-private-and-users-must-be-invited-to-collaborate";
+								}
+								%>
+
+								<liferay-ui:message key="<%= description %>" />
+							</div>
+						</div>
+					</aui:col>
+				</aui:row>
 			</div>
 		</div>
 	</div>
 
-	<div style="clear: both;"></div>
-
-	<aui:button-row>
+	<aui:button-row cssClass="dialog-footer">
 		<div class="buttons-left">
 			<aui:button disabled="<%= true %>" id="previous" onClick='<%= renderResponse.getNamespace() + "previous()" %>' value="previous" />
 
 			<aui:button id="next" onClick='<%= renderResponse.getNamespace() + "next()" %>' value="next" />
+		</div>
+
+		<div class="step" id="<portlet:namespace />step">
+			<span>
+				<liferay-ui:message arguments="<%= new Integer[] {1, 2} %>" key="step-x-of-x" translateArguments="<%= false %>" />
+			</span>
 		</div>
 
 		<div class="buttons-right">
@@ -193,133 +201,205 @@ portletURL.setParameter("jspPage", "/sites/edit_site.jsp");
 </aui:form>
 
 <aui:script>
-	var A = AUI();
-
-	var form = A.one(document.<portlet:namespace />dialogFm);
-
-	var sectionContainer = A.one('.so-portlet-sites-dialog .section-container');
-
-	var previousButton = A.one('.so-portlet-sites-dialog #previous');
-	var nextButton = A.one('.so-portlet-sites-dialog #next');
-
 	Liferay.provide(
 		window,
 		'<portlet:namespace />save',
 		function() {
-			nextButton.set('disabled', true);
+			var A = AUI();
 
-			var layoutElems = sectionContainer.all('.delete-layouts-container .page input:not(:checked)');
+			var dialog = A.one('.so-portlet-sites-dialog');
 
-			var deleteLayoutIds = [];
+			if (dialog) {
+				var nextButton = dialog.one('#next');
 
-			layoutElems.each(
-				function(layoutElem, index, collection) {
-					deleteLayoutIds.push(layoutElem.getAttribute('data-layoutId'));
+				if (nextButton) {
+					nextButton.set('disabled', true);
 				}
-			);
 
-			var deleteLayoutIdsElem = A.one('#<portlet:namespace />deleteLayoutIds');
+				var loadingMask = new A.LoadingMask(
+					{
+						'strings.loading': '<%= UnicodeLanguageUtil.get(request, "creating-a-new-site") %>',
+						target: dialog
+					}
+				);
 
-			deleteLayoutIdsElem.set('value', deleteLayoutIds.join(','));
+				loadingMask.show();
 
-			A.io.request(
-				form.getAttribute('action'),
-				{
-					after: {
-						success: function(event, id, obj) {
-							var data = this.get('responseData');
+				var sectionContainer = dialog.one('.section-container');
 
-							if (data.result == 'success') {
-								form.one('.portlet-msg-success').show();
-								form.one('.portlet-msg-error').hide();
+				if (sectionContainer) {
+					var layoutElems = sectionContainer.all('.delete-layouts-container .page input:not(:checked)');
 
-								form.one('.section-container').hide();
+					var deleteLayoutIds = [];
 
-								Liferay.SO.Sites.updateSites();
+					layoutElems.each(
+						function(item, index) {
+							deleteLayoutIds.push(item.getAttribute('data-layoutId'));
+						}
+					);
+				}
 
-								var callback = function() {
-									var dialog = Liferay.SO.Sites.getPopup();
+				var deleteLayoutIdsElem = A.one('#<portlet:namespace />deleteLayoutIds');
 
-									dialog.hide();
+				if (deleteLayoutIdsElem) {
+					deleteLayoutIdsElem.set('value', deleteLayoutIds.join(','));
+				}
+
+				var form = A.one(document.<portlet:namespace />dialogFm);
+
+				if (form) {
+					A.io.request(
+						form.getAttribute('action'),
+						{
+							after: {
+								success: function(event, id, obj) {
+									var data = this.get('responseData');
+
+									if (data.result == 'success') {
+										form.one('.portlet-msg-error').hide();
+
+										var sites = Liferay.SO.Sites;
+
+										sites.updateSites(true);
+
+										var callback = function() {
+											var popup = sites.getPopup();
+
+											popup.hide();
+
+											loadingMask.hide();
+										};
+
+										setTimeout(callback, 1000);
+									}
+									else if (data.result == 'failure') {
+										var errorMsg = form.one('.portlet-msg-error');
+
+										if (data.message) {
+											errorMsg.html(data.message);
+										}
+
+										errorMsg.show();
+
+										var section = dialog.one('.section');
+
+										<portlet:namespace />showSection(section);
+
+										loadingMask.hide();
+									}
 								}
-
-								setTimeout(callback, 1000);
-							}
-							else if (data.result == 'failure') {
-								var errorMsg = form.one('.portlet-msg-error');
-
-								if (data.message) {
-									errorMsg.html(data.message);
-								}
-
-								errorMsg.show();
-
-								var section = A.one('.so-portlet-sites-dialog .section');
-
-								<portlet:namespace />showSection(section);
+							},
+							dataType: 'JSON',
+							form: {
+								id: form.getDOM()
 							}
 						}
-					},
-					dataType: 'JSON',
-					form: {
-						id: form.getDOM()
-					}
+					);
 				}
-			);
-		}
+			}
+		},
+		['aui-base', 'aui-io-request-deprecated', 'aui-loading-mask-deprecated']
 	);
 
 	Liferay.provide(
 		window,
 		'<portlet:namespace />previous',
 		function() {
-			var section = A.one('.so-portlet-sites-dialog .section:not(.aui-helper-hidden)').previous();
+			var A = AUI();
 
-			<portlet:namespace />showSection(section);
-		}
+			var dialog = A.one('.so-portlet-sites-dialog');
+
+			if (dialog) {
+				var section = dialog.one('.section:not(.hide)').previous();
+
+				if (section) {
+					<portlet:namespace />showSection(section);
+				}
+			}
+		},
+		['aui-base']
 	);
 
 	Liferay.provide(
 		window,
 		'<portlet:namespace />showSection',
 		function(section) {
-			sectionContainer.all('.section').hide();
+			var A = AUI();
 
-			if (!section.previous()) {
-				Liferay.SO.Sites.disableButton(previousButton);
-			}
-			else {
-				Liferay.SO.Sites.enableButton(previousButton);
-			}
+			var dialog = A.one('.so-portlet-sites-dialog');
 
-			if (!section.next()) {
-				Liferay.SO.Sites.disableButton(nextButton);
-			}
-			else {
-				Liferay.SO.Sites.enableButton(nextButton);
-			}
+			if (dialog) {
+				var sites = Liferay.SO.Sites;
 
-			previousButton.blur();
-			nextButton.blur();
+				sites.setTitle(section.getAttribute('data-title'));
 
-			section.show();
-		}
+				var step = A.one('#<portlet:namespace />step');
+
+				if (step) {
+					step.html('<span>' + section.getAttribute('data-step') + '</span>');
+				}
+
+				var sectionContainer = dialog.one('.section-container');
+
+				if (sectionContainer) {
+					sectionContainer.all('.section').hide();
+				}
+
+				var previousButton = dialog.one('#previous');
+
+				if (previousButton) {
+					if (!section.previous('.section')) {
+						sites.disableButton(previousButton);
+					}
+					else {
+						sites.enableButton(previousButton);
+					}
+
+					previousButton.blur();
+				}
+
+				var nextButton = dialog.one('#next');
+
+				if (nextButton) {
+					if (!section.next('.section')) {
+						sites.disableButton(nextButton);
+					}
+					else {
+						sites.enableButton(nextButton);
+					}
+
+					nextButton.blur();
+				}
+
+				section.show();
+			}
+		},
+		['aui-base']
 	);
 
 	Liferay.provide(
 		window,
 		'<portlet:namespace />next',
 		function() {
-			var section = A.one('.so-portlet-sites-dialog .section:not(.aui-helper-hidden)').next();
+			var A = AUI();
 
-			<portlet:namespace />showSection(section);
-		}
+			var dialog = A.one('.so-portlet-sites-dialog');
+
+			if (dialog) {
+				var section = dialog.one('.section:not(.hide)').next();
+
+				if (section) {
+					<portlet:namespace />showSection(section);
+				}
+			}
+		},
+		['aui-base']
 	);
-
-	Liferay.Util.focusFormField(document.<portlet:namespace />dialogFm.<portlet:namespace />name);
 </aui:script>
 
-<aui:script use="aui-base,aui-io">
+<aui:script use="aui-base,aui-io-deprecated">
+	Liferay.Util.focusFormField(document.<portlet:namespace />dialogFm.<portlet:namespace />name);
+
 	var form = A.one(document.<portlet:namespace />dialogFm);
 
 	form.on(
@@ -329,15 +409,16 @@ portletURL.setParameter("jspPage", "/sites/edit_site.jsp");
 		}
 	);
 
-	var templateSelect = A.one('.so-portlet-sites-dialog #<portlet:namespace />layoutSetPrototypeSelect');
+	var dialog = A.one('.so-portlet-sites-dialog');
 
-	var descriptionContainer = A.one('.so-portlet-sites-dialog .template-details');
+	var descriptionContainer = dialog.one('.template-details');
 
-	var name = descriptionContainer.one('.name');
 	var description = descriptionContainer.one('.description');
-	var pages = descriptionContainer.one('.pages');
+	var name = descriptionContainer.one('.name');
 
-	var deleteLayoutsContainer = A.one('.so-portlet-sites-dialog .delete-layouts-container');
+	var deleteLayoutsContainer = dialog.one('.delete-layouts-container');
+
+	var templateSelect = dialog.one('#<portlet:namespace />layoutSetPrototypeSelect');
 
 	templateSelect.on(
 		'change',
@@ -358,37 +439,56 @@ portletURL.setParameter("jspPage", "/sites/edit_site.jsp");
 
 							var layouts = data.layouts;
 
-							var listBuffer = [];
-
-							for (var i in layouts) {
-								var layout = layouts[i];
-
-								listBuffer.push('<li>' + layout.name + '</li>');
-							}
-
-							pages.html(listBuffer.join(''));
-
 							var inputBuffer = [];
 
 							for (var i in layouts) {
 								var layout = layouts[i];
 
 								inputBuffer.push(
-									'<span class="page">' +
+									'<div class="page">' +
 										'<input checked data-layoutId="' + layout.layoutId + '" id="layout' + layout.layoutId + '" type="checkbox" />' +
 										'<label for="layout' + layout.layoutId + '">' + layout.name + '</label>' +
-									'</span>');
+									'</div>'
+								);
 							}
 
-							deleteLayoutsContainer.html(inputBuffer.join(''));
+							deleteLayoutsContainer.html(
+								inputBuffer.join('')
+							);
 						}
 					},
 					data: {
-						layoutSetPrototypeId: templateId
+						<portlet:namespace />layoutSetPrototypeId: templateId
 					},
 					dataType: 'JSON'
 				}
 			);
+		}
+	);
+
+	var typeSelect = dialog.one('#<portlet:namespace />typeSelect');
+
+	typeSelect.on(
+		'change',
+		function(event) {
+			var type = typeSelect.get('value');
+
+			var message = '';
+
+			if (type == <%= GroupConstants.TYPE_SITE_OPEN %>) {
+				message = '<%= UnicodeLanguageUtil.get(request, "open-sites-are-listed-pages-are-public-and-users-are-free-to-join-and-collaborate") %>';
+			}
+			else if (type == <%= GroupConstants.TYPE_SITE_PUBLIC_RESTRICTED %>) {
+				message = '<%= UnicodeLanguageUtil.get(request, "public-restricted-sites-are-listed-pages-are-public-and-users-must-request-to-join-and-collaborate") %>';
+			}
+			else if (type == <%= GroupConstants.TYPE_SITE_PRIVATE_RESTRICTED %>) {
+				message = '<%= UnicodeLanguageUtil.get(request, "private-restricted-sites-are-listed-pages-are-private-and-users-must-request-to-join-and-collaborate") %>';
+			}
+			else if (type == <%= GroupConstants.TYPE_SITE_PRIVATE %>) {
+				message = '<%= UnicodeLanguageUtil.get(request, "private-sites-are-not-listed-pages-are-private-and-users-must-be-invited-to-collaborate") %>';
+			}
+
+			dialog.one('.type-details .message').html(message);
 		}
 	);
 </aui:script>

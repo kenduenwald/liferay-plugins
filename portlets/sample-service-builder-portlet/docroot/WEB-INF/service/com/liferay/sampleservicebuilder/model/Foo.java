@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,14 @@
 
 package com.liferay.sampleservicebuilder.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.Accessor;
+
 /**
- * The model interface for the Foo service. Represents a row in the &quot;SSB_Foo&quot; database table, with each column mapped to a property of this class.
+ * The extended model interface for the Foo service. Represents a row in the &quot;SSB_Foo&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see FooModel
@@ -23,10 +29,28 @@ package com.liferay.sampleservicebuilder.model;
  * @see com.liferay.sampleservicebuilder.model.impl.FooModelImpl
  * @generated
  */
-public interface Foo extends FooModel {
+@ImplementationClassName("com.liferay.sampleservicebuilder.model.impl.FooImpl")
+@ProviderType
+public interface Foo extends FooModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.sampleservicebuilder.model.impl.FooImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<Foo, Long> FOO_ID_ACCESSOR = new Accessor<Foo, Long>() {
+			@Override
+			public Long get(Foo foo) {
+				return foo.getFooId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<Foo> getTypeClass() {
+				return Foo.class;
+			}
+		};
 }

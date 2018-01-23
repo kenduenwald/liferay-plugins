@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,15 +20,18 @@
 
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.portal.kernel.util.HttpUtil" %>
-<%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
-<%@ page import="com.liferay.portal.kernel.util.ReleaseInfo" %>
-<%@ page import="com.liferay.portal.kernel.util.StringPool" %>
-<%@ page import="com.liferay.portal.kernel.util.Validator" %>
+<%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
+page import="com.liferay.portal.kernel.util.HttpUtil" %><%@
+page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.ReleaseInfo" %><%@
+page import="com.liferay.portal.kernel.util.StringPool" %><%@
+page import="com.liferay.portal.kernel.util.Validator" %>
 
-<%@ page import="java.util.Iterator" %>
-<%@ page import="java.util.Set" %>
-<%@ page import="java.util.TreeSet" %>
+<%@ page import="java.util.Iterator" %><%@
+page import="java.util.Set" %><%@
+page import="java.util.TreeSet" %><%@
+page import="java.util.regex.Matcher" %><%@
+page import="java.util.regex.Pattern" %>
 
 <portlet:defineObjects />
 
@@ -43,12 +46,13 @@ String content = null;
 if (Validator.isNotNull(url)) {
 	content = HttpUtil.URLtoString(url);
 
-	int x = content.indexOf("var sourceforge_project_name =");
-	x = content.indexOf("'", x) + 1;
+	Pattern pattern = Pattern.compile("\"project\": \"(\\S+)\"");
 
-	int y = content.indexOf("'", x);
+	Matcher matcher = pattern.matcher(content);
 
-	projectName = content.substring(x, y);
+	if (matcher.find()) {
+		projectName = matcher.group(1);
+	}
 }
 %>
 
@@ -61,68 +65,53 @@ An example URL is: <em>http://sourceforge.net/project/showfiles.php?group_id=492
 <br /><br />
 
 <form action="<portlet:renderURL />" method="post" name="<portlet:namespace />fm">
+	<table class="lfr-table">
+		<tr>
+			<td>
+				<liferay-ui:message key="url" />:
+			</td>
+			<td>
+				<input name="<portlet:namespace />url" size="120" type="text" value="<%= HtmlUtil.escape(url) %>" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<liferay-ui:message key="project" />:
+			</td>
+			<td>
+				<%= projectName %>
+			</td>
+		</tr>
+	</table>
 
-<table class="lfr-table">
-<tr>
-	<td>
-		<liferay-ui:message key="url" />:
-	</td>
-	<td>
-		<input name="<portlet:namespace />url" size="120" type="text" value="<%= url %>" />
-	</td>
-</tr>
-<tr>
-	<td>
-		<liferay-ui:message key="project" />:
-	</td>
-	<td>
-		<%= projectName %>
-	</td>
-</tr>
-</table>
+	<br />
 
-<br />
-
-<input type="submit" value="<liferay-ui:message key="refresh" />" />
-
+	<input type="submit" value="<liferay-ui:message key="refresh" />" />
 </form>
 
 <c:if test="<%= Validator.isNotNull(url) %>">
 	<br />
 
 	<div class="portlet-msg-info">
-		Below are a list of plugins that are on SourceForge's download page but not available for the Plugin Installer.
+		Below are a list of plugins that are on SourceForge's download page.
 	</div>
 
 	<%
 	Set sfPlugins = new TreeSet();
 
-	for (int i = 1;; i++) {
-		int x = content.indexOf("pkg0_1rel0_" + i);
+	Pattern pattern = Pattern.compile("<tr title=\"(\\S+)\" class=\"file \">");
 
-		if (x == -1) {
-			break;
-		}
+	Matcher matcher = pattern.matcher(content);
 
-		x = content.indexOf("return false;\">", x);
-		int y = content.indexOf("</a>", x);
+	while (matcher.find()) {
+		String fileName = matcher.group(1);
 
-		String fileName = content.substring(x + 15, y);
-
-		String directDownloadURL = "http://downloads.sourceforge.net/" + projectName + "/" + fileName;
-
-		try {
-			sfPlugins.add(fileName);
-
-			com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalServiceUtil.getProductVersionByDirectDownloadURL(directDownloadURL);
-		}
-		catch (Exception e) {
+		sfPlugins.add(fileName);
 	%>
 
-			<%= fileName %><br />
+		<%= fileName %><br />
 
 	<%
-		}
 	}
 	%>
 

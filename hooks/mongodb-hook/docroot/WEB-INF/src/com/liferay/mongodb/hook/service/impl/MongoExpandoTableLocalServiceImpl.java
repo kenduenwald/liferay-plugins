@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,12 @@
 
 package com.liferay.mongodb.hook.service.impl;
 
+import com.liferay.expando.kernel.exception.DuplicateTableNameException;
+import com.liferay.expando.kernel.model.ExpandoTable;
+import com.liferay.expando.kernel.service.ExpandoTableLocalService;
+import com.liferay.expando.kernel.service.ExpandoTableLocalServiceWrapper;
 import com.liferay.mongodb.util.MongoDBUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portlet.expando.DuplicateTableNameException;
-import com.liferay.portlet.expando.model.ExpandoTable;
-import com.liferay.portlet.expando.service.ExpandoTableLocalService;
-import com.liferay.portlet.expando.service.ExpandoTableLocalServiceWrapper;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -40,7 +39,7 @@ public class MongoExpandoTableLocalServiceImpl
 
 	@Override
 	public ExpandoTable updateTable(long tableId, String name)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ExpandoTable expandoTable = super.getTable(tableId);
 

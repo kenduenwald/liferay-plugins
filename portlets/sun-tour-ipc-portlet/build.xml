@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
+<!DOCTYPE project>
 
-<project name="sun-tour-ipc-portlet" basedir="." default="deploy">
-	<import file="../build-common-portlet.xml" />
+<project basedir="." default="deploy" name="sun-tour-ipc-portlet">
+	<property name="compile.jsp.docroot.dir" value="tmp" />
 
 	<!--
 	Download Tour IPC Portlets from
@@ -9,4 +10,19 @@
 	-->
 
 	<property name="original.war.file" value="touripcportlet.war" />
+
+	<import file="../build-common-portlet.xml" />
+
+	<target name="merge">
+		<merge
+			module.dir="${basedir}"
+		/>
+
+		<replace file="tmp/WEB-INF/portlet.xml">
+			<replacefilter
+				token="/opt/SUNWportal/dtd/portlet.xsd"
+				value="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+			/>
+		</replace>
+	</target>
 </project>

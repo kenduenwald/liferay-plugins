@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,18 @@
  */
 --%>
 
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
-<%@ page import="java.util.HashMap" %>
-<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %><%@
+page import="java.util.Map" %>
+
+<%@ page import="javax.portlet.PortletRequest" %>
 
 <liferay-theme:defineObjects />
+
+<portlet:defineObjects />
 
 <%
 if (!themeDisplay.isSignedIn()) {
@@ -38,78 +44,84 @@ expectedValues.put("liferay.user.id", user.getUserId());
 expectedValues.put("user.name.full", user.getFullName());
 %>
 
-<table class="lfr-table">
-<tr>
-	<th>
-		Key
-	</th>
-	<th>
-		Expected Value
-	</th>
-	<th>
-		Actual Value
-	</th>
-	<th></th>
-</tr>
-
-<%
-Map userInfo = (Map)renderRequest.getAttribute(PortletRequest.USER_INFO);
-
-if (userInfo != null) {
-	for (Map.Entry entry : expectedValues.entrySet()) {
-		String key = entry.getKey();
-		String expectedValue = String.valueOf(entry.getValue());
-
-		String actualValue = String.valueOf(userInfo.get(key));
-%>
-
+<table class="table table-bordered table-hover table-striped">
+	<thead>
 		<tr>
-			<td>
-				<%= key %>
-			</td>
-			<td>
-				<%= expectedValue %>
-			</td>
-			<td>
-				<%= actualValue %>
-			</td>
-			<td>
+			<th>
+				Key
+			</th>
+			<th>
+				Expected Value
+			</th>
+			<th>
+				Actual Value
+			</th>
+			<th></th>
+		</tr>
+	</thead>
 
-				<%
-				if (expectedValue.equals(actualValue)) {
-				%>
+	<%
+	Map userInfo = (Map)renderRequest.getAttribute(PortletRequest.USER_INFO);
 
-					PASSED
+	if (userInfo != null) {
+		for (Map.Entry<String, Object> entry : expectedValues.entrySet()) {
+			String key = entry.getKey();
+			String expectedValue = String.valueOf(entry.getValue());
 
-				<%
-				}
-				else {
-				%>
+			String actualValue = String.valueOf(userInfo.get(key));
+	%>
 
-					FAILED
+		<tbody>
+			<tr>
+				<td>
+					<%= key %>
+				</td>
+				<td>
+					<%= expectedValue %>
+				</td>
+				<td>
+					<%= actualValue %>
+				</td>
+				<td>
 
-				<%
-				}
-				%>
-			
-			</td>
-		</tr>		
+					<%
+					if (expectedValue.equals(actualValue)) {
+					%>
 
-<%
+						PASSED
+
+					<%
+					}
+					else {
+					%>
+
+						FAILED
+
+					<%
+					}
+					%>
+
+				</td>
+			</tr>
+		</tbody>
+
+	<%
+		}
 	}
-}
-else {
-%>
+	else {
+	%>
 
-	<tr>
-		<td colspan="3"></td>
-		</td>
-			FAILED
-		</td>
-	</tr>
+		<tbody>
+			<tr>
+				<td colspan="3"></td>
+				</td>
+					FAILED
+				</td>
+			</tr>
+		</tbody>
 
-<%
-}
-%>
+	<%
+	}
+	%>
 
 </table>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -36,15 +36,16 @@ public class VerseWebCacheItem implements WebCacheItem {
 		_language = language;
 	}
 
+	@Override
 	public Object convert(String key) throws WebCacheException {
 		try {
 			Verse verse = null;
 
-			if (_language.equalsIgnoreCase("fi")) {
-				verse = getUskonkirjat(verse);
+			if (StringUtil.equalsIgnoreCase(_language, "fi")) {
+				verse = _getUskonkirjat();
 			}
 			else {
-				verse = getBiblegateway(verse);
+				verse = _getBiblegateway();
 			}
 
 			return verse;
@@ -55,7 +56,12 @@ public class VerseWebCacheItem implements WebCacheItem {
 		}
 	}
 
-	private Verse getBiblegateway(Verse verse) throws Exception {
+	@Override
+	public long getRefreshTime() {
+		return _REFRESH_TIME;
+	}
+
+	private Verse _getBiblegateway() throws Exception {
 		StringBundler sb = new StringBundler();
 
 		sb.append("http://www.biblegateway.com/passage/?search=");
@@ -130,7 +136,7 @@ public class VerseWebCacheItem implements WebCacheItem {
 		return new Verse(_location, text);
 	}
 
-	private Verse getUskonkirjat(Verse verse) throws Exception {
+	private Verse _getUskonkirjat() throws Exception {
 		StringBundler sb = new StringBundler();
 
 		sb.append("http://raamattu.uskonkirjat.net/servlet/biblesite.Bible?");
@@ -155,9 +161,9 @@ public class VerseWebCacheItem implements WebCacheItem {
 		// Strip &nbsp; and other extra characters
 
 		text = StringUtil.replace(text, "&nbsp;", "");
-		text = StringUtil.replace(text, "(", "");
-		text = StringUtil.replace(text, ")", "");
-		text = StringUtil.replace(text, ":", "");
+		text = StringUtil.replace(text, '(', "");
+		text = StringUtil.replace(text, ')', "");
+		text = StringUtil.replace(text, ':', "");
 		text = text.replaceAll("\\d+", "");
 
 		// Strip carriage returns
@@ -179,10 +185,6 @@ public class VerseWebCacheItem implements WebCacheItem {
 		text = text.trim();
 
 		return new Verse(_location, text);
-	}
-
-	public long getRefreshTime() {
-		return _REFRESH_TIME;
 	}
 
 	private static final long _REFRESH_TIME = Time.WEEK * 52;

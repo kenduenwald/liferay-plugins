@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,8 +18,8 @@
 
 <c:choose>
 	<c:when test="<%= user2 == null %>">
-		<div class="portlet-msg-error">
-			<liferay-ui:message key="this-application-will-only-function-when-placed-on-a-user-page" />
+		<div class="alert alert-danger">
+			<liferay-ui:message key="this-application-only-functions-when-placed-on-a-user-page" />
 		</div>
 	</c:when>
 	<c:otherwise>

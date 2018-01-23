@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
+
+<service-builder package-path="com.liferay.skinny">
+	<namespace>Skinny</namespace>
+	<entity local-service="false" name="Skinny" remote-service="true">
+		<reference entity="DDLRecordSet" package-path="com.liferay.dynamic.data.lists" />
+		<reference entity="DDMStructure" package-path="com.liferay.dynamic.data.mapping" />
+		<reference entity="JournalArticle" package-path="com.liferay.journal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+	</entity>
+</service-builder>

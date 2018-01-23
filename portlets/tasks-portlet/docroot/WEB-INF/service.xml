@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_0_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
 
 <service-builder package-path="com.liferay.tasks">
 	<author>Ryan Park</author>
 	<namespace>TMS</namespace>
-	<entity name="TasksEntry" local-service="true" remote-service="true">
+	<entity local-service="true" name="TasksEntry" remote-service="true">
 
 		<!-- PK fields -->
 
-		<column name="tasksEntryId" type="long" primary="true" />
+		<column name="tasksEntryId" primary="true" type="long" />
 
 		<!-- Group instance -->
 
@@ -66,8 +66,27 @@
 			<finder-column name="groupId" />
 			<finder-column name="resolverUserId" />
 		</finder>
+		<finder name="U_S" return-type="Collection">
+			<finder-column name="userId" />
+			<finder-column arrayable-operator="OR" name="status" />
+		</finder>
+		<finder name="A_S" return-type="Collection">
+			<finder-column name="assigneeUserId" />
+			<finder-column arrayable-operator="OR" name="status" />
+		</finder>
+		<finder name="G_U_S" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+			<finder-column arrayable-operator="OR" name="status" />
+		</finder>
+		<finder name="G_A_S" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="assigneeUserId" />
+			<finder-column arrayable-operator="OR" name="status" />
+		</finder>
 	</entity>
 	<exceptions>
 		<exception>TasksEntryDueDate</exception>
+		<exception>TasksEntryTitle</exception>
 	</exceptions>
 </service-builder>

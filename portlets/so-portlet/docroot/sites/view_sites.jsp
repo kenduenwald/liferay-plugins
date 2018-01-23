@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This file is part of Liferay Social Office. Liferay Social Office is free
  * software: you can redistribute it and/or modify it under the terms of the GNU
@@ -9,7 +9,7 @@
  *
  * Liferay Social Office is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -20,135 +20,74 @@
 <%@ include file="/sites/init.jsp" %>
 
 <%
+String tabs1 = ParamUtil.getString(request, "tabs1");
+
 String keywords = ParamUtil.getString(request, "keywords");
-boolean userSites = ParamUtil.getBoolean(request, "userSites");
 
-String searchKeywords = DAOParamUtil.getLike(request, "keywords");
+List<Group> groups = null;
+int groupsCount = 0;
 
-LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+if (tabs1.equals("my-sites")) {
+	groups = SitesUtil.getVisibleSites(themeDisplay.getCompanyId(), themeDisplay.getUserId(), keywords, true, 0, maxResultSize);
+	groupsCount = SitesUtil.getVisibleSitesCount(themeDisplay.getCompanyId(), themeDisplay.getUserId(), keywords, true);
 
-if (userSites) {
-	params.put("usersGroups", themeDisplay.getUserId());
+	if (groupsCount == 0) {
+		tabs1 = "all-sites";
+
+		groups = SitesUtil.getVisibleSites(themeDisplay.getCompanyId(), themeDisplay.getUserId(), keywords, false, 0, maxResultSize);
+		groupsCount = SitesUtil.getVisibleSitesCount(themeDisplay.getCompanyId(), themeDisplay.getUserId(), keywords, false);
+	}
+}
+else if (tabs1.equals("my-favorites")) {
+	groups = SitesUtil.getFavoriteSitesGroups(themeDisplay.getUserId(), keywords, 0, maxResultSize);
+	groupsCount = SitesUtil.getFavoriteSitesGroupsCount(themeDisplay.getUserId(), keywords);
 }
 else {
-	List<Integer> types = new ArrayList<Integer>();
-
-	types.add(GroupConstants.TYPE_SITE_OPEN);
-	types.add(GroupConstants.TYPE_SITE_RESTRICTED);
-
-	params.put("types", types);
+	groups = SitesUtil.getVisibleSites(themeDisplay.getCompanyId(), themeDisplay.getUserId(), keywords, false, 0, maxResultSize);
+	groupsCount = SitesUtil.getVisibleSitesCount(themeDisplay.getCompanyId(), themeDisplay.getUserId(), keywords, false);
 }
-
-List<Group> groups = GroupLocalServiceUtil.search(themeDisplay.getCompanyId(), searchKeywords, null, params, 0, 20, new GroupNameComparator(true));
-
-int totalGroups = GroupLocalServiceUtil.searchCount(themeDisplay.getCompanyId(), searchKeywords, null, params);
 %>
 
-<div class="directory">
+<div class="so-sites-directory" id="<portlet:namespace />directory">
 	<liferay-ui:header title="directory" />
 
 	<div class="search">
 		<div class="buttons-left">
 			<input id="<portlet:namespace />dialogKeywords" size="30" type="text" value="<%= HtmlUtil.escape(keywords) %>" />
 
-			<span>
-				<input <%= userSites ? "checked" : StringPool.BLANK %> id="<portlet:namespace />userSites" name="<portlet:namespace />userSites" type="checkbox" />
-
-				<label for="<portlet:namespace />userSites"><liferay-ui:message key="my-sites" /></label>
+			<span class="sites-tabs">
+				<aui:select label="" name="tabs1" value="<%= tabs1 %>">
+					<aui:option label="all-sites" value="all-sites" />
+					<aui:option label="my-sites" value="my-sites" />
+					<aui:option label="my-favorites" value="my-favorites" />
+				</aui:select>
 			</span>
 		</div>
 
 		<div class="buttons-right">
 			<aui:button cssClass="previous" disabled="<%= true %>" value="previous" />
 
-			<aui:button cssClass="next" disabled="<%= totalGroups < 20 %>" value="next" />
+			<aui:button cssClass="next" disabled="<%= groupsCount < maxResultSize %>" value="next" />
 		</div>
 
 		<div style="clear: both;"><!-- --></div>
 	</div>
 
-	<ul class="directory-list">
-
-		<%
-		boolean alternate = false;
-
-		for (Group group : groups) {
-			String classNames = StringPool.BLANK;
-
-			if (GetterUtil.getBoolean(group.getExpandoBridge().getAttribute("socialOfficeEnabled"))) {
-				classNames += "social-office-enabled ";
-			}
-
-			boolean member = GroupLocalServiceUtil.hasUserGroup(themeDisplay.getUserId(), group.getGroupId());
-
-			if (member) {
-				classNames += "member ";
-			}
-
-			if (alternate) {
-				classNames += "alt";
-			}
-		%>
-
-			<li class="<%= classNames %>">
-				<c:if test="<%= !GroupLocalServiceUtil.hasUserGroup(themeDisplay.getUserId(), group.getGroupId()) && GroupPermissionUtil.contains(permissionChecker, group.getGroupId(), ActionKeys.ASSIGN_MEMBERS) %>">
-					<liferay-portlet:actionURL windowState="<%= WindowState.NORMAL.toString() %>" portletName="<%= PortletKeys.SITES_ADMIN %>" var="joinURL">
-						<portlet:param name="struts_action" value="/sites_admin/edit_site_assignments" />
-						<portlet:param name="<%= Constants.CMD %>" value="group_users" />
-						<portlet:param name="redirect" value="<%= currentURL %>" />
-						<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />
-						<portlet:param name="addUserIds" value="<%= String.valueOf(user.getUserId()) %>" />
-					</liferay-portlet:actionURL>
-
-					<span class="join">
-						<a href="<%= joinURL %>"><liferay-ui:message key="join" /></a>
-					</span>
-				</c:if>
-
-				<span class="name">
-					<c:choose>
-						<c:when test="<%= group.hasPrivateLayouts() || group.hasPublicLayouts() %>">
-							<liferay-portlet:actionURL windowState="<%= LiferayWindowState.NORMAL.toString() %>" portletName="<%= PortletKeys.MY_PLACES %>" var="siteURL">
-								<portlet:param name="struts_action" value="/my_places/view" />
-								<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />
-								<portlet:param name="privateLayout" value="<%= String.valueOf(!group.hasPublicLayouts()) %>" />
-							</liferay-portlet:actionURL>
-
-							<a href="<%= siteURL %>"><%= group.getDescriptiveName() %></a>
-						</c:when>
-						<c:otherwise>
-							<%= group.getDescriptiveName() %>
-						</c:otherwise>
-					</c:choose>
-				</span>
-
-				<span class="description">
-					<%= group.getDescription() %>
-				</span>
-			</li>
-
-		<%
-			alternate = !alternate;
-		}
-		%>
-
-	</ul>
+	<ul class="directory-list"></ul>
 
 	<aui:button-row>
-		<div class="directory-navigation buttons-left">
+		<div class="buttons-left directory-navigation">
 			<span class="page-indicator">
-				<%= LanguageUtil.format(pageContext, "page-x-of-x", new String[] {"<span class=\"current\">1</span>", "<span class=\"total\">" + String.valueOf((int)Math.ceil(totalGroups / 20.0)) + "</span>"}) %>
+				<%= LanguageUtil.format(request, "page-x-of-x", new String[] {"<span class=\"current\">1</span>", "<span class=\"total\">" + String.valueOf((int)Math.ceil(groupsCount / (float)maxResultSize)) + "</span>"}, false) %>
 			</span>
-		</div>
-
-		<div class="buttons-right">
-			<aui:button onClick="Liferay.SO.Sites.closePopup()" value="close" />
 		</div>
 	</aui:button-row>
 </div>
 
 <aui:script use="datatype-number,liferay-so-site-list">
-	var directoryContainer = A.one('.so-portlet-sites-dialog');
+	var Lang = A.Lang;
+
+	var directoryContainer = A.one('#<portlet:namespace />directory');
 
 	var navigationContainer = directoryContainer.all('.directory-navigation');
 
@@ -158,32 +97,47 @@ int totalGroups = GroupLocalServiceUtil.searchCount(themeDisplay.getCompanyId(),
 	var keywordsInput = directoryContainer.one('#<portlet:namespace />dialogKeywords');
 	var nextButton = directoryContainer.one('.search .next');
 	var previousButton = directoryContainer.one('.search .previous');
-	var userGroupsCheckbox = directoryContainer.one('#<portlet:namespace />userSites');
+	var sitesTabsSelect = directoryContainer.one('select[name=<portlet:namespace />tabs1]');
 
 	var directoryList = new Liferay.SO.SiteList(
 		{
+			inputNode: '#<portlet:namespace />directory #<portlet:namespace />dialogKeywords',
+			listNode: '#<portlet:namespace />directory .directory-list',
+			minQueryLength: 0,
 			requestTemplate: function(query) {
 				return {
-					directory: true,
-					end: 20,
-					keywords: query,
-					start: 0,
-					userGroups: userGroupsCheckbox.get('checked')
-				}
+					<portlet:namespace />directory: true,
+					<portlet:namespace />end: <%= maxResultSize %>,
+					<portlet:namespace />keywords: query,
+					<portlet:namespace />searchTab: sitesTabsSelect.get('value'),
+					<portlet:namespace />start: 0
+				};
 			},
+			resultTextLocator: function(response) {
+				var result = '';
 
-			inputNode: '.so-portlet-sites-dialog #<portlet:namespace />dialogKeywords',
-			listNode: '.so-portlet-sites-dialog .directory-list',
-			minQueryLength: 0,
-			source: Liferay.SO.Sites.createDataSource('<portlet:resourceURL id="getSites" />')
+				if (typeof response.toString != 'undefined') {
+					result = response.toString();
+				}
+				else if (typeof response.responseText != 'undefined') {
+					result = response.responseText;
+				}
+
+				return result;
+			},
+			source: Liferay.SO.Sites.createDataSource('<portlet:resourceURL id="getSites" />', '<portlet:namespace />')
 		}
 	);
 
-	var updateDirectoryList = function(event) {
-		var data = A.JSON.parse(event.data.responseText);
+	Liferay.SO.Sites.createDirectoryList(directoryList);
 
-		var results = data.sites;
+	directoryList.sendRequest();
+
+	var updateDirectoryList = function(event) {
+		var data = JSON.parse(event.data.responseText);
+
 		var count = data.count;
+		var results = data.sites;
 
 		var options = data.options;
 
@@ -191,29 +145,51 @@ int totalGroups = GroupLocalServiceUtil.searchCount(themeDisplay.getCompanyId(),
 
 		if (results.length == 0) {
 			buffer.push(
-				'<li class="empty">' + Liferay.Language.get('there-are-no-results') + '</li>'
+				'<li class="empty"><liferay-ui:message key="there-are-no-results" /></li>'
 			);
 		}
 		else {
+			var getSiteActionHtml = function(actionClassNames, actionLinkClassName, actionTitle, actionURL) {
+				var siteActionTemplate =
+					'<span class="{actionClassNames}" title="{actionTitle}">' +
+						'<a class="{actionLinkClassName}" href="{actionURL}">' +
+						'</a>' +
+					'</span>';
+
+				return Lang.sub(
+					siteActionTemplate,
+					{
+						actionClassNames: actionClassNames,
+						actionLinkClassName: actionLinkClassName,
+						actionTitle: actionTitle,
+						actionURL: actionURL
+					}
+				);
+			};
+
 			var siteTemplate =
 				'<li class="{classNames}">' +
-					'{joinHtml}' +
+					'{favoriteHTML}' +
+					'{joinHTML}' +
+					'{leaveHTML}' +
+					'{requestHTML}' +
+					'{requestedHTML}' +
+					'{deleteHTML}' +
 					'<span class="name">{siteName}</span>' +
-					'<span class="description">{siteDescription}</span>'
+					'<span class="description">{siteDescription}</span>' +
 				'</li>';
 
 			buffer.push(
-				A.Array.map(
-					results,
+				results.map(
 					function(result, index) {
 						var classNames = [];
-						var joinHtml = '';
+						var joinHTML = '';
 
-						if (result.socialOfficeEnabled) {
+						if (result.socialOfficeGroup) {
 							classNames.push('social-office-enabled');
 						}
 
-						if (!result.joinUrl) {
+						if (!result.joinURL) {
 							classNames.push('member');
 						}
 
@@ -221,17 +197,65 @@ int totalGroups = GroupLocalServiceUtil.searchCount(themeDisplay.getCompanyId(),
 							classNames.push('alt');
 						}
 
-						var name = result.name;
+						var deleteHTML = '<span class="action-not-allowed"></span>';
 
-						if (result.url) {
-							name = '<a href="' + result.url + '">' + name + '</a>';
+						if (result.deleteURL) {
+							if (result.deleteURL == '<%= StringPool.FALSE %>') {
+								deleteHTML = getSiteActionHtml('delete', 'disabled', '<liferay-ui:message key="you-cannot-delete-the-current-site" />', '#');
+							}
+							else {
+								deleteHTML = getSiteActionHtml('action delete', 'delete-site', '<liferay-ui:message key="delete-site" />', result.deleteURL);
+							}
 						}
 
-						return A.Lang.sub(
+						var favoriteHTML;
+
+						if (result.favoriteURL == '<%= StringPool.BLANK %>') {
+							favoriteHTML = getSiteActionHtml('favorite', 'disabled', '<liferay-ui:message key="you-must-be-a-member-of-the-site-to-add-to-favorites" />', '#');
+						}
+						else if (result.favoriteURL) {
+							favoriteHTML = getSiteActionHtml('action favorite', '', '<liferay-ui:message key="add-to-favorites" />', result.favoriteURL);
+						}
+						else {
+							favoriteHTML = getSiteActionHtml('action unfavorite', '', '<liferay-ui:message key="remove-from-favorites" />', result.unfavoriteURL);
+						}
+
+						var name = result.name;
+
+						if (result.publicLayoutsURL) {
+							name = '<a href="' + result.publicLayoutsURL + '">' + name + '</a>';
+
+							if (result.privateLayoutsURL) {
+								name += '<a class="private-pages" href="' + result.privateLayoutsURL + '"> (<liferay-ui:message key="private-pages" />)</a>';
+							}
+						}
+						else if (!result.publicLayoutsURL && result.privateLayoutsURL) {
+							name = '<a href="' + result.privateLayoutsURL + '">' + name + '</a>';
+						}
+
+						var leaveHTML = '';
+
+						var leaveURLOnly = !result.joinURL && !result.membershipRequested && !result.requestUrl;
+
+						if (leaveURLOnly) {
+							if (result.leaveURL) {
+								leaveHTML = getSiteActionHtml('action leave', 'leave-site', '<liferay-ui:message key="leave-site" />', result.leaveURL);
+							}
+							else {
+								leaveHTML = getSiteActionHtml('action leave', 'disabled', '<liferay-ui:message key="you-cannot-leave-the-site-as-a-user-group-member-or-organization-member" />', '#');
+							}
+						}
+
+						return Lang.sub(
 							siteTemplate,
 							{
 								classNames: classNames.join(' '),
-								joinHtml: (result.joinUrl ? '<span class="join"><a href="' + result.joinUrl + '">' + Liferay.Language.get('join') + '</a></span>' : ''),
+								deleteHTML: deleteHTML,
+								favoriteHTML: favoriteHTML,
+								joinHTML: result.joinURL ? getSiteActionHtml('action join', 'join-site', '<liferay-ui:message key="join-site" />', result.joinURL) : '',
+								leaveHTML: leaveHTML,
+								requestedHTML: result.membershipRequested ? getSiteActionHtml('action requested', '', '<liferay-ui:message key="membership-requested" />', '#') : '',
+								requestHTML: result.requestUrl ? getSiteActionHtml('action request', 'request-site', '<liferay-ui:message key="request-membership" />', result.requestUrl) : '',
 								siteDescription: result.description,
 								siteName: name
 							}
@@ -243,8 +267,8 @@ int totalGroups = GroupLocalServiceUtil.searchCount(themeDisplay.getCompanyId(),
 
 		this._listNode.html(buffer.join(''));
 
-		var currentPage = Math.floor(options.start/20) + 1;
-		var totalPage = Math.ceil(count/20);
+		var currentPage = Math.floor(options.start / <%= maxResultSize %>) + 1;
+		var totalPage = Math.ceil(count / <%= maxResultSize %>);
 
 		currentPageNode.html(currentPage);
 		totalPageNode.html(totalPage);
@@ -267,19 +291,27 @@ int totalGroups = GroupLocalServiceUtil.searchCount(themeDisplay.getCompanyId(),
 	directoryList.on('results', updateDirectoryList);
 
 	var getRequestTemplate = function(targetPage) {
-		var start = (targetPage - 1) * 20;
-		var end = start + 19;
+		var start = (targetPage - 1) * <%= maxResultSize %>;
+
+		var end = start + <%= maxResultSize %>;
 
 		return function(query) {
 			return {
-				directory: true,
-				end: end,
-				keywords: query,
-				start: start,
-				userGroups: userGroupsCheckbox.get('checked')
-			}
+				<portlet:namespace />directory: true,
+				<portlet:namespace />end: end,
+				<portlet:namespace />keywords: query,
+				<portlet:namespace />searchTab: sitesTabsSelect.get('value'),
+				<portlet:namespace />start: start
+			};
 		};
 	};
+
+	sitesTabsSelect.on(
+		'change',
+		function(event) {
+			directoryList.sendRequest();
+		}
+	);
 
 	nextButton.on(
 		'click',
@@ -312,33 +344,107 @@ int totalGroups = GroupLocalServiceUtil.searchCount(themeDisplay.getCompanyId(),
 		}
 	);
 
-	userGroupsCheckbox.on(
-		'change',
-		function() {
-			directoryList.sendRequest();
-		}
-	);
-
 	directoryContainer.one('.directory-list').delegate(
 		'click',
 		function(event) {
 			event.preventDefault();
 
-			A.io.request(
-				event.currentTarget.get('href'),
-				{
-					after: {
-						success: function(event, id, obj) {
-							Liferay.SO.Sites.updateSites();
+			var currentPage = A.DataType.Number.parse(currentPageNode.html());
 
-							var targetPage = A.DataType.Number.parse(currentPageNode.html());
+			var currentTargetClass = event.currentTarget.getAttribute('class');
 
-							directoryList.sendRequest(keywordsInput.get('value'), getRequestTemplate(targetPage));
+			if ((currentTargetClass == 'delete-site') || (currentTargetClass == 'leave-site') || (currentTargetClass == 'join-site') || (currentTargetClass == 'request-site')) {
+				var confirmMessage = '';
+
+				var siteAction = '';
+
+				var siteNode = event.currentTarget.ancestor('li');
+
+				var siteName = siteNode.one('.name a');
+
+				if (!siteName) {
+					siteName = siteNode.one('.name');
+				}
+
+				var unescapedSiteName = Lang.String.unescapeHTML(siteName.getContent());
+
+				if (currentTargetClass == 'leave-site') {
+					confirmMessage = Lang.sub('<liferay-ui:message key="are-you-sure-you-want-to-leave-x" />', [unescapedSiteName]);
+					siteAction = Lang.sub('<liferay-ui:message key="you-left-x" />', [unescapedSiteName]);
+				}
+				else if (currentTargetClass == 'join-site') {
+					confirmMessage = Lang.sub('<liferay-ui:message key="are-you-sure-you-want-to-join-x" />', [unescapedSiteName]);
+					siteAction = Lang.sub('<liferay-ui:message key="you-joined-x" />', [unescapedSiteName]);
+				}
+				else if (currentTargetClass == 'request-site') {
+					confirmMessage = Lang.sub('<liferay-ui:message key="this-is-a-restricted-site-do-you-want-to-send-a-membership-request-to-x" />', [unescapedSiteName]);
+					siteAction = '<liferay-ui:message key="your-membership-request-has-been-sent" />';
+				}
+				else {
+					confirmMessage = Lang.sub('<liferay-ui:message key="are-you-sure-you-want-to-delete-x" />', [unescapedSiteName]);
+					siteAction = Lang.sub('<liferay-ui:message key="you-deleted-x" />', [unescapedSiteName]);
+				}
+
+				if (confirm(confirmMessage)) {
+					A.io.request(
+						event.currentTarget.get('href'),
+						{
+							after: {
+								success: function(event, id, obj) {
+									siteName.insert(siteAction, 'replace');
+
+									var updateSites = function() {
+										Liferay.SO.Sites.updateSites(false, keywordsInput.get('value'), getRequestTemplate(currentPage));
+									};
+
+									setTimeout(updateSites, 2000);
+
+									<c:if test="<%= themeDisplay.isStatePopUp() %>">
+										if (window.parent) {
+											Liferay.Util.getOpener().Liferay.Portlet.refresh('#p_p_id_5_WAR_soportlet_');
+										}
+									</c:if>
+								}
+							}
+						}
+					);
+				}
+			}
+			else {
+				A.io.request(
+					event.currentTarget.get('href'),
+					{
+						after: {
+							success: function(event, id, obj) {
+								Liferay.SO.Sites.updateSites(false, keywordsInput.get('value'), getRequestTemplate(currentPage));
+
+								<c:if test="<%= themeDisplay.isStatePopUp() %>">
+									if (window.parent) {
+										Liferay.Util.getOpener().Liferay.Portlet.refresh('#p_p_id_5_WAR_soportlet_');
+									}
+								</c:if>
+							}
 						}
 					}
-				}
-			);
+				);
+			}
 		},
-		'.join a'
+		'.action a'
 	);
+
+	<c:if test="<%= themeDisplay.isStatePopUp() %>">
+		directoryContainer.one('.directory-list').delegate(
+			'click',
+			function(event) {
+				if (window.parent) {
+					event.preventDefault();
+
+					var uri = event.currentTarget.getAttribute('href');
+
+					Liferay.Util.getOpener().location.href = uri;
+				}
+			},
+			'.name a'
+		);
+	</c:if>
 </aui:script>

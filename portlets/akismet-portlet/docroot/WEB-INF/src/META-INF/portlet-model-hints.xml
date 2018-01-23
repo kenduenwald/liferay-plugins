@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.liferay.akismet.model.AkismetData">
+		<field name="akismetDataId" type="long" />
+		<field name="modifiedDate" type="Date" />
+		<field name="classNameId" type="long" />
+		<field name="classPK" type="long" />
+		<field name="type" type="String" />
+		<field name="permalink" type="String" />
+		<field name="referrer" type="String" />
+		<field name="userAgent" type="String" />
+		<field name="userIP" type="String" />
+		<field name="userURL" type="String" />
+	</model>
+</model-hints>

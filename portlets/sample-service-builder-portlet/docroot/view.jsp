@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,22 +16,76 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+PortletURL currentURLObj = PortletURLUtil.getCurrent(PortalUtil.getLiferayPortletRequest(renderRequest), PortalUtil.getLiferayPortletResponse(renderResponse));
+
+String[] field1s = ParamUtil.getStringValues(renderRequest, "field1");
+
+SearchContainer<Foo> fooSearchContainer = new SearchContainer(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, currentURLObj, null, "no-entries-were-found");
+
+fooSearchContainer.setForcePost(true);
+
+if (field1s.length == 0) {
+	fooSearchContainer.setTotal(FooLocalServiceUtil.getFoosCount());
+
+	fooSearchContainer.setResults(FooLocalServiceUtil.getFoos(fooSearchContainer.getStart(), fooSearchContainer.getEnd(), new FooField4Comparator()));
+}
+else {
+	fooSearchContainer.setTotal(FooLocalServiceUtil.getField1FoosCount(field1s));
+
+	fooSearchContainer.setResults(FooLocalServiceUtil.getField1Foos(field1s, fooSearchContainer.getStart(), fooSearchContainer.getEnd(), new FooField4Comparator()));
+}
+%>
+
 <strong><liferay-ui:message key="welcome-to-the-sample-service-builder-portlet" /></strong>
 
-<portlet:renderURL var="editFooURL">
-	<portlet:param name="jspPage" value="/edit_foo.jsp" />
-	<portlet:param name="redirect" value="<%= currentURL %>" />
-</portlet:renderURL>
-
 <aui:button-row>
+	<portlet:renderURL var="editFooURL">
+		<portlet:param name="mvcPath" value="/edit_foo.jsp" />
+		<portlet:param name="redirect" value="<%= currentURL %>" />
+	</portlet:renderURL>
+
 	<aui:button href="<%= editFooURL %>" value="add-foo" />
 </aui:button-row>
 
-<liferay-ui:search-container>
-	<liferay-ui:search-container-results
-		results="<%= FooLocalServiceUtil.getFoos(searchContainer.getStart(), searchContainer.getEnd(), new FooField4Comparator()) %>"
-		total="<%= FooLocalServiceUtil.getFoosCount() %>"
-	/>
+<liferay-ui:search-container
+	searchContainer="<%= fooSearchContainer %>"
+>
+	<portlet:renderURL var="refreshURL" windowState="normal">
+		<portlet:param name="mvcPath" value="/view.jsp" />
+	</portlet:renderURL>
+
+	<aui:form action="<%= refreshURL %>" method="post" name="fm">
+		<section>
+			<article>
+				<aui:select label="Select" multiple="true" name="field1" />
+
+				<aui:script use="liferay-dynamic-select">
+					var data = function(callback) {
+						Liferay.Service(
+							'/sample-service-builder-portlet.foo/get-foos',
+							callback
+						);
+					};
+
+					new Liferay.DynamicSelect(
+						[
+							{
+								select: '<portlet:namespace />field1',
+								selectData: data,
+								selectDesc: 'field1',
+								selectId: 'field1',
+								selectSort: '',
+								selectVal: ['<%= StringUtil.merge(field1s, "','") %>']
+							}
+						]
+					);
+				</aui:script>
+
+				<aui:button type="submit" value="search" />
+			</article>
+		</section>
+	</aui:form>
 
 	<liferay-ui:search-container-row
 		className="com.liferay.sampleservicebuilder.model.Foo"
@@ -78,10 +132,10 @@
 			valign="top"
 		/>
 
-		<liferay-ui:search-container-column-text
+		<liferay-ui:search-container-column-date
 			name="field4"
 			valign="top"
-			value="<%= dateFormatDateTime.format(foo.getField4()) %>"
+			value="<%= foo.getField4() %>"
 		/>
 
 		<liferay-ui:search-container-column-text
@@ -90,6 +144,7 @@
 		/>
 
 		<liferay-ui:search-container-column-jsp
+			cssClass="entry-action"
 			path="/foo_action.jsp"
 			valign="top"
 		/>

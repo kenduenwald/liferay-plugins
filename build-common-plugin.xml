@@ -1,44 +1,379 @@
 <?xml version="1.0"?>
+<!DOCTYPE project>
 
 <project name="build-common-plugin" xmlns:antelope="antlib:ise.antelope.tasks">
 	<import file="build-common.xml" />
 
-	<if>
-		<available file="docroot/WEB-INF/liferay-plugin-package.properties" />
-		<then>
-			<property file="docroot/WEB-INF/liferay-plugin-package.properties" prefix="plugin-package" />
+	<property name="plugins.includes.path" value="${basedir}" />
 
-			<property name="plugin.version" value="${plugin-package.module-incremental-version}" />
-			<property name="plugin.jars" value="${plugin-package.portal-dependency-jars}" />
-			<property name="plugin.tlds" value="${plugin-package.portal-dependency-tlds}" />
-		</then>
-	</if>
-
-	<antelope:stringutil string="${basedir}" property="plugin.name.beginindex">
-		<antelope:lastindexof string="${file.separator}" />
-	</antelope:stringutil>
-
-	<antelope:math
-		datatype="int"
-		operand1="${plugin.name.beginindex}"
-		operand2="1"
-		operation="+"
-		result="plugin.name.beginindex"
+	<set-module-properties
+		module.dir="${basedir}"
 	/>
 
-	<antelope:stringutil string="${basedir}" property="plugin.name">
-		<antelope:substring beginindex="${plugin.name.beginindex}" />
-	</antelope:stringutil>
+	<macrodef name="build-service">
+		<attribute name="service.api.dir" />
+		<attribute default="true" name="service.auto.namespace.tables" />
+		<attribute default="portlet-hbm.xml" name="service.hbm.file.name" />
+		<attribute default="portlet-model-hints.xml" name="service.model.hints.file.name" />
+		<attribute default="portlet-spring.xml" name="service.spring.file.name" />
+		<attribute name="service.sql.dir" />
+		<attribute name="service.test.dir" />
 
-	<if>
-		<antelope:endswith string="${plugin.name}" with="-client" />
-		<then>
-			<property name="plugin.file" value="${project.dir}/dist/${plugin.name}-${lp.version}.${plugin.version}.jar" />
-		</then>
-		<else>
-			<property name="plugin.file" value="${project.dir}/dist/${plugin.name}-${lp.version}.${plugin.version}.war" />
-		</else>
-	</if>
+		<sequential>
+			<if>
+				<available file="docroot" />
+				<then>
+					<var name="service.base.dir" value="docroot/WEB-INF" />
+				</then>
+				<else>
+					<var name="service.base.dir" value="." />
+				</else>
+			</if>
+
+			<var name="service.props.util" value="com.liferay.util.service.ServiceProps" />
+			<var name="service.plugin.name" value="${plugin.name}" />
+			<var name="service.spring.namespaces" value="beans" />
+
+			<mkdir dir="@{service.api.dir}" />
+			<mkdir dir="@{service.sql.dir}" />
+
+			<mkdir dir="${service.base.dir}/classes" />
+			<mkdir dir="${service.base.dir}/lib" />
+			<mkdir dir="${service.base.dir}/src" />
+
+			<copy todir="${service.base.dir}/classes">
+				<fileset dir="${service.base.dir}/src" excludes="**/*.java" />
+			</copy>
+
+			<path id="service.builder.classpath">
+				<fileset dir="${sdk.dir}/dependencies/com.liferay.portal.tools.service.builder/lib" includes="*.jar" />
+				<fileset dir="${service.base.dir}/lib" includes="*.jar" />
+				<pathelement location="${service.base.dir}/classes" />
+			</path>
+
+			<if>
+				<os family="windows" />
+				<then>
+					<classpath-to-jar
+						classpathref="service.builder.classpath"
+						jarfile="service-builder-classpath.jar"
+					/>
+				</then>
+			</if>
+
+			<if>
+				<not>
+					<isset property="service.input.file" />
+				</not>
+				<then>
+					<property name="service.input.file" value="${basedir}/${service.base.dir}/service.xml" />
+				</then>
+			</if>
+
+			<java
+				classname="com.liferay.portal.tools.service.builder.ServiceBuilder"
+				classpathref="service.builder.classpath"
+				fork="true"
+				newenvironment="true"
+				outputproperty="build-service.output"
+			>
+				<jvmarg value="-Dfile.encoding=UTF-8" />
+				<jvmarg value="-Xms512m" />
+				<jvmarg value="-Xmx1024m" />
+				<jvmarg value="-Xss2048k" />
+				<jvmarg value="-XX:MaxPermSize=512m" />
+				<arg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
+				<arg value="-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger" />
+				<arg value="service.api.dir=@{service.api.dir}" />
+				<arg value="service.auto.namespace.tables=@{service.auto.namespace.tables}" />
+				<arg value="service.bean.locator.util=com.liferay.util.bean.PortletBeanLocatorUtil" />
+				<arg value="service.build.number=1" />
+				<arg value="service.build.number.increment=true" />
+				<arg value="service.hbm.file=${basedir}/${service.base.dir}/src/META-INF/@{service.hbm.file.name}" />
+				<arg value="service.impl.dir=${basedir}/${service.base.dir}/src" />
+				<arg value="service.input.file=${service.input.file}" />
+				<arg value="service.model.hints.file=${basedir}/${service.base.dir}/src/META-INF/@{service.model.hints.file.name}" />
+				<arg value="service.osgi.module=false" />
+				<arg value="service.plugin.name=${service.plugin.name}" />
+				<arg value="service.props.util=${service.props.util}" />
+				<arg value="service.resources.dir=${basedir}/${service.base.dir}/src" />
+				<arg value="service.spring.file=${basedir}/${service.base.dir}/src/META-INF/@{service.spring.file.name}" />
+				<arg value="service.spring.namespaces=${service.spring.namespaces}" />
+				<arg value="service.sql.dir=@{service.sql.dir}" />
+				<arg value="service.sql.file=tables.sql" />
+				<arg value="service.sql.indexes.file=indexes.sql" />
+				<arg value="service.sql.sequences.file=sequences.sql" />
+				<arg value="service.target.entity.name=${service.target.entity.name}" />
+				<arg value="service.test.dir=@{service.test.dir}" />
+			</java>
+
+			<if>
+				<os family="windows" />
+				<then>
+					<delete file="service-builder-classpath.jar" />
+				</then>
+			</if>
+
+			<delete file="ServiceBuilder.temp" />
+
+			<echo>${build-service.output}</echo>
+
+			<if>
+				<contains string="${build-service.output}" substring="Error" />
+				<then>
+					<fail>Service Builder generated exceptions.</fail>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="build-taglibs">
+		<attribute name="tagbuilder.components.xml" />
+		<attribute name="tagbuilder.java.dir" />
+		<attribute name="tagbuilder.java.package" />
+		<attribute default="/init.jsp" name="tagbuilder.jsp.common.init.path" />
+		<attribute default="/" name="tagbuilder.jsp.dir" />
+		<attribute default="src/META-INF/resources/" name="tagbuilder.jsp.parent.dir" />
+		<attribute default="src/META-INF/resources/" name="tagbuilder.tld.dir" />
+
+		<sequential>
+			<loop-macrodef-or-target
+				module.dirs="${basedir}"
+				target.name="compile"
+			/>
+
+			<path id="tagbuilder.classpath">
+				<fileset dir="${sdk.dir}/dependencies/com.liferay.alloy.taglib/lib" includes="*.jar" />
+				<fileset dir="${sdk.dir}/dependencies/org.freemarker/lib" includes="*.jar" />
+				<path refid="portal.classpath" />
+				<fileset dir="${plugin.lib.dir}" includes="*.jar" />
+				<pathelement location="${plugin.classes.dir}" />
+			</path>
+
+			<java
+				classname="com.liferay.alloy.tools.tagbuilder.TagBuilder"
+				classpathref="tagbuilder.classpath"
+				fork="true"
+				maxmemory="256m"
+				newenvironment="true"
+			>
+				<jvmarg value="-Dtagbuilder.components.xml=@{tagbuilder.components.xml}" />
+				<jvmarg value="-Dtagbuilder.copyright.year=present" />
+				<jvmarg value="-Dtagbuilder.java.dir=@{tagbuilder.java.dir}" />
+				<jvmarg value="-Dtagbuilder.java.package=@{tagbuilder.java.package}" />
+				<jvmarg value="-Dtagbuilder.jsp.common.init.path=/init.jsp" />
+				<jvmarg value="-Dtagbuilder.jsp.dir=@{tagbuilder.jsp.dir}" />
+				<jvmarg value="-Dtagbuilder.jsp.parent.dir=@{tagbuilder.jsp.parent.dir}" />
+				<jvmarg value="-Dtagbuilder.osgi.module.symbolic.name=${plugin.name}" />
+				<jvmarg value="-Dtagbuilder.templates.dir=com/liferay/alloy/tools/tagbuilder/templates/" />
+				<jvmarg value="-Dtagbuilder.tld.dir=@{tagbuilder.tld.dir}" />
+			</java>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="classpath-to-jar">
+		<attribute name="classpathref" />
+		<attribute name="jarfile" />
+
+		<sequential>
+
+			<!--
+			Windows chokes if the classpath is longer than 32 kb. But the
+			workaround only works for Ant 1.8 and above. See LPS-29085.
+			-->
+
+			<if>
+				<and>
+					<not>
+						<contains string="${ant.version}" substring="1.6" />
+					</not>
+					<not>
+						<contains string="${ant.version}" substring="1.7" />
+					</not>
+				</and>
+				<then>
+					<manifestclasspath
+						jarfile="@{jarfile}"
+						maxParentLevels="99"
+						property="manifest.classpath"
+					>
+						<classpath refid="@{classpathref}" />
+					</manifestclasspath>
+
+					<manifest file="@{jarfile}.manifest">
+						<attribute name="Class-Path" value="${manifest.classpath}" />
+					</manifest>
+
+					<jar
+						destfile="@{jarfile}"
+						manifest="@{jarfile}.manifest"
+					/>
+
+					<delete file="@{jarfile}.manifest" />
+
+					<var name="manifest.classpath" unset="true" />
+
+					<path id="@{classpathref}">
+						<fileset file="@{jarfile}" />
+					</path>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="compile-jsp">
+		<attribute default="true" name="compile.jsp.delete.generated.files" />
+		<attribute name="compile.jsp.docroot.dir" />
+		<attribute default="" name="compile.jsp.temp.dir" />
+
+		<sequential>
+			<if>
+				<not>
+					<equals arg1="${app.server.type}" arg2="tomcat" />
+				</not>
+				<then>
+					<fail>Compiling JSPs with ${app.server.type} is not supported.</fail>
+				</then>
+			</if>
+
+			<if>
+				<available file="@{compile.jsp.docroot.dir}" />
+				<then>
+					<path id="jspc.classpath.common">
+						<pathelement location="${env.JAVA_HOME}/jre/lib/rt.jar" />
+						<fileset dir="${app.server.lib.global.dir}" includes="*.jar" />
+						<fileset dir="${sdk.dir}/dependencies/com.liferay.jasper.jspc/lib" includes="*.jar" />
+						<pathelement location="${app.server.lib.portal.dir}/ant.jar" />
+						<fileset dir="${basedir}" includes="lib/*.jar" />
+						<fileset dir="${basedir}" includes="docroot/WEB-INF/lib/*.jar" />
+						<fileset dir="@{compile.jsp.docroot.dir}" includes="WEB-INF/lib/*.jar" />
+					</path>
+
+					<var name="compile.jsp.dependencies.classpath" unset="true" />
+
+					<local name="jspc.module.web" />
+
+					<if>
+						<equals arg1="@{compile.jsp.temp.dir}" arg2="" />
+						<then>
+							<path id="jspc.classpath">
+								<path refid="jspc.classpath.common" />
+								<pathelement location="@{compile.jsp.docroot.dir}/WEB-INF/classes" />
+							</path>
+
+							<property name="jspc.module.web" value="false" />
+						</then>
+						<else>
+							<path id="jspc.classpath.module.common">
+								<path refid="jspc.classpath.common" />
+								<fileset dir="${app.server.lib.portal.dir}" includes="*.jar" />
+								<fileset dir="${module.framework.base.dir}/modules" includes="*.jar" />
+								<pathelement location="@{compile.jsp.temp.dir}" />
+							</path>
+
+							<if>
+								<available file="@{compile.jsp.docroot.dir}/WEB-INF" type="dir" />
+								<then>
+									<path id="jspc.classpath">
+										<path refid="jspc.classpath.module.common" />
+										<pathelement location="@{compile.jsp.docroot.dir}/WEB-INF/classes" />
+									</path>
+								</then>
+								<else>
+									<path id="jspc.classpath">
+										<path refid="jspc.classpath.module.common" />
+									</path>
+								</else>
+							</if>
+
+							<property name="jspc.module.web" value="true" />
+						</else>
+					</if>
+
+					<tstamp>
+						<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
+					</tstamp>
+
+					<var name="compile.jsp.jspc.dir" value="${tstamp.value}" />
+
+					<mkdir dir="${compile.jsp.jspc.dir}" />
+
+					<java
+						classname="com.liferay.jasper.jspc.JspC"
+						classpathref="jspc.classpath"
+						fork="true"
+						jvm="${env.JAVA_HOME}/bin/java"
+						newenvironment="true"
+						outputproperty="jspc.output"
+					>
+						<sysproperty key="jspc.module.web" value="${jspc.module.web}" />
+						<sysproperty key="jspc.portal.dir" value="${app.server.portal.dir}" />
+						<arg line="-d ${compile.jsp.jspc.dir}/src -webapp @{compile.jsp.docroot.dir}" />
+					</java>
+
+					<echo>${jspc.output}</echo>
+
+					<if>
+						<contains string="${jspc.output}" substring="JasperException" />
+						<then>
+							<delete dir="${compile.jsp.jspc.dir}/src" quiet="true" />
+
+							<fail>JSPs failed to compile.</fail>
+						</then>
+					</if>
+
+					<if>
+						<available file="${compile.jsp.jspc.dir}/src" type="dir" />
+						<then>
+							<mkdir dir="${compile.jsp.jspc.dir}/classes" />
+
+							<tempfile deleteonexit="true" destdir="${sdk.dir}" prefix="jspc.javac.output." property="jspc.javac.output.file" suffix=".txt" />
+
+							<record action="start" name="${jspc.javac.output.file}" />
+
+							<javac
+								classpathref="jspc.classpath"
+								compiler="${javac.compiler}"
+								deprecation="${javac.deprecation}"
+								destdir="${compile.jsp.jspc.dir}/classes"
+								encoding="${javac.encoding}"
+								errorProperty="jspc.javac.fail"
+								failonerror="false"
+								includeAntRuntime="false"
+								nowarn="on"
+								srcdir="${compile.jsp.jspc.dir}/src"
+							/>
+
+							<record action="stop" name="${jspc.javac.output.file}" />
+
+							<loadfile property="jspc.javac.output.file.content" srcfile="${jspc.javac.output.file}" />
+
+							<if>
+								<matches pattern="error: package .* does not exist" string="${jspc.javac.output.file.content}" />
+								<then>
+									<fail>JSPs failed to compile. Please check whether all dependencies modules are deployed.</fail>
+								</then>
+							</if>
+
+							<if>
+								<istrue value="@{compile.jsp.delete.generated.files}" />
+								<then>
+									<delete dir="${compile.jsp.jspc.dir}" quiet="true" />
+								</then>
+							</if>
+						</then>
+					</if>
+
+					<if>
+						<istrue value="${jspc.javac.fail}" />
+						<then>
+							<fail>JSPs failed to compile.</fail>
+						</then>
+					</if>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
 
 	<target name="all">
 		<antcall target="clean" />
@@ -46,7 +381,7 @@
 	</target>
 
 	<target name="build-client">
-		<property name="client.url" value="http://localhost:8080/${plugin.name}/axis" />
+		<property name="client.url" value="http://localhost:8080/${plugin.name}/api/axis" />
 
 		<echo message="Make sure the server is listening on ${client.url}." />
 		<echo message="" />
@@ -69,11 +404,11 @@
 
 		<mkdir dir="docroot/WEB-INF/client/classes" />
 
-		<antcall target="compile-java">
-			<param name="javac.classpathref" value="portal.classpath" />
-			<param name="javac.destdir" value="docroot/WEB-INF/client/classes" />
-			<param name="javac.srcdir" value="docroot/WEB-INF/client/src" />
-		</antcall>
+		<compile-java
+			javac.classpathref="portal.classpath"
+			javac.destdir="docroot/WEB-INF/client/classes"
+			javac.srcdir="docroot/WEB-INF/client/src"
+		/>
 
 		<zip destfile="docroot/WEB-INF/client/${plugin.name}-client.jar">
 			<fileset dir="docroot/WEB-INF/client/classes" />
@@ -84,561 +419,369 @@
 		<delete dir="docroot/WEB-INF/client/src" />
 	</target>
 
-	<target name="build-db">
-		<java
-			classname="com.liferay.portal.tools.DBBuilder"
-			classpathref="portal.classpath"
-			fork="true"
-			maxmemory="384m"
-			newenvironment="true"
-		>
-			<arg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-			<arg value="db.database.name=${database.name}" />
-			<arg value="db.database.types=${database.types}" />
-			<arg value="db.sql.dir=docroot/WEB-INF/sql" />
-		</java>
-
-		<delete file="velocity.log" quiet="true" />
-	</target>
-
 	<target name="build-lang">
-		<antcall target="build-lang-cmd">
-			<param name="lang.dir" value="docroot/WEB-INF/src/content" />
-			<param name="lang.file" value="Language" />
-		</antcall>
+		<if>
+			<available file="docroot/WEB-INF/src/content" />
+			<then>
+				<antcall target="build-lang-cmd">
+					<param name="lang.dir" value="docroot/WEB-INF/src/content" />
+					<param name="lang.file" value="Language" />
+					<param name="lang.translate" value="true" />
+				</antcall>
+			</then>
+		</if>
+
+		<if>
+			<available file="src/content" />
+			<then>
+				<antcall target="build-lang-cmd">
+					<param name="lang.dir" value="src/content" />
+					<param name="lang.file" value="Language" />
+					<param name="lang.translate" value="true" />
+				</antcall>
+			</then>
+		</if>
 	</target>
 
 	<target name="build-lang-cmd">
+		<path id="lang.builder.classpath">
+			<fileset dir="${sdk.dir}/dependencies/com.liferay.lang.builder/lib" includes="*.jar" />
+			<path refid="portal.classpath" />
+		</path>
+
 		<java
-			classname="com.liferay.portal.tools.LangBuilder"
-			classpathref="portal.classpath"
+			classname="com.liferay.lang.builder.LangBuilder"
+			classpathref="lang.builder.classpath"
 			fork="true"
 			newenvironment="true"
 		>
-			<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
 			<jvmarg value="-Dfile.encoding=UTF-8" />
 			<jvmarg value="-Duser.country=US" />
 			<jvmarg value="-Duser.language=en" />
-			<arg value="${lang.dir}" />
-			<arg value="${lang.file}" />
+			<arg value="lang.dir=${lang.dir}" />
+			<arg value="lang.file=${lang.file}" />
+			<arg value="lang.plugin=true" />
+			<arg value="lang.translate=${lang.translate}" />
+			<arg value="lang.translate.subscription.key=${microsoft.translator.subscription.key}" />
 		</java>
-
-		<copy file="${lang.dir}/${lang.file}.properties" tofile="${lang.dir}/${lang.file}_en.properties" />
 	</target>
 
 	<target name="build-service">
-		<mkdir dir="docroot/WEB-INF/classes" />
-		<mkdir dir="docroot/WEB-INF/lib" />
-		<mkdir dir="docroot/WEB-INF/service" />
-		<mkdir dir="docroot/WEB-INF/sql" />
-		<mkdir dir="docroot/WEB-INF/src" />
-
-		<copy todir="docroot/WEB-INF/classes">
-			<fileset dir="docroot/WEB-INF/src" excludes="**/*.java" />
-		</copy>
-
-		<path id="service.classpath">
-			<path refid="lib.classpath" />
-			<path refid="portal.classpath" />
-			<fileset dir="${app.server.lib.portal.dir}" includes="commons-digester.jar,commons-lang.jar,easyconf.jar" />
-			<fileset dir="docroot/WEB-INF/lib" includes="*.jar" />
-			<pathelement location="docroot/WEB-INF/classes" />
-		</path>
-
 		<if>
-			<not>
-				<isset property="service.input.file" />
-			</not>
-		    	<then>
-		    		<property name="service.input.file" value="${basedir}/docroot/WEB-INF/service.xml" />
-			</then>
-		</if>
-
-		<java
-			classname="com.liferay.portal.tools.servicebuilder.ServiceBuilder"
-			classpathref="service.classpath"
-			outputproperty="service.test.output"
-		>
-			<arg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-			<arg value="-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger" />
-			<arg value="service.input.file=${service.input.file}" />
-			<arg value="service.hbm.file=${basedir}/docroot/WEB-INF/src/META-INF/portlet-hbm.xml" />
-			<arg value="service.orm.file=${basedir}/docroot/WEB-INF/src/META-INF/portlet-orm.xml" />
-			<arg value="service.model.hints.file=${basedir}/docroot/WEB-INF/src/META-INF/portlet-model-hints.xml" />
-			<arg value="service.spring.file=${basedir}/docroot/WEB-INF/src/META-INF/portlet-spring.xml" />
-			<arg value="service.spring.base.file=${basedir}/docroot/WEB-INF/src/META-INF/base-spring.xml" />
-			<arg value="service.spring.cluster.file=${basedir}/docroot/WEB-INF/src/META-INF/cluster-spring.xml" />
-			<arg value="service.spring.dynamic.data.source.file=${basedir}/docroot/WEB-INF/src/META-INF/dynamic-data-source-spring.xml" />
-			<arg value="service.spring.hibernate.file=${basedir}/docroot/WEB-INF/src/META-INF/hibernate-spring.xml" />
-			<arg value="service.spring.infrastructure.file=${basedir}/docroot/WEB-INF/src/META-INF/infrastructure-spring.xml" />
-			<arg value="service.spring.shard.data.source.file=${basedir}/docroot/WEB-INF/src/META-INF/shard-data-source-spring.xml" />
-			<arg value="service.api.dir=${basedir}/docroot/WEB-INF/service" />
-			<arg value="service.impl.dir=${basedir}/docroot/WEB-INF/src" />
-			<arg value="service.json.file=${basedir}/docroot/js/service.js" />
-			<arg value="service.sql.dir=${basedir}/docroot/WEB-INF/sql" />
-			<arg value="service.sql.file=tables.sql" />
-			<arg value="service.sql.indexes.file=indexes.sql" />
-			<arg value="service.sql.indexes.properties.file=indexes.properties" />
-			<arg value="service.sql.sequences.file=sequences.sql" />
-			<arg value="service.auto.namespace.tables=true" />
-			<arg value="service.bean.locator.util=com.liferay.util.bean.PortletBeanLocatorUtil" />
-			<arg value="service.props.util=com.liferay.util.service.ServiceProps" />
-			<arg value="service.plugin.name=${plugin.name}" />
-		</java>
-
-		<echo>${service.test.output}</echo>
-
-		<if>
-			<contains string="${service.test.output}" substring="Error" />
+			<available file="docroot" />
 			<then>
-				<fail>Service Builder generated exceptions.</fail>
+				<var name="service.base.dir" value="docroot/WEB-INF" />
 			</then>
+			<else>
+				<var name="service.base.dir" value="." />
+			</else>
 		</if>
 
-		<delete file="ServiceBuilder.temp" />
-
-		<mkdir dir="docroot/WEB-INF/service-classes" />
-
-		<path id="service.classpath">
-			<fileset dir="${app.server.lib.global.dir}" includes="*.jar" />
-			<fileset dir="${project.dir}/lib" includes="activation.jar,jsp-api.jar,mail.jar,servlet-api.jar" />
-			<fileset dir="docroot/WEB-INF/lib" excludes="${plugin.name}-service.jar" includes="*.jar" />
-		</path>
-
-		<antcall target="compile-java">
-			<param name="javac.classpathref" value="service.classpath" />
-			<param name="javac.destdir" value="docroot/WEB-INF/service-classes" />
-			<param name="javac.srcdir" value="docroot/WEB-INF/service" />
-			<reference refid="service.classpath" torefid="service.classpath" />
-		</antcall>
-
-		<zip
-			basedir="docroot/WEB-INF/service-classes"
-			destfile="docroot/WEB-INF/lib/${plugin.name}-service.jar"
+		<build-service
+			service.api.dir="${basedir}/${service.base.dir}/service"
+			service.sql.dir="${basedir}/${service.base.dir}/sql"
+			service.test.dir=""
 		/>
 
-		<delete dir="docroot/WEB-INF/service-classes" />
-	</target>
+		<mkdir dir="${service.base.dir}/service-classes" />
 
-	<target name="build-wsdd" depends="compile">
-		<path id="wsdd.classpath">
+		<path id="service.classpath">
 			<path refid="lib.classpath" />
-			<path refid="portal.classpath" />
-			<fileset dir="docroot/WEB-INF/lib" includes="*.jar" />
-			<pathelement location="docroot/WEB-INF/classes" />
+			<fileset dir="${app.server.lib.global.dir}" includes="*.jar" />
+			<fileset dir="${sdk.dir}/dependencies/aQute.bnd/lib" includes="*.jar" />
+			<fileset dir="${service.base.dir}/lib" excludes="${plugin.name}-service.jar" includes="*.jar" />
 		</path>
 
+		<compile-java
+			javac.classpathref="service.classpath"
+			javac.destdir="${service.base.dir}/service-classes"
+			javac.srcdir="${service.base.dir}/service"
+		/>
+
+		<jar
+			basedir="${service.base.dir}/service-classes"
+			destfile="${service.base.dir}/lib/${plugin.name}-service.jar"
+		/>
+
+		<delete dir="${service.base.dir}/service-classes" />
+	</target>
+
+	<target name="build-wsdd">
+		<loop-macrodef-or-target
+			module.dirs="${basedir}"
+			target.name="compile"
+		/>
+
+		<path id="wsdd.builder.classpath">
+			<fileset dir="${sdk.dir}/dependencies/com.liferay.portal.tools.wsdd.builder/lib" includes="*.jar" />
+			<path refid="portal.classpath" />
+			<fileset dir="${plugin.lib.dir}" includes="*.jar" />
+			<pathelement location="${plugin.classes.dir}" />
+		</path>
+
+		<if>
+			<os family="windows" />
+			<then>
+				<classpath-to-jar
+					classpathref="wsdd.builder.classpath"
+					jarfile="wsdd-builder-classpath.jar"
+				/>
+			</then>
+		</if>
+
 		<java
-			classname="com.liferay.portal.tools.WSDDBuilder"
-			classpathref="wsdd.classpath"
+			classname="com.liferay.portal.tools.wsdd.builder.WSDDBuilder"
+			classpathref="wsdd.builder.classpath"
 			fork="true"
 			maxmemory="256m"
 			newenvironment="true"
+			outputproperty="build-wsdd.output"
 		>
 			<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
 			<jvmarg value="-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger" />
-			<arg value="wsdd.input.file=docroot/WEB-INF/service.xml" />
-			<arg value="wsdd.server.config.file=docroot/WEB-INF/server-config.wsdd" />
+			<arg value="wsdd.input.file=${plugin.source.dir}/../service.xml" />
+			<arg value="wsdd.server.config.file=${plugin.source.dir}/../server-config.wsdd" />
 			<arg value="wsdd.service.namespace=Plugin" />
-			<arg value="wsdd.output.path=docroot/WEB-INF/src/" />
+			<arg value="wsdd.output.path=${plugin.source.dir}/" />
 		</java>
-	</target>
 
-	<target name="clean" description="clean">
-		<delete dir="docroot/WEB-INF/classes" />
-		<delete dir="test-classes" />
-		<delete dir="test-results" />
-		<delete dir="tmp" />
-		<delete file="${plugin.file}" />
-
-		<delete>
-			<fileset dir="docroot" includes="**/.sprite.png" />
-			<fileset dir="docroot" includes="**/.sprite.properties" />
-			<fileset dir="docroot" includes="**/Thumbs.db" />
-		</delete>
-
-		<antcall target="clean-portal-dependencies" />
-	</target>
-
-	<target name="clean-portal-dependencies">
 		<if>
-			<available file="docroot/WEB-INF/lib" />
+			<os family="windows" />
 			<then>
-				<delete>
-					<fileset dir="docroot/WEB-INF/lib" includes="${required.portal.jars}" />
-					<fileset dir="docroot/WEB-INF/lib" includes="${plugin.jars}" />
-				</delete>
+				<delete file="wsdd-builder-classpath.jar" />
 			</then>
 		</if>
 
-		<if>
-			<available file="docroot/WEB-INF/tld" />
-			<then>
-				<delete>
-					<fileset dir="docroot/WEB-INF/tld" includes="${plugin.tlds}" />
-				</delete>
-			</then>
-		</if>
+		<echo>${build-wsdd.output}</echo>
 
 		<if>
-			<available file="tmp/WEB-INF/lib" />
+			<contains string="${build-wsdd.output}" substring="IOException" />
 			<then>
-				<delete>
-					<fileset dir="tmp/WEB-INF/lib" includes="${required.portal.jars}" />
-					<fileset dir="tmp/WEB-INF/lib" includes="${plugin.jars}" />
-				</delete>
-			</then>
-		</if>
-
-		<if>
-			<available file="tmp/WEB-INF/tld" />
-			<then>
-				<delete>
-					<fileset dir="tmp/WEB-INF/tld" includes="${plugin.tlds}" />
-				</delete>
+				<fail>WSDD Builder generated exceptions.</fail>
 			</then>
 		</if>
 	</target>
 
-	<target name="compile">
-		<antcall target="merge" />
+	<target name="compile-import-shared">
+		<compile-import-shared
+			module.dir="${basedir}"
+		/>
+	</target>
 
-		<mkdir dir="docroot/WEB-INF/classes" />
-		<mkdir dir="docroot/WEB-INF/lib" />
+	<target name="compile-jsp">
+		<if>
+			<resourcecount count="0" when="gt">
+				<fileset
+					dir="${basedir}"
+					excludes="**/custom_jsps/**/*,**/dependencies/**/*"
+					includes="docroot/**/*.jsp,src/META-INF/resources/**/*.jsp,tmp/**/*.jsp"
+				/>
+			</resourcecount>
+			<then>
+				<set-module-properties
+					module.dir="${basedir}"
+				/>
 
-		<copy todir="docroot/WEB-INF/lib">
-			<fileset dir="${app.server.lib.portal.dir}" includes="${plugin.jars}" />
-		</copy>
+				<if>
+					<isset property="compile.jsp.docroot.dir" />
+					<then>
+						<compile
+							module.dir="${basedir}"
+						/>
+
+						<compile-jsp
+							compile.jsp.docroot.dir="${compile.jsp.docroot.dir}"
+						/>
+					</then>
+					<else>
+						<loop-macrodef-or-target
+							module.dirs="${basedir}"
+							target.name="compile"
+						/>
+
+						<compile-jsp
+							compile.jsp.docroot.dir="docroot"
+						/>
+					</else>
+				</if>
+			</then>
+		</if>
+	</target>
+
+	<target name="compile-test">
+		<compile-test
+			module.dir="${basedir}"
+		/>
+	</target>
+
+	<target name="compile-test-integration">
+		<compile-test-integration
+			module.dir="${basedir}"
+		/>
+	</target>
+
+	<target name="compile-test-unit">
+		<compile-test-unit
+			module.dir="${basedir}"
+		/>
+	</target>
+
+	<target name="format-wsdl">
+		<path id="xml.formatter.classpath">
+			<fileset dir="${sdk.dir}/dependencies/com.liferay.xml.formatter/lib" includes="*.jar" />
+		</path>
+
+		<for param="wsdl.full.path">
+			<path>
+				<fileset
+					dir="."
+					includes="docroot/WEB-INF/wsdl/*.wsdl,docroot/WEB-INF/wsdl/**/*.wsdl"
+				/>
+			</path>
+			<sequential>
+				<java
+					classname="com.liferay.xml.formatter.XMLFormatter"
+					classpathref="xml.formatter.classpath"
+					fork="true"
+					newenvironment="true"
+				>
+					<jvmarg value="-Dxml.formatter.file=@{wsdl.full.path}" />
+					<jvmarg value="-Dxml.formatter.strip.comments=true" />
+				</java>
+			</sequential>
+		</for>
+	</target>
+
+	<target name="format-xsd">
+		<path id="xml.formatter.classpath">
+			<fileset dir="${sdk.dir}/dependencies/com.liferay.xml.formatter/lib" includes="*.jar" />
+		</path>
+
+		<for param="xsd.full.path">
+			<path>
+				<fileset
+					dir="."
+					includes="docroot/WEB-INF/xsd/*.xsd,docroot/WEB-INF/xsd/**/*.xsd"
+				/>
+			</path>
+			<sequential>
+				<java
+					classname="com.liferay.xml.formatter.XMLFormatter"
+					classpathref="xml.formatter.classpath"
+					fork="true"
+					newenvironment="true"
+				>
+					<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
+					<jvmarg value="-Dxml.formatter.file=@{xsd.full.path}" />
+					<jvmarg value="-Dxml.formatter.strip.comments=true" />
+				</java>
+			</sequential>
+		</for>
+	</target>
+
+	<target depends="publish-local-m2-release" name="install" />
+
+	<target depends="javadoc" name="jar-javadoc">
+		<jar-javadoc
+			module.dir="${basedir}"
+		/>
+	</target>
+
+	<target name="jar-source">
+		<jar-source
+			module.dir="${basedir}"
+		/>
+	</target>
+
+	<target name="javadoc">
+		<javadoc-macro
+			module.dir="${basedir}"
+		/>
+	</target>
+
+	<target name="merge">
+		<merge
+			module.dir="${basedir}"
+		/>
+	</target>
+
+	<target name="merge-unzip">
+		<merge-unzip
+			module.dir="${basedir}"
+		/>
+	</target>
+
+	<target name="patch">
+		<var name="patched.file.available" value="false" />
+
+		<for param="patched.file">
+			<path>
+				<fileset
+					dir="${plugin.source.dir}"
+					includes="${patch.destination}"
+				/>
+			</path>
+			<sequential>
+				<var name="patched.file.available" value="true" />
+			</sequential>
+		</for>
 
 		<if>
-			<isset property="plugin-package.required-deployment-contexts" />
+			<equals arg1="${patched.file.available}" arg2="false" />
 			<then>
-				<for list="${plugin-package.required-deployment-contexts}" param="required.deployment.context">
+				<mirrors-get
+					dest="${patch.original.lib.name}-sources.jar"
+					src="${patch.original.lib.url}/${patch.original.lib.name}/${patch.original.lib.version}/${patch.original.lib.name}-${patch.original.lib.version}-sources.jar"
+				/>
+
+				<unjar
+					dest="${plugin.source.dir}"
+					src="${patch.original.lib.name}-sources.jar"
+				>
+					<mapper
+						from="${patch.original.lib.source.dir}/*"
+						to="*"
+						type="glob"
+					/>
+					<patternset includes="${patch.destination}" />
+				</unjar>
+
+				<delete file="${patch.original.lib.name}-sources.jar" />
+
+				<if>
+					<available file="${patch.source}" type="dir" />
+					<then>
+						<pathconvert property="patch.files">
+							<path>
+								<fileset dir="${patch.source}" />
+							</path>
+						</pathconvert>
+					</then>
+					<else>
+						<pathconvert property="patch.files">
+							<path>
+								<fileset file="${patch.source}" />
+							</path>
+						</pathconvert>
+					</else>
+				</if>
+
+				<for delimiter="${path.separator}" list="${patch.files}" param="patch.file">
 					<sequential>
-						<if>
-							<available file="${project.dir}/hooks/@{required.deployment.context}/docroot/WEB-INF/lib/@{required.deployment.context}-service.jar" />
-							<then>
-								<copy
-									file="${project.dir}/hooks/@{required.deployment.context}/docroot/WEB-INF/lib/@{required.deployment.context}-service.jar"
-									todir="docroot/WEB-INF/lib"
-									overwrite="true"
-								/>
-							</then>
-							<elseif>
-								<available file="${project.dir}/portlets/@{required.deployment.context}/docroot/WEB-INF/lib/@{required.deployment.context}-service.jar" />
-								<then>
-									<copy
-										file="${project.dir}/portlets/@{required.deployment.context}/docroot/WEB-INF/lib/@{required.deployment.context}-service.jar"
-										todir="docroot/WEB-INF/lib"
-										overwrite="true"
-									/>
-								</then>
-							</elseif>
-							<elseif>
-								<available file="${project.dir}/webs/@{required.deployment.context}/docroot/WEB-INF/lib/@{required.deployment.context}-service.jar" />
-								<then>
-									<copy
-										file="${project.dir}/webs/@{required.deployment.context}/docroot/WEB-INF/lib/@{required.deployment.context}-service.jar"
-										todir="docroot/WEB-INF/lib"
-										overwrite="true"
-									/>
-								</then>
-							</elseif>
-						</if>
+						<echo>Applying patch @{patch.file}.</echo>
+
+						<patch dir="${plugin.source.dir}" patchfile="@{patch.file}" strip="1" />
 					</sequential>
 				</for>
 			</then>
 		</if>
 
-		<copy todir="docroot/WEB-INF/tld">
-			<fileset dir="${app.server.portal.dir}/WEB-INF/tld" includes="${plugin.tlds}" />
-		</copy>
-
-		<if>
-			<available file="docroot/WEB-INF/src" />
-			<then>
-				<if>
-					<available file="tmp" />
-					<then>
-						<path id="plugin-lib.classpath">
-							<fileset dir="docroot/WEB-INF/lib" includes="*.jar" />
-							<fileset dir="tmp/WEB-INF/lib" includes="*.jar" />
-							<pathelement location="docroot/WEB-INF/classes" />
-							<pathelement location="tmp/WEB-INF/classes" />
-						</path>
-					</then>
-					<else>
-						<path id="plugin-lib.classpath">
-							<fileset dir="docroot/WEB-INF/lib" includes="*.jar" />
-							<pathelement location="docroot/WEB-INF/classes" />
-						</path>
-					</else>
-				</if>
-
-				<copy todir="docroot/WEB-INF/lib">
-					<fileset dir="${app.server.lib.portal.dir}" includes="${required.portal.jars}" />
-				</copy>
-
-				<if>
-					<available file="docroot/WEB-INF/lib/portal-impl.jar" />
-					<then>
-						<fail>
-.
-
-Detected inclusion of portal-impl.jar in WEB-INF/lib.
-
-portal-impl.jar is designed with a large number of singleton classes which are
-instantiated on the basis that they will exist alone in the application server.
-
-While compile time issues may be resolved, portlets cannot be made to work by
-simply adding portal-impl.jar, because doing so violates the above assumption,
-and the resulting problems will be extremely difficult to debug.
-
-Please find a solution that does not require portal-impl.jar.
-						</fail>
-					</then>
-				</if>
-
-				<antcall target="compile-java">
-					<param name="javac.classpathref" value="plugin.classpath" />
-					<param name="javac.destdir" value="docroot/WEB-INF/classes" />
-					<param name="javac.srcdir" value="docroot/WEB-INF/src" />
-					<reference refid="plugin-lib.classpath" torefid="plugin-lib.classpath" />
-				</antcall>
-			</then>
-		</if>
-
-		<antcall target="merge" />
-	</target>
-
-	<target name="compile-test">
-		<mkdir dir="test-classes" />
-		<mkdir dir="test-results" />
-
-		<copy todir="test-classes">
-			<fileset dir="test" includes="**/*.png,**/*.properties,**/*.xml" />
-		</copy>
-
-		<if>
-			<available file="tmp" />
-			<then>
-				<path id="plugin-lib.classpath">
-					<fileset dir="docroot/WEB-INF/lib" includes="*.jar" />
-					<fileset dir="tmp/WEB-INF/lib" includes="*.jar" />
-					<pathelement location="docroot/WEB-INF/classes" />
-					<pathelement location="tmp/WEB-INF/classes" />
-				</path>
-			</then>
-			<else>
-				<path id="plugin-lib.classpath">
-					<fileset dir="docroot/WEB-INF/lib" includes="*.jar" />
-					<pathelement location="docroot/WEB-INF/classes" />
-				</path>
-			</else>
-		</if>
-
-		<antcall target="compile-java">
-			<param name="javac.classpathref" value="test.classpath" />
-			<param name="javac.destdir" value="test-classes" />
-			<param name="javac.srcdir" value="test" />
-			<reference refid="plugin-lib.classpath" torefid="plugin-lib.classpath" />
-		</antcall>
-	</target>
-
-	<target name="deploy" depends="war">
-		<copy file="${plugin.file}" todir="${auto.deploy.dir}" />
-	</target>
-
-	<target name="direct-deploy" depends="war">
-		<if>
-			<antelope:endswith string="${plugin.name}" with="-ext" />
-			<then>
-				<java
-					classname="com.liferay.portal.tools.deploy.ExtDeployer"
-					classpathref="portal.classpath"
-					fork="true"
-					newenvironment="true"
-				>
-
-					<!-- Required Arguments -->
-
-					<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-					<jvmarg value="-Dliferay.lib.portal.dir=${app.server.lib.portal.dir}" />
-					<jvmarg value="-Ddeployer.base.dir=${project.dir}/dist" />
-					<jvmarg value="-Ddeployer.dest.dir=${app.server.deploy.dir}" />
-					<jvmarg value="-Ddeployer.app.server.type=${app.server.type}" />
-					<jvmarg value="-Ddeployer.unpack.war=${auto.deploy.unpack.war}" />
-					<jvmarg value="-Ddeployer.file.pattern=${plugin.name}-*.war" />
-
-					<!-- Optional Arguments -->
-
-					<jvmarg value="-Ddeployer.tomcat.lib.dir=${app.server.tomcat.lib.global.dir}" />
-
-					<!-- Dependent Libraries -->
-
-					<arg value="${app.server.lib.portal.dir}/util-java.jar" />
-				</java>
-			</then>
-			<elseif>
-				<antelope:endswith string="${plugin.name}" with="-hook" />
-				<then>
-					<java
-						classname="com.liferay.portal.tools.deploy.HookDeployer"
-						classpathref="portal.classpath"
-						fork="true"
-						newenvironment="true"
-					>
-
-						<!-- Required Arguments -->
-
-						<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-						<jvmarg value="-Dliferay.lib.portal.dir=${app.server.lib.portal.dir}" />
-						<jvmarg value="-Ddeployer.base.dir=${project.dir}/dist" />
-						<jvmarg value="-Ddeployer.dest.dir=${app.server.deploy.dir}" />
-						<jvmarg value="-Ddeployer.app.server.type=${app.server.type}" />
-						<jvmarg value="-Ddeployer.unpack.war=${auto.deploy.unpack.war}" />
-						<jvmarg value="-Ddeployer.file.pattern=${plugin.name}-*.war" />
-
-						<!-- Optional Arguments -->
-
-						<jvmarg value="-Ddeployer.tomcat.lib.dir=${app.server.tomcat.lib.global.dir}" />
-
-						<!-- Dependent Libraries -->
-
-						<arg value="${app.server.lib.portal.dir}/util-java.jar" />
-					</java>
-				</then>
-			</elseif>
-			<elseif>
-				<antelope:endswith string="${plugin.name}" with="-layouttpl" />
-				<then>
-					<java
-						classname="com.liferay.portal.tools.deploy.LayoutTemplateDeployer"
-						classpathref="portal.classpath"
-						fork="true"
-						newenvironment="true"
-					>
-
-						<!-- Required Arguments -->
-
-						<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-						<jvmarg value="-Dliferay.lib.portal.dir=${app.server.lib.portal.dir}" />
-						<jvmarg value="-Ddeployer.base.dir=${project.dir}/dist" />
-						<jvmarg value="-Ddeployer.dest.dir=${app.server.deploy.dir}" />
-						<jvmarg value="-Ddeployer.app.server.type=${app.server.type}" />
-						<jvmarg value="-Ddeployer.unpack.war=${auto.deploy.unpack.war}" />
-						<jvmarg value="-Ddeployer.file.pattern=${plugin.name}-*.war" />
-					</java>
-				</then>
-			</elseif>
-			<elseif>
-				<antelope:endswith string="${plugin.name}" with="-portlet" />
-				<then>
-					<java
-						classname="com.liferay.portal.tools.deploy.PortletDeployer"
-						classpathref="portal.classpath"
-						fork="true"
-						newenvironment="true"
-					>
-
-						<!-- Required Arguments -->
-
-						<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-						<jvmarg value="-Dliferay.lib.portal.dir=${app.server.lib.portal.dir}" />
-						<jvmarg value="-Ddeployer.base.dir=${project.dir}/dist" />
-						<jvmarg value="-Ddeployer.dest.dir=${app.server.deploy.dir}" />
-						<jvmarg value="-Ddeployer.app.server.type=${app.server.type}" />
-						<jvmarg value="-Ddeployer.aui.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-aui.tld" />
-						<jvmarg value="-Ddeployer.portlet.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-portlet.tld" />
-						<jvmarg value="-Ddeployer.portlet-ext.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-portlet-ext.tld" />
-						<jvmarg value="-Ddeployer.security.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-security.tld" />
-						<jvmarg value="-Ddeployer.theme.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-theme.tld" />
-						<jvmarg value="-Ddeployer.ui.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-ui.tld" />
-						<jvmarg value="-Ddeployer.util.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-util.tld" />
-						<jvmarg value="-Ddeployer.unpack.war=${auto.deploy.unpack.war}" />
-						<jvmarg value="-Ddeployer.custom.portlet.xml=${auto.deploy.custom.portlet.xml}" />
-						<jvmarg value="-Ddeployer.file.pattern=${plugin.name}-*.war" />
-
-						<!-- Optional Arguments -->
-
-						<jvmarg value="-Ddeployer.tomcat.lib.dir=${app.server.tomcat.lib.global.dir}" />
-
-						<!-- Dependent Libraries -->
-
-						<arg value="${app.server.lib.portal.dir}/util-bridges.jar" />
-						<arg value="${app.server.lib.portal.dir}/util-java.jar" />
-						<arg value="${app.server.lib.portal.dir}/util-taglib.jar" />
-					</java>
-				</then>
-			</elseif>
-			<elseif>
-				<antelope:endswith string="${plugin.name}" with="-theme" />
-				<then>
-					<java
-						classname="com.liferay.portal.tools.deploy.ThemeDeployer"
-						classpathref="portal.classpath"
-						fork="true"
-						newenvironment="true"
-					>
-
-						<!-- Required Arguments -->
-
-						<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-						<jvmarg value="-Dliferay.lib.portal.dir=${app.server.lib.portal.dir}" />
-						<jvmarg value="-Ddeployer.base.dir=${project.dir}/dist" />
-						<jvmarg value="-Ddeployer.dest.dir=${app.server.deploy.dir}" />
-						<jvmarg value="-Ddeployer.app.server.type=${app.server.type}" />
-						<jvmarg value="-Ddeployer.theme.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-theme.tld" />
-						<jvmarg value="-Ddeployer.util.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-util.tld" />
-						<jvmarg value="-Ddeployer.unpack.war=${auto.deploy.unpack.war}" />
-						<jvmarg value="-Ddeployer.file.pattern=${plugin.name}-*.war" />
-
-						<!-- Optional Arguments -->
-
-						<jvmarg value="-Ddeployer.tomcat.lib.dir=${app.server.tomcat.lib.global.dir}" />
-
-						<!-- Dependent Libraries -->
-
-						<arg value="${app.server.lib.portal.dir}/util-java.jar" />
-						<arg value="${app.server.lib.portal.dir}/util-taglib.jar" />
-					</java>
-				</then>
-			</elseif>
-		</if>
-	</target>
-
-	<target name="merge" if="original.war.file">
-		<if>
-			<not>
-				<uptodate srcfile="${original.war.file}" targetfile="tmp" />
-			</not>
-			<then>
-				<delete dir="tmp" />
-				<mkdir dir="tmp" />
-
-				<mkdir dir="tmp/WEB-INF/classes" />
-				<mkdir dir="tmp/WEB-INF/lib" />
-
-				<antcall target="merge-unzip" />
-
-				<copy todir="tmp" overwrite="true">
-					<fileset dir="docroot" />
-				</copy>
-			</then>
-		</if>
-
-		<copy todir="tmp">
-			<fileset dir="docroot" />
-		</copy>
-	</target>
-
-	<target name="merge-unzip">
-		<unzip dest="tmp" src="${original.war.file}" />
+		<var name="patched.file.available" unset="true" />
 	</target>
 
 	<target name="shrink-zip-cmd">
 		<tstamp>
-			<format property="tstamp.value" pattern="yyyyMMddkkmmssSSS" />
+			<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
 		</tstamp>
 
 		<unzip
@@ -646,6 +789,7 @@ Please find a solution that does not require portal-impl.jar.
 			src="${zip.file.name}"
 		>
 			<patternset
+				excludes="${zip.excludes}"
 				includes="${zip.includes}"
 			/>
 		</unzip>
@@ -658,124 +802,131 @@ Please find a solution that does not require portal-impl.jar.
 		<delete dir="${tstamp.value}" />
 	</target>
 
-	<target name="test">
-		<delete dir="test-classes" />
-		<delete dir="test-results" />
-
-		<antcall target="compile" />
-		<antcall target="compile-test" />
-
-		<fileset dir="test-classes" id="test.suite.classes">
-			<include name="**/*TestSuite.class" />
-		</fileset>
-
-		<pathconvert
-			property="test.suite.classes.available"
-			refid="test.suite.classes"
-			setonempty="false"
+	<target name="test-class">
+		<test-class
+			module.dir="${basedir}"
+			test.class="${test.class}"
 		/>
 
-		<if>
-			<available file="tmp" />
-			<then>
-				<path id="plugin-lib.classpath">
-					<fileset dir="docroot/WEB-INF/lib" includes="*.jar" />
-					<fileset dir="tmp/WEB-INF/lib" includes="*.jar" />
-					<pathelement location="docroot/WEB-INF/classes" />
-					<pathelement location="tmp/WEB-INF/classes" />
-				</path>
-			</then>
-			<else>
-				<path id="plugin-lib.classpath">
-					<fileset dir="docroot/WEB-INF/lib" includes="*.jar" />
-					<pathelement location="docroot/WEB-INF/classes" />
-				</path>
-			</else>
-		</if>
+		<stop-test-app-server />
+	</target>
 
+	<target name="test-class-group">
 		<if>
 			<not>
-				<isset property="test.suite.classes.available" />
+				<isset property="test.class.group.index" />
 			</not>
 			<then>
-				<junit dir="${project.dir}" fork="on" forkmode="once" printsummary="on">
-					<jvmarg line="${junit.debug.jpda}" />
-					<jvmarg value="-Xmx256m" />
-					<jvmarg value="-Duser.timezone=GMT" />
-					<jvmarg value="-Dexternal-properties=${test.properties}" />
-					<classpath refid="test.classpath" />
-					<formatter type="brief" usefile="false" />
-					<formatter type="xml" />
-					<batchtest todir="test-results">
-						<fileset dir="test-classes" includes="**/*Test.class" />
-					</batchtest>
-				</junit>
+				<fail>Use "ant test-class-group -Dtest.class.group.index=0".</fail>
 			</then>
-			<else>
-				<junit dir="${project.dir}" fork="on" forkmode="once" printsummary="on">
-					<jvmarg line="${junit.debug.jpda}" />
-					<jvmarg value="-Xmx256m" />
-					<jvmarg value="-Duser.timezone=GMT" />
-					<jvmarg value="-Dexternal-properties=${test.properties}" />
-					<classpath refid="test.classpath" />
-					<formatter type="brief" usefile="false" />
-					<formatter type="xml" />
-					<batchtest todir="test-results">
-						<fileset dir="test-classes" includes="**/*TestSuite.class" />
-					</batchtest>
-				</junit>
-			</else>
+		</if>
+
+		<if>
+			<available file="${basedir}/test" type="dir" />
+			<then>
+				<property file="${lp.portal.project.dir}/test.class.file.names.properties" />
+
+				<propertycopy from="TEST_CLASS_GROUP_${test.class.group.index}" name="test.classes" />
+
+				<propertyregex property="test.java.classes"
+					global="true"
+					input="${test.classes}"
+					regexp="\.class"
+					replace=".java"
+				/>
+
+				<if>
+					<and>
+						<or>
+							<not>
+								<isset property="test.type" />
+							</not>
+							<equals arg1="${test.type}" arg2="unit" />
+						</or>
+						<resourcecount count="0" when="gt">
+							<fileset dir="${basedir}/test/unit" erroronmissingdir="false" includes="${test.java.classes}" />
+						</resourcecount>
+					</and>
+					<then>
+						<test-cmd
+							module.dir="${basedir}"
+							junit.forkmode="perTest"
+							test.class="${test.classes}"
+							test.type="unit"
+						/>
+					</then>
+				</if>
+
+				<if>
+					<and>
+						<or>
+							<not>
+								<isset property="test.type" />
+							</not>
+							<equals arg1="${test.type}" arg2="integration" />
+						</or>
+						<resourcecount count="0" when="gt">
+							<fileset dir="${basedir}/test/integration" erroronmissingdir="false" includes="${test.java.classes}" />
+						</resourcecount>
+					</and>
+					<then>
+						<test-cmd
+							module.dir="${basedir}"
+							junit.forkmode="once"
+							test.class="${test.classes}"
+							test.type="integration"
+						/>
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<if>
+			<and>
+				<or>
+					<not>
+						<isset property="test.type" />
+					</not>
+					<equals arg1="${test.type}" arg2="unit" />
+				</or>
+				<equals arg1="${test.class.group.index}" arg2="0" />
+			</and>
+			<then>
+				<antcall target="compile-jsp" />
+			</then>
 		</if>
 	</target>
 
-	<target name="test-class" depends="compile,compile-test" if="class">
-		<junit dir="${project.dir}" fork="on" forkmode="once" outputtoformatters="false" printsummary="on" showoutput="true">
-			<jvmarg line="${junit.debug.jpda}" />
-			<jvmarg value="-Xmx512m" />
-			<jvmarg value="-XX:MaxPermSize=128m" />
-			<jvmarg value="-Duser.timezone=GMT" />
-			<jvmarg value="-Dexternal-properties=${test.properties}" />
-			<classpath refid="test.classpath" />
-			<formatter type="brief" usefile="false" />
-			<formatter type="xml" />
-			<batchtest todir="test-results">
-				<fileset dir="test-classes" includes="**/${class}.class" />
-			</batchtest>
-		</junit>
-	</target>
-
-	<target name="war" depends="compile">
-		<mkdir dir="${project.dir}/dist" />
-
+	<target name="test-package">
 		<if>
-			<available file="tmp" />
+			<not>
+				<isset property="test.package" />
+			</not>
 			<then>
-				<property name="docroot.dir" value="tmp" />
+				<fail>Use "ant test-package -Dtest.package=com.liferay.portal.kernel.util".</fail>
 			</then>
-			<else>
-				<property name="docroot.dir" value="docroot" />
-			</else>
 		</if>
 
-		<delete file="${plugin.file}" />
+		<propertyregex
+			global="true"
+			input="${test.package}"
+			property="test.package.dir"
+			regexp="\."
+			replace="/"
+		/>
 
-		<antcall target="clean-portal-dependencies" />
+		<test-cmd
+			module.dir="${basedir}"
+			junit.forkmode="once"
+			test.class="**/${test.package.dir}/*Test.class"
+			test.type="integration"
+		/>
 
-		<if>
-			<contains string="${app.server.dir}" substring="glassfish" />
-			<then>
-				<zip
-					basedir="${docroot.dir}"
-					destfile="${plugin.file}"
-					excludes="**/META-INF/context.xml"
-				/>
-			</then>
-		<else>
-				<zip
-					basedir="${docroot.dir}"
-					destfile="${plugin.file}"
-				/>
-			</else>
-		</if>
+		<test-cmd
+			module.dir="${basedir}"
+			junit.forkmode="perTest"
+			test.class="**/${test.package.dir}/*Test.class"
+			test.type="unit"
+		/>
 	</target>
 </project>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,28 +14,45 @@
 
 package com.liferay.microblogs.service.persistence;
 
+import aQute.bnd.annotation.ProviderType;
+
 /**
  * @author Brian Wing Shun Chan
+ * @generated
  */
+@ProviderType
 public interface MicroblogsEntryFinder {
-	public int countByUserId(long userId)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public int countByUserId(long userId);
 
-	public int countByU_MU(long userId, long microblogsEntryUserId)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public int countByU_MU(long userId, long microblogsEntryUserId);
 
-	public int countByU_ATN(long userId, java.lang.String assetTagName)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public int countByU_ATN(long userId, java.lang.String assetTagName);
+
+	public int countByCCNI_ATN(long creatorClassNameId,
+		java.lang.String assetTagName);
+
+	public int countByU_T_MU(long userId, int type, long microblogsEntryUserId);
+
+	public int countByCCNI_CCPK_ATN(long creatorClassNameId,
+		long creatorClassPK, java.lang.String assetTagName, boolean andOperator);
 
 	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> findByUserId(
-		long userId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException;
+		long userId, int start, int end);
 
 	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> findByU_MU(
-		long userId, long microblogsEntryUserId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException;
+		long userId, long microblogsEntryUserId, int start, int end);
 
 	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> findByU_ATN(
-		long userId, java.lang.String assetTagName, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException;
+		long userId, java.lang.String assetTagName, int start, int end);
+
+	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> findByCCNI_ATN(
+		long creatorClassNameId, java.lang.String assetTagName, int start,
+		int end);
+
+	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> findByU_T_MU(
+		long userId, int type, long microblogsEntryUserId, int start, int end);
+
+	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> findByCCNI_CCPK_ATN(
+		long creatorClassNameId, long creatorClassPK,
+		java.lang.String assetTagName, boolean andOperator, int start, int end);
 }

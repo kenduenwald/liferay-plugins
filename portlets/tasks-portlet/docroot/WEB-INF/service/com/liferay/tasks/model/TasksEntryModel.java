@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,16 @@
 
 package com.liferay.tasks.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.GroupedModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.GroupedModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -39,7 +42,9 @@ import java.util.Date;
  * @see com.liferay.tasks.model.impl.TasksEntryModelImpl
  * @generated
  */
-public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
+@ProviderType
+public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel,
+	ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -79,6 +84,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @return the group ID of this tasks entry
 	 */
+	@Override
 	public long getGroupId();
 
 	/**
@@ -86,6 +92,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @param groupId the group ID of this tasks entry
 	 */
+	@Override
 	public void setGroupId(long groupId);
 
 	/**
@@ -93,6 +100,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @return the company ID of this tasks entry
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -100,6 +108,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @param companyId the company ID of this tasks entry
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**
@@ -107,6 +116,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @return the user ID of this tasks entry
 	 */
+	@Override
 	public long getUserId();
 
 	/**
@@ -114,21 +124,23 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @param userId the user ID of this tasks entry
 	 */
+	@Override
 	public void setUserId(long userId);
 
 	/**
 	 * Returns the user uuid of this tasks entry.
 	 *
 	 * @return the user uuid of this tasks entry
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid() throws SystemException;
+	@Override
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this tasks entry.
 	 *
 	 * @param userUuid the user uuid of this tasks entry
 	 */
+	@Override
 	public void setUserUuid(String userUuid);
 
 	/**
@@ -137,6 +149,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 * @return the user name of this tasks entry
 	 */
 	@AutoEscape
+	@Override
 	public String getUserName();
 
 	/**
@@ -144,6 +157,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @param userName the user name of this tasks entry
 	 */
+	@Override
 	public void setUserName(String userName);
 
 	/**
@@ -151,6 +165,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @return the create date of this tasks entry
 	 */
+	@Override
 	public Date getCreateDate();
 
 	/**
@@ -158,6 +173,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @param createDate the create date of this tasks entry
 	 */
+	@Override
 	public void setCreateDate(Date createDate);
 
 	/**
@@ -165,6 +181,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @return the modified date of this tasks entry
 	 */
+	@Override
 	public Date getModifiedDate();
 
 	/**
@@ -172,6 +189,7 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 *
 	 * @param modifiedDate the modified date of this tasks entry
 	 */
+	@Override
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
@@ -221,9 +239,8 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 * Returns the assignee user uuid of this tasks entry.
 	 *
 	 * @return the assignee user uuid of this tasks entry
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getAssigneeUserUuid() throws SystemException;
+	public String getAssigneeUserUuid();
 
 	/**
 	 * Sets the assignee user uuid of this tasks entry.
@@ -250,9 +267,8 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 * Returns the resolver user uuid of this tasks entry.
 	 *
 	 * @return the resolver user uuid of this tasks entry
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getResolverUserUuid() throws SystemException;
+	public String getResolverUserUuid();
 
 	/**
 	 * Sets the resolver user uuid of this tasks entry.
@@ -303,35 +319,60 @@ public interface TasksEntryModel extends BaseModel<TasksEntry>, GroupedModel {
 	 */
 	public void setStatus(int status);
 
+	@Override
 	public boolean isNew();
 
+	@Override
 	public void setNew(boolean n);
 
+	@Override
 	public boolean isCachedModel();
 
+	@Override
 	public void setCachedModel(boolean cachedModel);
 
+	@Override
 	public boolean isEscapedModel();
 
-	public void setEscapedModel(boolean escapedModel);
-
+	@Override
 	public Serializable getPrimaryKeyObj();
 
+	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj);
 
+	@Override
 	public ExpandoBridge getExpandoBridge();
 
+	@Override
+	public void setExpandoBridgeAttributes(BaseModel<?> baseModel);
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge);
+
+	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
+	@Override
 	public Object clone();
 
-	public int compareTo(TasksEntry tasksEntry);
+	@Override
+	public int compareTo(com.liferay.tasks.model.TasksEntry tasksEntry);
 
+	@Override
 	public int hashCode();
 
-	public TasksEntry toEscapedModel();
+	@Override
+	public CacheModel<com.liferay.tasks.model.TasksEntry> toCacheModel();
 
+	@Override
+	public com.liferay.tasks.model.TasksEntry toEscapedModel();
+
+	@Override
+	public com.liferay.tasks.model.TasksEntry toUnescapedModel();
+
+	@Override
 	public String toString();
 
+	@Override
 	public String toXmlString();
 }

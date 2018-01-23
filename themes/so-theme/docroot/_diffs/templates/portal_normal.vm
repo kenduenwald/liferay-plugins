@@ -2,19 +2,17 @@
 
 #parse ($init)
 
-<html class="#language("lang.dir")" dir="#language("lang.dir")" lang="$w3c_language_id">
+<html class="$root_css_class" dir="#language("lang.dir")" lang="$w3c_language_id">
 
 <head>
 	<title>$the_title - $company_name</title>
 
 	$theme.include($top_head_include)
+
+	<meta content="user-scalable=yes, initial-scale=1.0, width=device-width" name="viewport" />
 </head>
 
-#if ($page_group.isUser())
-	#set($css_class = $css_class + " user-group")
-#end
-	
-<body class="$css_class">
+<body class="dockbar-split so-strata-theme $css_class">
 
 $theme.include($body_top_include)
 
@@ -23,73 +21,136 @@ $theme.include($body_top_include)
 #end
 
 <div id="wrapper">
-	<a href="#main-content" id="skip-to-content">#language("skip-to-content")</a>
+	<a class="hidden-accessible" href="#main-content" id="skip-to-content">#language("skip-to-content")</a>
 
 	<header id="banner" role="banner">
-		<hgroup id="heading">
-			<h1 class="company-title">
-				<a class="logo" href="$company_url" title="#language("go-to") $company_name">
-					<span>$company_name</span>
-				</a>
-			</h1>
+		<div id="heading">
+			#if (!$is_user_dashboard)
+				<h1 class="site-title">
+					<a class="$logo_css_class" href="$logo_url" title="#language_format ("go-to-x", [$site_name])">
 
-			<h2 class="community-title">
-				<a href="$community_default_url" title="#language("go-to") $community_name">
-					<span>$community_name</span>
-				</a>
-			</h2>
+						#if (!$is_profile_page)
+							<img alt="$logo_description" height="$site_logo_height" src="$site_logo" width="$site_logo_width" />
+						#end
 
-			<h3 class="page-title">
-				<span>$the_title</span>
-			</h3>
-		</hgroup>
+						#if ($show_site_name)
+							<span class="site-name" title="#language_format ("go-to-x", [$site_name])">
+								$site_name
+							</span>
+						#end
+					</a>
+				</h1>
 
-		#if (!$is_signed_in)
-			<a href="$sign_in_url" id="sign-in" rel="nofollow">$sign_in_text</a>
-		#end
+				#if ($is_signed_in && !$is_user_page)
+					#set ($group_local_service = $serviceLocator.findService("com.liferay.portal.kernel.service.GroupLocalService"))
 
-		#if ($update_available_url)
-			<div class="popup-alert-notice">
-				<a class="update-available" href="$update_available_url">#language("updates-are-available-for-liferay")</a>
-			</div>
-		#end
+					#set ($member = $group_local_service.hasUserGroup($user_id, $page_group.getGroupId()))
 
-		#if ($is_signed_in)
-			<div id="page-search">
-				$theme.search()
-			</div>
-		#end
+					#set ($membership_request_local_service = $serviceLocator.findService("com.liferay.portal.kernel.service.MembershipRequestLocalService"))
 
-		#if ($has_navigation || ($page_group.isUser() && ($page_group.getClassPK() == $user_id)))
-			#parse ("$full_templates_path/navigation.vm")
-		#end
+					#set ($membership_request = $membership_request_local_service.hasMembershipRequest($user_id, $page_group.getGroupId(), 0))
+
+					#if (!$member)
+						#if ($page_group.getType() == 1)
+							#set ($join_url = $portletURLFactory.create($request, "174", $page.getPlid(), "ACTION_PHASE"))
+
+							$join_url.setParameter("struts_action", "/sites_admin/edit_site_assignments")
+							$join_url.setParameter("cmd", "group_users")
+							$join_url.setParameter("redirect", $community_default_url)
+							$join_url.setParameter("groupId", "$page_group.getGroupId()")
+							$join_url.setParameter("addUserIds", "$user_id")
+							$join_url.setWindowState("normal")
+
+							<a class="action member-link request" href="$join_url" id="memberButton">
+								<span>#language("join-site")</span>
+							</a>
+						#elseif (($page_group.getType() == 2) && !$membership_request)
+							#set ($membership_request_url = $portletURLFactory.create($request, "174", $page.getPlid(), "ACTION_PHASE"))
+
+							$membership_request_url.setParameter("struts_action", "/sites_admin/post_membership_request")
+							$membership_request_url.setParameter("redirect", $community_default_url)
+							$membership_request_url.setParameter("groupId", "$page_group.getGroupId()")
+							$membership_request_url.setWindowState("normal")
+
+							#set ($arguments = [$user_name, $community_name])
+
+							$membership_request_url.setParameter("comments", $languageUtil.format($locale, "x-wishes-to-join-x", $arguments.toArray(), false))
+
+							<a class="action member-link request" href="$membership_request_url" id="memberButton">
+								<span>#language ("request-membership")</span>
+							</a>
+						#elseif ($membership_request)
+							<span class="action member-link request" id="memberButton">
+								<span>#language ("membership-requested")</span>
+							</span>
+						#end
+					#end
+				#end
+			#end
+
+			#if ($is_signed_in)
+				#if ((!$page_group.isControlPanel()) && $user.isSetupComplete() && ($show_add_controls || $show_edit_controls || $show_preview_controls || $show_toggle_controls))
+					<a class="config-icon" href="javascript:;" id="toggleDockbar">
+						<i alt="#language("configuration") #language("icon")" class="icon-cog"></i>
+
+						<span class="aui-helper-hidden">
+							#language("toggle") #language("javax.portlet.title.145")
+						</span>
+					</a>
+				#end
+
+				<div id="page-search">
+					$theme.search()
+				</div>
+			#end
+
+			#if (!$is_signed_in)
+				<a href="$sign_in_url" id="sign-in" rel="nofollow">$sign_in_text</a>
+			#end
+
+			#if ($is_user_dashboard)
+				<h2 class="page-title">
+						<a class="avatar" href="$current_user_profile_url" style="background-image: url($user.getPortraitURL($themeDisplay))">
+							<img alt="$htmlUtil.escape($user.getFullName())" src="$user.getPortraitURL($themeDisplay)">
+						</a>
+
+						<span class="aui-helper-hidden">$htmlUtil.escape($current_user.getFullName())'s</span>
+
+					<span>$the_title</span>
+				</h2>
+			#end
+		</div>
 	</header>
 
-	<div id="content">
-		<nav class="site-breadcrumbs" id="breadcrumbs">
-			<h1>
-				<span>#language("breadcrumbs")</span>
-			</h1>
-
-			#breadcrumbs()
-		</nav>
+	<section id="content">
+		#if ($has_navigation || $is_signed_in)
+			<section>
+				#parse ("$full_templates_path/navigation.vm")
+			</section>
+		#end
 
 		#if ($selectable)
-			$theme.include($content_include)
+			<section>
+				$theme.include($content_include)
+			</section>
 		#else
-			$portletDisplay.recycle()
+			<section>
+				$portletDisplay.recycle()
 
-			$portletDisplay.setTitle($the_title)
+				$portletDisplay.setTitle($the_title)
 
-			$theme.wrapPortlet("portlet.vm", $content_include)
+				$theme.wrapPortlet("portlet.vm", $content_include)
+			</section>
 		#end
-	</div>
+	</section>
 
-	<footer id="footer" role="contentinfo">
-		<p class="powered-by">
-			#language("powered-by") <a href="http://www.liferay.com" rel="external">Liferay</a>
-		</p>
-	</footer>
+	<section>
+		<footer id="footer" role="contentinfo">
+			<p class="powered-by">
+				#language("powered-by") <a href="http://www.liferay.com" rel="external">Liferay</a>
+			</p>
+		</footer>
+	</section>
 </div>
 
 $theme.include($body_bottom_include)

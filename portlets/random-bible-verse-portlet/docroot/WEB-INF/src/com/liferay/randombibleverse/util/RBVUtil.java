@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Randomizer;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.webcache.WebCacheItem;
 import com.liferay.portal.kernel.webcache.WebCachePoolUtil;
 import com.liferay.portal.kernel.xml.Document;
@@ -31,7 +30,6 @@ import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -61,51 +59,52 @@ public class RBVUtil {
 	}
 
 	private RBVUtil() {
-		Document doc = null;
+		Document document = null;
 
 		try {
-			ClassLoader classLoader = getClass().getClassLoader();
+			Class<?> clazz = getClass();
+
+			ClassLoader classLoader = clazz.getClassLoader();
 
 			URL url = classLoader.getResource(
-				"com/liferay/randombibleverse/dependencies/" +
-					"random_bible_verse.xml");
+				"com/liferay/randombibleverse/dependencies" +
+					"/random_bible_verse.xml");
 
-			doc = SAXReaderUtil.read(url);
+			document = SAXReaderUtil.read(url);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
 		}
 
-		_bibles = new LinkedHashMap<String, Bible>();
-		_verses = new ArrayList<String>();
+		_bibles = new LinkedHashMap<>();
+		_verses = new ArrayList<>();
 
-		Element root = doc.getRootElement();
+		Element rootElement = document.getRootElement();
 
-		Iterator<Element> itr = root.element("bibles").elements(
-			"bible").iterator();
+		Element biblesElement = rootElement.element("bibles");
 
-		while (itr.hasNext()) {
-			Element bible = itr.next();
+		List<Element> bibleElements = biblesElement.elements("bible");
 
+		for (Element bibleElement : bibleElements) {
 			_bibles.put(
-				bible.attributeValue("language"),
+				bibleElement.attributeValue("language"),
 				new Bible(
-					bible.attributeValue("language"),
-					bible.attributeValue("language-name"),
-					bible.attributeValue("version-id")));
+					bibleElement.attributeValue("language"),
+					bibleElement.attributeValue("language-name"),
+					bibleElement.attributeValue("version-id")));
 		}
 
 		_bibles = Collections.unmodifiableMap(_bibles);
 
-		itr = root.element("verses").elements("verse").iterator();
+		Element versesElement = rootElement.element("verses");
 
-		while (itr.hasNext()) {
-			Element verse = itr.next();
+		List<Element> verseElements = versesElement.elements("verse");
 
-			_verses.add(verse.attributeValue("location"));
+		for (Element verseElement : verseElements) {
+			_verses.add(verseElement.attributeValue("location"));
 		}
 
-		_verses = new UnmodifiableList<String>(_verses);
+		_verses = Collections.unmodifiableList(_verses);
 	}
 
 	private Bible _getBible(PortletPreferences preferences, Locale locale) {

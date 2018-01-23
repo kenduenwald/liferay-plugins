@@ -1,27 +1,43 @@
 <?xml version="1.0"?>
-<!DOCTYPE routes PUBLIC "-//Liferay//DTD Friendly URL Routes 6.0.0//EN" "http://www.liferay.com/dtd/liferay-friendly-url-routes_6_0_0.dtd">
+<!DOCTYPE routes PUBLIC "-//Liferay//DTD Friendly URL Routes 7.0.0//EN" "http://www.liferay.com/dtd/liferay-friendly-url-routes_7_0_0.dtd">
 
 <routes>
 	<route>
-		<pattern>/rss/all/plugin/trunk</pattern>
+		<pattern></pattern>
+		<implicit-parameter name="mvcPath">/svn/view.jsp</implicit-parameter>
+	</route>
+	<route>
+		<pattern>/rss/all/plugins/trunk</pattern>
+		<ignored-parameter name="mvcPath" />
 		<implicit-parameter name="all">1</implicit-parameter>
-		<implicit-parameter name="p_p_state">exclusive</implicit-parameter>
-		<implicit-parameter name="url">/plugin/trunk</implicit-parameter>
+		<implicit-parameter name="p_p_cacheability">cacheLevelPage</implicit-parameter>
+		<implicit-parameter name="p_p_lifecycle">2</implicit-parameter>
+		<implicit-parameter name="p_p_resource_id">rss</implicit-parameter>
+		<implicit-parameter name="url">/plugins/trunk</implicit-parameter>
 	</route>
 	<route>
 		<pattern>/rss/all/portal/trunk</pattern>
+		<ignored-parameter name="mvcPath" />
 		<implicit-parameter name="all">1</implicit-parameter>
-		<implicit-parameter name="p_p_state">exclusive</implicit-parameter>
+		<implicit-parameter name="p_p_cacheability">cacheLevelPage</implicit-parameter>
+		<implicit-parameter name="p_p_lifecycle">2</implicit-parameter>
+		<implicit-parameter name="p_p_resource_id">rss</implicit-parameter>
 		<implicit-parameter name="url">/portal/trunk</implicit-parameter>
 	</route>
 	<route>
-		<pattern>/rss/user/plugin/trunk</pattern>
-		<implicit-parameter name="p_p_state">exclusive</implicit-parameter>
-		<implicit-parameter name="url">/plugin/trunk</implicit-parameter>
+		<pattern>/rss/user/plugins/trunk</pattern>
+		<ignored-parameter name="mvcPath" />
+		<implicit-parameter name="p_p_cacheability">cacheLevelPage</implicit-parameter>
+		<implicit-parameter name="p_p_lifecycle">2</implicit-parameter>
+		<implicit-parameter name="p_p_resource_id">rss</implicit-parameter>
+		<implicit-parameter name="url">/plugins/trunk</implicit-parameter>
 	</route>
 	<route>
 		<pattern>/rss/user/portal/trunk</pattern>
-		<implicit-parameter name="p_p_state">exclusive</implicit-parameter>
+		<ignored-parameter name="mvcPath" />
+		<implicit-parameter name="p_p_cacheability">cacheLevelPage</implicit-parameter>
+		<implicit-parameter name="p_p_lifecycle">2</implicit-parameter>
+		<implicit-parameter name="p_p_resource_id">rss</implicit-parameter>
 		<implicit-parameter name="url">/portal/trunk</implicit-parameter>
 	</route>
 </routes>

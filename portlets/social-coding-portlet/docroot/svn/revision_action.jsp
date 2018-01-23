@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -34,25 +34,25 @@ JIRAIssue jiraIssue = (JIRAIssue)objArray[2];
 		%>
 
 		<liferay-ui:icon
-			message="SVN"
-			src='<%= request.getContextPath() + "/icons/svn.png" %>'
-			url="<%= taglibSVNURL %>"
-			target="_blank"
 			label="<%= true %>"
+			message="SVN"
+			src='<%= PortalUtil.getPathContext(request) + "/icons/svn.png" %>'
+			target="_blank"
+			url="<%= taglibSVNURL %>"
 		/>
 
 		<c:if test="<%= jiraIssue != null %>">
 
 			<%
-			String taglibJIRAURL = "javascript:location.href = 'http://support.liferay.com/browse/" + jiraIssue.getKey() + "';";
+			String taglibJIRAURL = "javascript:location.href = '" + PortletPropsValues.JIRA_URL + "/browse/" + jiraIssue.getKey() + "';";
 			%>
 
 			<liferay-ui:icon
-				message="JIRA"
-				src='<%= request.getContextPath() + "/icons/jira.png" %>'
-				url="<%= taglibJIRAURL %>"
-				target="_blank"
 				label="<%= true %>"
+				message="JIRA"
+				src='<%= PortalUtil.getPathContext(request) + "/icons/jira.png" %>'
+				target="_blank"
+				url="<%= taglibJIRAURL %>"
 			/>
 		</c:if>
 	</liferay-ui:icon-list>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE resource-action-mapping PUBLIC "-//Liferay//DTD Resource Action Mapping 6.1.0//EN" "http://www.liferay.com/dtd/liferay-resource-action-mapping_6_1_0.dtd">
+<!DOCTYPE resource-action-mapping PUBLIC "-//Liferay//DTD Resource Action Mapping 6.2.0//EN" "http://www.liferay.com/dtd/liferay-resource-action-mapping_6_2_0.dtd">
 
 <resource-action-mapping>
 	<portlet-resource>
@@ -8,9 +8,9 @@
 			<supports>
 				<action-key>VIEW</action-key>
 			</supports>
-			<community-defaults>
+			<site-member-defaults>
 				<action-key>VIEW</action-key>
-			</community-defaults>
+			</site-member-defaults>
 			<guest-defaults>
 				<action-key>VIEW</action-key>
 			</guest-defaults>
@@ -23,14 +23,15 @@
 			<portlet-name>1</portlet-name>
 			<portlet-name>2</portlet-name>
 		</portlet-ref>
+		<root>true</root>
 		<permissions>
 			<supports>
 				<action-key>ADD_ENTRY</action-key>
 				<action-key>PERMISSIONS</action-key>
 			</supports>
-			<community-defaults>
+			<site-member-defaults>
 				<action-key>ADD_ENTRY</action-key>
-			</community-defaults>
+			</site-member-defaults>
 			<guest-defaults />
 			<guest-unsupported>
 				<action-key>ADD_ENTRY</action-key>
@@ -51,9 +52,9 @@
 				<action-key>UPDATE</action-key>
 				<action-key>VIEW</action-key>
 			</supports>
-			<community-defaults>
+			<site-member-defaults>
 				<action-key>VIEW</action-key>
-			</community-defaults>
+			</site-member-defaults>
 			<guest-defaults>
 				<action-key>VIEW</action-key>
 			</guest-defaults>

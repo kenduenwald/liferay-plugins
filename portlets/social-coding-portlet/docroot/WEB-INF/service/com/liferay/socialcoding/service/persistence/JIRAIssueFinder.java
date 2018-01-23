@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,18 +14,22 @@
 
 package com.liferay.socialcoding.service.persistence;
 
+import aQute.bnd.annotation.ProviderType;
+
 /**
  * @author Brian Wing Shun Chan
+ * @generated
  */
+@ProviderType
 public interface JIRAIssueFinder {
-	public int countByCD_P(java.util.Date createDate, long projectId)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public int countByCD_P(java.util.Date createDate, long projectId);
+
+	public com.liferay.socialcoding.model.JIRAIssue findByKey(
+		java.lang.String jiraIssueKey);
 
 	public java.util.List<com.liferay.socialcoding.model.JIRAIssue> findByCD_P(
-		java.util.Date createDate, long projectId)
-		throws com.liferay.portal.kernel.exception.SystemException;
+		java.util.Date createDate, long projectId);
 
 	public java.util.List<com.liferay.socialcoding.model.JIRAIssue> findByCD_P(
-		java.util.Date createDate, long projectId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException;
+		java.util.Date createDate, long projectId, int start, int end);
 }

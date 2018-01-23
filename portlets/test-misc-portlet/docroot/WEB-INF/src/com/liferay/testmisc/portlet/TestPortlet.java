@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,20 +14,26 @@
 
 package com.liferay.testmisc.portlet;
 
+import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortlet;
+import com.liferay.portal.kernel.portlet.PortletResponseUtil;
+import com.liferay.portal.kernel.servlet.PortalMessages;
+import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.util.portlet.PortletRequestUtil;
-import com.liferay.util.servlet.PortletResponseUtil;
-import com.liferay.util.servlet.ServletResponseUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StreamUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.testmisc.util.PortletKeys;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.util.List;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -42,31 +48,62 @@ import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.portlet.PortletFileUpload;
+
 /**
  * @author Brian Wing Shun Chan
  * @author Amos Fong
  */
 public class TestPortlet extends LiferayPortlet {
 
+	public void addPortalMessage(
+		ActionRequest actionRequest, ActionResponse actionResponse) {
+
+		PortalMessages.add(
+			actionRequest, PortalMessages.KEY_JSP_PATH,
+			"/portal_message/portal_message.jsp");
+
+		PortalMessages.add(
+			actionRequest, PortalMessages.KEY_PORTLET_ID,
+			PortletKeys.TEST_MISC);
+	}
+
 	@Override
 	public void doDispatch(
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
-		String jspPage = ParamUtil.getString(
-			renderRequest, "jspPage", "/view.jsp");
+		String title = ParamUtil.getString(renderRequest, "title");
 
-		if (jspPage.equals("/renderResponseponse/buffer_size.jsp")) {
+		if (Validator.isNotNull(title)) {
+			renderResponse.setTitle(title);
+		}
+
+		String mvcPath = ParamUtil.getString(
+			renderRequest, "mvcPath", "/view.jsp");
+
+		if (mvcPath.equals("/portlet_response/buffer_size.jsp")) {
 			testResponseBufferSize(renderResponse);
 		}
 
-		include(jspPage, renderRequest, renderResponse);
+		include(mvcPath, renderRequest, renderResponse);
 	}
 
 	@Override
 	public void processAction(
 			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws IOException {
+		throws IOException, PortletException {
+
+		String actionName = ParamUtil.getString(
+			actionRequest, ActionRequest.ACTION_NAME);
+
+		if (Validator.isNotNull(actionName)) {
+			super.processAction(actionRequest, actionResponse);
+
+			return;
+		}
 
 		HttpServletRequest request = PortalUtil.getHttpServletRequest(
 			actionRequest);
@@ -106,17 +143,18 @@ public class TestPortlet extends LiferayPortlet {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		UploadPortletRequest uploadRequest = PortalUtil.getUploadPortletRequest(
-			actionRequest);
+		UploadPortletRequest uploadPortletRequest =
+			PortalUtil.getUploadPortletRequest(actionRequest);
 
 		String actionRequestTitle = ParamUtil.getString(actionRequest, "title");
-		String uploadRequestTitle = ParamUtil.getString(uploadRequest, "title");
+		String uploadPortletRequestTitle = ParamUtil.getString(
+			uploadPortletRequest, "title");
 
-		File file = uploadRequest.getFile("fileName");
+		File file = uploadPortletRequest.getFile("fileName");
 
 		if (_log.isInfoEnabled()) {
 			_log.info("actionRequestTitle " + actionRequestTitle);
-			_log.info("uploadRequestTitle " + uploadRequestTitle);
+			_log.info("uploadPortletRequestTitle " + uploadPortletRequestTitle);
 			_log.info("File " + file + " " + file.length());
 		}
 	}
@@ -125,14 +163,14 @@ public class TestPortlet extends LiferayPortlet {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		PortletRequestUtil.testMultipartWithCommonsFileUpload(actionRequest);
+		testMultipartWithCommonsFileUpload(actionRequest);
 	}
 
 	public void uploadForm3(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		PortletRequestUtil.testMultipartWithPortletInputStream(actionRequest);
+		testMultipartWithPortletInputStream(actionRequest);
 	}
 
 	protected void include(
@@ -151,12 +189,80 @@ public class TestPortlet extends LiferayPortlet {
 		}
 	}
 
+	protected void testMultipartWithCommonsFileUpload(
+			ActionRequest actionRequest)
+		throws Exception {
+
+		boolean multiPartContent = PortletFileUpload.isMultipartContent(
+			actionRequest);
+
+		if (_log.isInfoEnabled()) {
+			if (multiPartContent) {
+				_log.info("The request is a multipart request");
+			}
+			else {
+				_log.info("The request is not a multipart request");
+			}
+		}
+
+		DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
+
+		PortletFileUpload portletFileUpload = new PortletFileUpload(
+			diskFileItemFactory);
+
+		List<FileItem> fileItemsList = portletFileUpload.parseRequest(
+			actionRequest);
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				"Apache commons upload was able to parse " +
+					fileItemsList.size() + " items");
+		}
+
+		for (int i = 0; i < fileItemsList.size(); i++) {
+			FileItem fileItem = fileItemsList.get(i);
+
+			if (_log.isInfoEnabled()) {
+				_log.info("Item " + i + " " + fileItem);
+			}
+		}
+	}
+
+	protected int testMultipartWithPortletInputStream(
+			ActionRequest actionRequest)
+		throws Exception {
+
+		InputStream inputStream = actionRequest.getPortletInputStream();
+
+		if (inputStream != null) {
+			UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
+				new UnsyncByteArrayOutputStream();
+
+			StreamUtil.transfer(inputStream, unsyncByteArrayOutputStream);
+
+			int size = unsyncByteArrayOutputStream.size();
+
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					"Byte array size from the raw input stream is " + size);
+			}
+
+			return size;
+		}
+
+		return -1;
+	}
+
 	protected void testResponseBufferSize(RenderResponse renderResponse) {
-		_log.info("Original buffer size " + renderResponse.getBufferSize());
+		if (_log.isInfoEnabled()) {
+			_log.info("Original buffer size " + renderResponse.getBufferSize());
+		}
 
 		renderResponse.setBufferSize(12345);
 
-		_log.info("New buffer size " + renderResponse.getBufferSize());
+		if (_log.isInfoEnabled()) {
+			_log.info("New buffer size " + renderResponse.getBufferSize());
+		}
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(TestPortlet.class);

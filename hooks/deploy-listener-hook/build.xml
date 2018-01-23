@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+
+<project basedir="." default="deploy" name="deploy-listener-hook">
+	<property name="import.shared" value="deploy-listener-shared" />
+
+	<import file="../build-common-hook.xml" />
+</project>

@@ -1,5 +1,5 @@
-AUI().add(
-	'liferay-soffice-invitemembers',
+AUI.add(
+	'liferay-so-invite-members',
 	function(A) {
 		var InviteMembers = function() {
 			InviteMembers.superclass.constructor.apply(this, arguments);
@@ -24,7 +24,7 @@ AUI().add(
 				initializer: function(params) {
 					var instance = this;
 
-					instance._inviteMembersContainer = A.one('#so-invitemembers-container');
+					instance._inviteMembersContainer = A.one('#' + instance.get('portletNamespace') + 'inviteMembersContainer');
 
 					if (!instance._inviteMembersContainer) {
 						return;
@@ -50,7 +50,13 @@ AUI().add(
 
 							event.halt();
 
-							dialog.io.set('form', {id: form.getDOM()});
+							dialog.io.set(
+								'form',
+								{
+									id: form.getDOM()
+								}
+							);
+
 							dialog.io.set('uri', form.getAttribute('action'));
 
 							dialog.io.start();
@@ -99,19 +105,12 @@ AUI().add(
 						},
 						'#so-add-email-address'
 					);
-
-					new A.LiveSearch(
-						{
-							input: '#invite-user-search',
-							nodes: '#so-invitemembers-container .search .user'
-						}
-					);
 				},
 
 				_addMemberEmail: function() {
 					var instance = this;
 
-					var emailAddress = A.Lang.trim(instance._emailInput.val());
+					var emailAddress = instance._emailInput.val().trim();
 
 					if (emailAddress) {
 						var html = '<div class="user" data-emailAddress="' + emailAddress + '"><span class="email">' + emailAddress + '</span></div>';
@@ -137,28 +136,32 @@ AUI().add(
 
 					userId = userId || user.getAttribute('data-userId');
 
-					var user = instance._findMembersList.one('[data-userId="' + userId + '"]');
+					user = instance._findMembersList.one('[data-userId="' + userId + '"]');
+
 					var invitedUser = instance._invitedMembersList.one('[data-userId="' + userId + '"]');
 
-					user.removeClass('invited');
+					if (user) {
+						user.removeClass('invited');
+					}
+
 					invitedUser.remove();
 				},
 
 				_syncFields: function(form) {
 					var instance = this;
 
-					var userIds = [];
 					var emailAddresses = [];
+					var userIds = [];
 
 					instance._invitedMembersList.all('.user').each(
-						function(user, index, collection) {
-							userIds.push(user.attr('data-userId'));
+						function(item, index) {
+							userIds.push(item.attr('data-userId'));
 						}
 					);
 
 					instance._invitedEmailList.all('.user').each(
-						function(emailAddress, index, collection) {
-							emailAddresses.push(emailAddress.attr('data-emailAddress'));
+						function(item, index) {
+							emailAddresses.push(item.attr('data-emailAddress'));
 						}
 					);
 
@@ -179,6 +182,33 @@ AUI().add(
 	},
 	'',
 	{
-		requires: ['aui-base', 'aui-dialog', 'aui-io', 'aui-live-search']
+		requires: ['aui-base', 'aui-io-deprecated', 'liferay-util-window']
+	}
+);
+
+AUI.add(
+	'liferay-so-invite-members-list',
+	function(A) {
+		var InviteMembersList = A.Base.create(
+			'inviteMembersList',
+			A.Base,
+			[A.AutoCompleteBase],
+			{
+				initializer: function(config) {
+					this._listNode = A.one(config.listNode);
+
+					this._bindUIACBase();
+					this._syncUIACBase();
+				}
+			}
+		);
+
+		Liferay.namespace('SO');
+
+		Liferay.SO.InviteMembersList = InviteMembersList;
+	},
+	'',
+	{
+		requires: ['aui-base', 'autocomplete-base', 'node-core']
 	}
 );

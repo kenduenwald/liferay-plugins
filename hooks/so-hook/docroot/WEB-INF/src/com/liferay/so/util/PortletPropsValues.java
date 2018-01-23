@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This file is part of Liferay Social Office. Liferay Social Office is free
  * software: you can redistribute it and/or modify it under the terms of the GNU
@@ -8,7 +8,7 @@
  *
  * Liferay Social Office is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -23,7 +23,10 @@ import com.liferay.util.portlet.PortletProps;
 /**
  * @author Ryan Park
  */
- public class PortletPropsValues {
+public class PortletPropsValues {
+
+	public static final String LOGIN_REDIRECT = PortletProps.get(
+		PortletPropsKeys.LOGIN_REDIRECT);
 
 	public static final String[] SITE_AUTO_CREATE_TEAM_NAMES =
 		PortletProps.getArray(PortletPropsKeys.SITE_AUTO_CREATE_TEAM_NAMES);
@@ -32,14 +35,9 @@ import com.liferay.util.portlet.PortletProps;
 		GetterUtil.getString(
 			PortletProps.get(PortletPropsKeys.SITE_PROTOTYPE_LAYOUT_TEMPLATE));
 
-	public static final String[] USER_APPLICATIONS = PortletProps.getArray(
-		PortletPropsKeys.USER_APPLICATIONS);
-
-	public static final String[] USER_NEW_LAYOUT_PORTLETS =
-		PortletProps.getArray(PortletPropsKeys.USER_NEW_LAYOUT_PORTLETS);
-
-	public static final String USER_NEW_LAYOUT_TEMPLATE =
+	public static final String SO_USER_DEFAULT_LANDING_PAGE_PATH =
 		GetterUtil.getString(
-			PortletProps.get(PortletPropsKeys.USER_NEW_LAYOUT_TEMPLATE));
+			PortletProps.get(
+				PortletPropsKeys.SO_USER_DEFAULT_LANDING_PAGE_PATH));
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,7 +33,7 @@ public class TICHUtil {
 		List<Event> events = (List<Event>)WebCachePoolUtil.get(key, wci);
 
 		try {
-			if (events.size() > 0) {
+			if (!events.isEmpty()) {
 				Event event = events.get(0);
 			}
 		}

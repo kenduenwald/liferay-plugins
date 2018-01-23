@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,13 +18,13 @@
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-<%@ taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %>
-<%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
-<%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
-
-<portlet:defineObjects />
+<%@ taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %><%@
+taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
+taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <liferay-theme:defineObjects />
+
+<portlet:defineObjects />
 
 <%
 long groupId = scopeGroupId;
@@ -36,16 +36,14 @@ String actionId = "ADD_SOMETHING";
 Do you have the <i><liferay-ui:message key='<%= "action." + actionId %>' /></i> permission for this portlet?
 
 <strong>
-
-<c:choose>
-	<c:when test="<%= permissionChecker.hasPermission(groupId, name, primKey, actionId) %>">
-		Yes
-	</c:when>
-	<c:otherwise>
-		No
-	</c:otherwise>
-</c:choose>
-
+	<c:choose>
+		<c:when test="<%= permissionChecker.hasPermission(groupId, name, primKey, actionId) %>">
+			Yes
+		</c:when>
+		<c:otherwise>
+			No
+		</c:otherwise>
+	</c:choose>
 </strong>
 
 <br /><br />
@@ -59,16 +57,14 @@ actionId = "VIEW";
 Do you have the <i><liferay-ui:message key='<%= "action." + actionId %>' /></i> permission for the model <i><liferay-ui:message key='<%= "model.resource." + name %>' /></i> with the primary key <i><%= primKey %></i>?
 
 <strong>
-
-<c:choose>
-	<c:when test="<%= permissionChecker.hasPermission(groupId, name, primKey, actionId) %>">
-		Yes
-	</c:when>
-	<c:otherwise>
-		No
-	</c:otherwise>
-</c:choose>
-
+	<c:choose>
+		<c:when test="<%= permissionChecker.hasPermission(groupId, name, primKey, actionId) %>">
+			Yes
+		</c:when>
+		<c:otherwise>
+			No
+		</c:otherwise>
+	</c:choose>
 </strong>
 
 <br /><br />
@@ -76,9 +72,9 @@ Do you have the <i><liferay-ui:message key='<%= "action." + actionId %>' /></i> 
 <portlet:renderURL var="redirectURL" />
 
 <liferay-security:permissionsURL
-	redirect="<%= redirectURL %>"
 	modelResource="<%= name %>"
 	modelResourceDescription='<%= "Hello World" %>'
+	redirect="<%= redirectURL %>"
 	resourcePrimKey="<%= primKey %>"
 	var="permissionsURL"
 />

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,39 +21,34 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 
 Foo foo = null;
 
-boolean view = false;
-
 if (row != null) {
 	foo = (Foo)row.getObject();
 }
 else {
 	foo = (Foo)request.getAttribute("edit_foo.jsp-foo");
-
-	view = true;
 }
 %>
 
-<liferay-ui:icon-menu showExpanded="<%= view %>" showWhenSingleIcon="<%= view %>">
-	<c:if test="<%= !view %>">
-		<portlet:renderURL var="editURL">
-			<portlet:param name="jspPage" value="/edit_foo.jsp" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
-			<portlet:param name="fooId" value="<%= String.valueOf(foo.getFooId()) %>" />
-		</portlet:renderURL>
+<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= row == null %>" showWhenSingleIcon="<%= row == null %>">
+	<portlet:renderURL var="editURL">
+		<portlet:param name="mvcPath" value="/edit_foo.jsp" />
+		<portlet:param name="redirect" value="<%= currentURL %>" />
+		<portlet:param name="fooId" value="<%= String.valueOf(foo.getFooId()) %>" />
+	</portlet:renderURL>
 
-		<liferay-ui:icon
-			image="edit"
-			url="<%= editURL %>"
-		/>
-	</c:if>
+	<liferay-ui:icon
+		iconCssClass="icon-edit"
+		message="edit"
+		url="<%= editURL %>"
+	/>
 
 	<portlet:renderURL var="redirectURL">
-		<portlet:param name="jspPage" value="/view.jsp" />
+		<portlet:param name="mvcPath" value="/view.jsp" />
 	</portlet:renderURL>
 
 	<portlet:actionURL var="deleteURL">
 		<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />
-		<portlet:param name="redirect" value="<%= view ? redirectURL : currentURL %>" />
+		<portlet:param name="redirect" value="<%= (row == null) ? redirectURL : currentURL %>" />
 		<portlet:param name="fooId" value="<%= String.valueOf(foo.getFooId()) %>" />
 	</portlet:actionURL>
 

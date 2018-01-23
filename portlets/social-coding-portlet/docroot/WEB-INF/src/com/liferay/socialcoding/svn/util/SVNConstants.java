@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,11 +33,10 @@ public interface SVNConstants {
 	public static final String SVN_PORTAL_TRUNK_URL =
 		"svn://svn.liferay.com/repos/public/portal/trunk";
 
+	public static final String[] SVN_URLS =
+		{SVN_PORTAL_TRUNK_URL, SVN_PLUGINS_TRUNK_URL};
+
 	public static final String WEB_REVISION_NUMBER_URL =
 		"http://svn.liferay.com/changelog/{0}/?cs={1}";
-
-	public static final String[] SVN_URLS = new String[] {
-		SVN_PORTAL_TRUNK_URL, SVN_PLUGINS_TRUNK_URL
-	};
 
 }

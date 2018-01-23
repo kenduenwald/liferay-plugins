@@ -1,45 +1,163 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * This file is part of Liferay Social Office. Liferay Social Office is free
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * Liferay Social Office is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Liferay Social Office. If not, see http://www.gnu.org/licenses/agpl-3.0.html.
  */
 
 package com.liferay.contacts.util;
 
+import com.liferay.contacts.model.Entry;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.Address;
+import com.liferay.portal.kernel.model.Contact;
+import com.liferay.portal.kernel.model.Country;
+import com.liferay.portal.kernel.model.EmailAddress;
+import com.liferay.portal.kernel.model.ListType;
+import com.liferay.portal.kernel.model.Phone;
+import com.liferay.portal.kernel.model.Region;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.Website;
+import com.liferay.portal.kernel.service.AddressLocalServiceUtil;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
+import com.liferay.portal.kernel.service.EmailAddressLocalServiceUtil;
+import com.liferay.portal.kernel.service.ListTypeServiceUtil;
+import com.liferay.portal.kernel.service.PhoneLocalServiceUtil;
+import com.liferay.portal.kernel.service.RegionServiceUtil;
+import com.liferay.portal.kernel.service.WebsiteLocalServiceUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.Address;
-import com.liferay.portal.model.Contact;
-import com.liferay.portal.model.Country;
-import com.liferay.portal.model.EmailAddress;
-import com.liferay.portal.model.ListType;
-import com.liferay.portal.model.Phone;
-import com.liferay.portal.model.Region;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.Website;
-import com.liferay.portal.service.AddressLocalServiceUtil;
-import com.liferay.portal.service.CountryServiceUtil;
-import com.liferay.portal.service.EmailAddressLocalServiceUtil;
-import com.liferay.portal.service.ListTypeServiceUtil;
-import com.liferay.portal.service.PhoneLocalServiceUtil;
-import com.liferay.portal.service.RegionServiceUtil;
-import com.liferay.portal.service.WebsiteLocalServiceUtil;
+import com.liferay.social.kernel.model.SocialRequestConstants;
+import com.liferay.social.kernel.service.SocialRelationLocalServiceUtil;
+import com.liferay.social.kernel.service.SocialRequestLocalServiceUtil;
+
+import java.lang.reflect.Field;
 
 import java.util.List;
 
 /**
  * @author Ryan Park
+ * @author Jonathan Lee
  */
 public class ContactsUtil {
+
+	public static JSONObject getEntryJSONObject(Entry entry) {
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("comments", entry.getComments());
+		jsonObject.put("emailAddress", entry.getEmailAddress());
+		jsonObject.put("entryId", String.valueOf(entry.getEntryId()));
+		jsonObject.put("fullName", entry.getFullName());
+		jsonObject.put("portalUser", false);
+
+		return jsonObject;
+	}
+
+	public static long getGroupId(String filterBy) {
+		String groupIdString = filterBy.substring(
+			ContactsConstants.FILTER_BY_GROUP.length());
+
+		return GetterUtil.getLong(groupIdString);
+	}
+
+	public static String[] getPortalPropsValue(String key) {
+		try {
+			ClassLoader portalClassLoader =
+				PortalClassLoaderUtil.getClassLoader();
+
+			Class<?> targetClass = portalClassLoader.loadClass(
+				"com.liferay.portal.util.PropsValues");
+
+			Field field = targetClass.getField(key);
+
+			return (String[])field.get((Object)null);
+		}
+		catch (Exception e) {
+		}
+
+		return null;
+	}
+
+	public static long getSocialRelationType(String filterBy) {
+		String socialRelationTypeString = filterBy.substring(
+			ContactsConstants.FILTER_BY_TYPE.length());
+
+		return GetterUtil.getLong(socialRelationTypeString);
+	}
+
+	public static JSONObject getUserJSONObject(long userId, User user)
+		throws PortalException {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		boolean block = SocialRelationLocalServiceUtil.hasRelation(
+			userId, user.getUserId(), SocialRelationConstants.TYPE_UNI_ENEMY);
+
+		jsonObject.put("block", block);
+
+		jsonObject.put("contactId", String.valueOf(user.getContactId()));
+		jsonObject.put("emailAddress", user.getEmailAddress());
+		jsonObject.put("firstName", user.getFirstName());
+		jsonObject.put("fullName", user.getFullName());
+		jsonObject.put("jobTitle", user.getJobTitle());
+		jsonObject.put("lastName", user.getLastName());
+		jsonObject.put("portalUser", true);
+		jsonObject.put("portraitId", String.valueOf(user.getPortraitId()));
+		jsonObject.put("userId", String.valueOf(user.getUserId()));
+		jsonObject.put("uuid", user.getUuid());
+
+		if (!SocialRelationLocalServiceUtil.hasRelation(
+				user.getUserId(), userId,
+				SocialRelationConstants.TYPE_UNI_ENEMY) &&
+			!SocialRelationLocalServiceUtil.hasRelation(
+				userId, user.getUserId(),
+				SocialRelationConstants.TYPE_UNI_ENEMY)) {
+
+			boolean connectionRequested =
+				SocialRequestLocalServiceUtil.hasRequest(
+					userId, User.class.getName(), userId,
+					SocialRelationConstants.TYPE_BI_CONNECTION,
+					user.getUserId(), SocialRequestConstants.STATUS_PENDING);
+
+			jsonObject.put("connectionRequested", connectionRequested);
+
+			boolean connected = false;
+
+			if (!connectionRequested &&
+				SocialRelationLocalServiceUtil.hasRelation(
+					userId, user.getUserId(),
+					SocialRelationConstants.TYPE_BI_CONNECTION)) {
+
+				connected = true;
+			}
+
+			jsonObject.put("connected", connected);
+
+			boolean following = SocialRelationLocalServiceUtil.hasRelation(
+				userId, user.getUserId(),
+				SocialRelationConstants.TYPE_UNI_FOLLOWER);
+
+			jsonObject.put("following", following);
+		}
+
+		return jsonObject;
+	}
 
 	public static String getVCard(User user) throws Exception {
 		StringBundler sb = new StringBundler();
@@ -49,6 +167,7 @@ public class ContactsUtil {
 		Contact contact = user.getContact();
 
 		sb.append(_getName(user, contact));
+
 		sb.append(_getJobTitle(user));
 		sb.append(_getEmailAddresses(user));
 		sb.append(_getPhones(user));
@@ -72,17 +191,16 @@ public class ContactsUtil {
 
 	private static String _getAddresses(User user) throws Exception {
 		List<Address> addresses = AddressLocalServiceUtil.getAddresses(
-			user.getCompanyId(), Contact.class.getName(),
-			user.getContactId());
+			user.getCompanyId(), Contact.class.getName(), user.getContactId());
 
 		StringBundler sb = new StringBundler(addresses.size() * 19);
 
-		for (Address address: addresses) {
+		for (Address address : addresses) {
 			sb.append("ADR;TYPE=");
 
 			ListType listType = address.getType();
 
-			sb.append(listType.getName().toUpperCase());
+			sb.append(StringUtil.toUpperCase(_getVCardListTypeName(listType)));
 
 			sb.append(StringPool.COLON);
 			sb.append(StringPool.SEMICOLON);
@@ -157,7 +275,7 @@ public class ContactsUtil {
 
 			ListType listType = emailAddress.getType();
 
-			sb.append(listType.getName().toUpperCase());
+			sb.append(StringUtil.toUpperCase(listType.getName()));
 
 			sb.append(StringPool.COLON);
 			sb.append(emailAddress.getAddress());
@@ -178,39 +296,15 @@ public class ContactsUtil {
 	private static String _getInstantMessaging(Contact contact) {
 		StringBundler sb = new StringBundler(18);
 
-		if (Validator.isNotNull(contact.getAimSn())) {
-			sb.append("X-AIM;type=OTHER;type=pref:");
-			sb.append(contact.getAimSn());
-			sb.append(StringPool.NEW_LINE);
-		}
-
-		if (Validator.isNotNull(contact.getIcqSn())) {
-			sb.append("X-ICQ;type=OTHER;type=pref:");
-			sb.append(contact.getAimSn());
-			sb.append(StringPool.NEW_LINE);
-		}
-
 		if (Validator.isNotNull(contact.getJabberSn())) {
 			sb.append("X-JABBER;type=OTHER;type=pref:");
 			sb.append(contact.getJabberSn());
 			sb.append(StringPool.NEW_LINE);
 		}
 
-		if (Validator.isNotNull(contact.getMsnSn())) {
-			sb.append("X-MSN;type=OTHER;type=pref:");
-			sb.append(contact.getMsnSn());
-			sb.append(StringPool.NEW_LINE);
-		}
-
 		if (Validator.isNotNull(contact.getSkypeSn())) {
 			sb.append("X-SKYPE;type=OTHER;type=pref:");
 			sb.append(contact.getSkypeSn());
-			sb.append(StringPool.NEW_LINE);
-		}
-
-		if (Validator.isNotNull(contact.getYmSn())) {
-			sb.append("X-YM;type=OTHER;type=pref:");
-			sb.append(contact.getYmSn());
 			sb.append(StringPool.NEW_LINE);
 		}
 
@@ -240,7 +334,7 @@ public class ContactsUtil {
 		sb.append(user.getMiddleName());
 		sb.append(StringPool.SEMICOLON);
 
-		int prefixId = contact.getPrefixId();
+		long prefixId = contact.getPrefixId();
 
 		if (prefixId > 0) {
 			ListType listType = ListTypeServiceUtil.getListType(prefixId);
@@ -250,7 +344,7 @@ public class ContactsUtil {
 
 		sb.append(StringPool.SEMICOLON);
 
-		int suffixId = contact.getSuffixId();
+		long suffixId = contact.getSuffixId();
 
 		if (suffixId > 0) {
 			ListType listType = ListTypeServiceUtil.getListType(suffixId);
@@ -268,8 +362,7 @@ public class ContactsUtil {
 
 	private static String _getPhones(User user) throws Exception {
 		List<Phone> phones = PhoneLocalServiceUtil.getPhones(
-			user.getCompanyId(), Contact.class.getName(),
-			user.getContactId());
+			user.getCompanyId(), Contact.class.getName(), user.getContactId());
 
 		StringBundler sb = new StringBundler(phones.size() * 7);
 
@@ -278,7 +371,7 @@ public class ContactsUtil {
 
 			ListType listType = phone.getType();
 
-			sb.append(listType.getName().toUpperCase());
+			sb.append(StringUtil.toUpperCase(_getVCardListTypeName(listType)));
 
 			sb.append(StringPool.COLON);
 			sb.append(phone.getNumber());
@@ -290,19 +383,31 @@ public class ContactsUtil {
 		return sb.toString();
 	}
 
+	private static String _getVCardListTypeName(ListType listType) {
+		String listTypeName = listType.getName();
+
+		if (StringUtil.equalsIgnoreCase(listTypeName, "business")) {
+			listTypeName = "work";
+		}
+		else if (StringUtil.equalsIgnoreCase(listTypeName, "personal")) {
+			listTypeName = "home";
+		}
+
+		return listTypeName;
+	}
+
 	private static String _getWebsites(User user) throws Exception {
 		List<Website> websites = WebsiteLocalServiceUtil.getWebsites(
-			user.getCompanyId(), Contact.class.getName(),
-			user.getContactId());
+			user.getCompanyId(), Contact.class.getName(), user.getContactId());
 
 		StringBundler sb = new StringBundler(websites.size() * 5);
 
-		for (Website website: websites) {
+		for (Website website : websites) {
 			sb.append("URL;TYPE=");
 
 			ListType listType = website.getType();
 
-			sb.append(listType.getName().toUpperCase());
+			sb.append(StringUtil.toUpperCase(_getVCardListTypeName(listType)));
 
 			sb.append(StringPool.COLON);
 

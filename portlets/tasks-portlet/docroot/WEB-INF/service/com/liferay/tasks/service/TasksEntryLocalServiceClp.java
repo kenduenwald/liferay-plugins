@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,160 +14,415 @@
 
 package com.liferay.tasks.service;
 
-import com.liferay.portal.kernel.util.ClassLoaderProxy;
-import com.liferay.portal.kernel.util.MethodHandler;
-import com.liferay.portal.kernel.util.MethodKey;
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.service.InvokableLocalService;
 
 /**
  * @author Ryan Park
+ * @generated
  */
+@ProviderType
 public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
-	public TasksEntryLocalServiceClp(ClassLoaderProxy classLoaderProxy) {
-		_classLoaderProxy = classLoaderProxy;
+	public TasksEntryLocalServiceClp(
+		InvokableLocalService invokableLocalService) {
+		_invokableLocalService = invokableLocalService;
 
-		_addTasksEntryMethodKey0 = new MethodKey(_classLoaderProxy.getClassName(),
-				"addTasksEntry", com.liferay.tasks.model.TasksEntry.class);
+		_methodName0 = "getActionableDynamicQuery";
 
-		_createTasksEntryMethodKey1 = new MethodKey(_classLoaderProxy.getClassName(),
-				"createTasksEntry", long.class);
+		_methodParameterTypes0 = new String[] {  };
 
-		_deleteTasksEntryMethodKey2 = new MethodKey(_classLoaderProxy.getClassName(),
-				"deleteTasksEntry", long.class);
+		_methodName1 = "dynamicQuery";
 
-		_deleteTasksEntryMethodKey3 = new MethodKey(_classLoaderProxy.getClassName(),
-				"deleteTasksEntry", com.liferay.tasks.model.TasksEntry.class);
+		_methodParameterTypes1 = new String[] {  };
 
-		_dynamicQueryMethodKey4 = new MethodKey(_classLoaderProxy.getClassName(),
-				"dynamicQuery",
-				com.liferay.portal.kernel.dao.orm.DynamicQuery.class);
+		_methodName2 = "getIndexableActionableDynamicQuery";
 
-		_dynamicQueryMethodKey5 = new MethodKey(_classLoaderProxy.getClassName(),
-				"dynamicQuery",
-				com.liferay.portal.kernel.dao.orm.DynamicQuery.class,
-				int.class, int.class);
+		_methodParameterTypes2 = new String[] {  };
 
-		_dynamicQueryMethodKey6 = new MethodKey(_classLoaderProxy.getClassName(),
-				"dynamicQuery",
-				com.liferay.portal.kernel.dao.orm.DynamicQuery.class,
-				int.class, int.class,
-				com.liferay.portal.kernel.util.OrderByComparator.class);
+		_methodName3 = "deletePersistedModel";
 
-		_dynamicQueryCountMethodKey7 = new MethodKey(_classLoaderProxy.getClassName(),
-				"dynamicQueryCount",
-				com.liferay.portal.kernel.dao.orm.DynamicQuery.class);
+		_methodParameterTypes3 = new String[] {
+				"com.liferay.portal.kernel.model.PersistedModel"
+			};
 
-		_getTasksEntryMethodKey8 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getTasksEntry", long.class);
+		_methodName4 = "getPersistedModel";
 
-		_getTasksEntriesMethodKey9 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getTasksEntries", int.class, int.class);
+		_methodParameterTypes4 = new String[] { "java.io.Serializable" };
 
-		_getTasksEntriesCountMethodKey10 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getTasksEntriesCount");
+		_methodName5 = "addTasksEntry";
 
-		_updateTasksEntryMethodKey11 = new MethodKey(_classLoaderProxy.getClassName(),
-				"updateTasksEntry", com.liferay.tasks.model.TasksEntry.class);
+		_methodParameterTypes5 = new String[] {
+				"com.liferay.tasks.model.TasksEntry"
+			};
 
-		_updateTasksEntryMethodKey12 = new MethodKey(_classLoaderProxy.getClassName(),
-				"updateTasksEntry", com.liferay.tasks.model.TasksEntry.class,
-				boolean.class);
+		_methodName6 = "addTasksEntry";
 
-		_getBeanIdentifierMethodKey13 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getBeanIdentifier");
+		_methodParameterTypes6 = new String[] {
+				"long", "java.lang.String", "int", "long", "int", "int", "int",
+				"int", "int", "boolean",
+				"com.liferay.portal.kernel.service.ServiceContext"
+			};
 
-		_setBeanIdentifierMethodKey14 = new MethodKey(_classLoaderProxy.getClassName(),
-				"setBeanIdentifier", java.lang.String.class);
+		_methodName7 = "createTasksEntry";
 
-		_addTasksEntryMethodKey15 = new MethodKey(_classLoaderProxy.getClassName(),
-				"addTasksEntry", long.class, java.lang.String.class, int.class,
-				long.class, int.class, int.class, int.class, int.class,
-				int.class, boolean.class,
-				com.liferay.portal.service.ServiceContext.class);
+		_methodParameterTypes7 = new String[] { "long" };
 
-		_getAssigneeTasksEntriesMethodKey16 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getAssigneeTasksEntries", long.class, int.class, int.class);
+		_methodName8 = "deleteTasksEntry";
 
-		_getAssigneeTasksEntriesCountMethodKey17 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getAssigneeTasksEntriesCount", long.class);
+		_methodParameterTypes8 = new String[] {
+				"com.liferay.tasks.model.TasksEntry"
+			};
 
-		_getGroupAssigneeTasksEntriesMethodKey18 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getGroupAssigneeTasksEntries", long.class, long.class,
-				int.class, int.class);
+		_methodName9 = "deleteTasksEntry";
 
-		_getGroupAssigneeTasksEntriesCountMethodKey19 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getGroupAssigneeTasksEntriesCount", long.class, long.class);
+		_methodParameterTypes9 = new String[] { "long" };
 
-		_getGroupResolverTasksEntriesMethodKey20 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getGroupResolverTasksEntries", long.class, long.class,
-				int.class, int.class);
+		_methodName10 = "fetchTasksEntry";
 
-		_getGroupResolverTasksEntriesCountMethodKey21 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getGroupResolverTasksEntriesCount", long.class, long.class);
+		_methodParameterTypes10 = new String[] { "long" };
 
-		_getGroupUserTasksEntriesMethodKey22 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getGroupUserTasksEntries", long.class, long.class, int.class,
-				int.class);
+		_methodName11 = "getTasksEntry";
 
-		_getGroupUserTasksEntriesCountMethodKey23 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getGroupUserTasksEntriesCount", long.class, long.class);
+		_methodParameterTypes11 = new String[] { "long" };
 
-		_getResolverTasksEntriesMethodKey24 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getResolverTasksEntries", long.class, int.class, int.class);
+		_methodName12 = "updateTasksEntry";
 
-		_getResolverTasksEntriesCountMethodKey25 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getResolverTasksEntriesCount", long.class);
+		_methodParameterTypes12 = new String[] {
+				"com.liferay.tasks.model.TasksEntry"
+			};
 
-		_getTasksEntriesMethodKey26 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getTasksEntries", long.class, int.class, int.class);
+		_methodName13 = "updateTasksEntry";
 
-		_getTasksEntriesMethodKey27 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getTasksEntries", long.class, int.class, long.class,
-				long.class, int.class, long[].class, long[].class, int.class,
-				int.class);
+		_methodParameterTypes13 = new String[] {
+				"long", "java.lang.String", "int", "long", "long", "int", "int",
+				"int", "int", "int", "boolean", "int",
+				"com.liferay.portal.kernel.service.ServiceContext"
+			};
 
-		_getTasksEntriesCountMethodKey28 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getTasksEntriesCount", long.class);
+		_methodName14 = "updateTasksEntryStatus";
 
-		_getTasksEntriesCountMethodKey29 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getTasksEntriesCount", long.class, int.class, long.class,
-				long.class, int.class, long[].class, long[].class);
+		_methodParameterTypes14 = new String[] {
+				"long", "long", "int",
+				"com.liferay.portal.kernel.service.ServiceContext"
+			};
 
-		_getUserTasksEntriesMethodKey30 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getUserTasksEntries", long.class, int.class, int.class);
+		_methodName15 = "getAssigneeTasksEntriesCount";
 
-		_getUserTasksEntriesCountMethodKey31 = new MethodKey(_classLoaderProxy.getClassName(),
-				"getUserTasksEntriesCount", long.class);
+		_methodParameterTypes15 = new String[] { "long" };
 
-		_updateAssetMethodKey32 = new MethodKey(_classLoaderProxy.getClassName(),
-				"updateAsset", long.class,
-				com.liferay.tasks.model.TasksEntry.class, long[].class,
-				java.lang.String[].class);
+		_methodName16 = "getGroupAssigneeTasksEntriesCount";
 
-		_updateTasksEntryMethodKey33 = new MethodKey(_classLoaderProxy.getClassName(),
-				"updateTasksEntry", long.class, java.lang.String.class,
-				int.class, long.class, long.class, int.class, int.class,
-				int.class, int.class, int.class, boolean.class, int.class,
-				com.liferay.portal.service.ServiceContext.class);
+		_methodParameterTypes16 = new String[] { "long", "long" };
 
-		_updateTasksEntryStatusMethodKey34 = new MethodKey(_classLoaderProxy.getClassName(),
-				"updateTasksEntryStatus", long.class, long.class, int.class,
-				com.liferay.portal.service.ServiceContext.class);
+		_methodName17 = "getGroupResolverTasksEntriesCount";
+
+		_methodParameterTypes17 = new String[] { "long", "long" };
+
+		_methodName18 = "getGroupUserTasksEntriesCount";
+
+		_methodParameterTypes18 = new String[] { "long", "long" };
+
+		_methodName19 = "getResolverTasksEntriesCount";
+
+		_methodParameterTypes19 = new String[] { "long" };
+
+		_methodName20 = "getTasksEntriesCount";
+
+		_methodParameterTypes20 = new String[] {  };
+
+		_methodName21 = "getTasksEntriesCount";
+
+		_methodParameterTypes21 = new String[] { "long" };
+
+		_methodName22 = "getTasksEntriesCount";
+
+		_methodParameterTypes22 = new String[] {
+				"long", "long", "int", "long", "int", "long[][]", "long[][]"
+			};
+
+		_methodName23 = "getUserTasksEntriesCount";
+
+		_methodParameterTypes23 = new String[] { "long" };
+
+		_methodName25 = "getOSGiServiceIdentifier";
+
+		_methodParameterTypes25 = new String[] {  };
+
+		_methodName26 = "dynamicQuery";
+
+		_methodParameterTypes26 = new String[] {
+				"com.liferay.portal.kernel.dao.orm.DynamicQuery"
+			};
+
+		_methodName27 = "dynamicQuery";
+
+		_methodParameterTypes27 = new String[] {
+				"com.liferay.portal.kernel.dao.orm.DynamicQuery", "int", "int"
+			};
+
+		_methodName28 = "dynamicQuery";
+
+		_methodParameterTypes28 = new String[] {
+				"com.liferay.portal.kernel.dao.orm.DynamicQuery", "int", "int",
+				"com.liferay.portal.kernel.util.OrderByComparator"
+			};
+
+		_methodName29 = "getAssigneeTasksEntries";
+
+		_methodParameterTypes29 = new String[] { "long", "int", "int" };
+
+		_methodName30 = "getGroupAssigneeTasksEntries";
+
+		_methodParameterTypes30 = new String[] { "long", "long", "int", "int" };
+
+		_methodName31 = "getGroupResolverTasksEntries";
+
+		_methodParameterTypes31 = new String[] { "long", "long", "int", "int" };
+
+		_methodName32 = "getGroupUserTasksEntries";
+
+		_methodParameterTypes32 = new String[] { "long", "long", "int", "int" };
+
+		_methodName33 = "getResolverTasksEntries";
+
+		_methodParameterTypes33 = new String[] { "long", "int", "int" };
+
+		_methodName34 = "getTasksEntries";
+
+		_methodParameterTypes34 = new String[] { "int", "int" };
+
+		_methodName35 = "getTasksEntries";
+
+		_methodParameterTypes35 = new String[] { "long", "int", "int" };
+
+		_methodName36 = "getTasksEntries";
+
+		_methodParameterTypes36 = new String[] {
+				"long", "long", "int", "long", "int", "long[][]", "long[][]",
+				"int", "int"
+			};
+
+		_methodName37 = "getUserTasksEntries";
+
+		_methodParameterTypes37 = new String[] { "long", "int", "int" };
+
+		_methodName38 = "dynamicQueryCount";
+
+		_methodParameterTypes38 = new String[] {
+				"com.liferay.portal.kernel.dao.orm.DynamicQuery"
+			};
+
+		_methodName39 = "dynamicQueryCount";
+
+		_methodParameterTypes39 = new String[] {
+				"com.liferay.portal.kernel.dao.orm.DynamicQuery",
+				"com.liferay.portal.kernel.dao.orm.Projection"
+			};
+
+		_methodName40 = "updateAsset";
+
+		_methodParameterTypes40 = new String[] {
+				"long", "com.liferay.tasks.model.TasksEntry", "long[][]",
+				"java.lang.String[][]"
+			};
 	}
 
-	public com.liferay.tasks.model.TasksEntry addTasksEntry(
-		com.liferay.tasks.model.TasksEntry tasksEntry)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	@Override
+	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		Object returnObj = null;
 
-		MethodHandler methodHandler = new MethodHandler(_addTasksEntryMethodKey0,
-				ClpSerializer.translateInput(tasksEntry));
-
 		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
+			returnObj = _invokableLocalService.invokeMethod(_methodName0,
+					_methodParameterTypes0, new Object[] {  });
 		}
 		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName1,
+					_methodParameterTypes1, new Object[] {  });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.portal.kernel.dao.orm.DynamicQuery)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName2,
+					_methodParameterTypes2, new Object[] {  });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.kernel.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName3,
+					_methodParameterTypes3,
+					new Object[] { ClpSerializer.translateInput(persistedModel) });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.portal.kernel.model.PersistedModel)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName4,
+					_methodParameterTypes4,
+					new Object[] { ClpSerializer.translateInput(primaryKeyObj) });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.portal.kernel.model.PersistedModel)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.tasks.model.TasksEntry addTasksEntry(
+		com.liferay.tasks.model.TasksEntry tasksEntry) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName5,
+					_methodParameterTypes5,
+					new Object[] { ClpSerializer.translateInput(tasksEntry) });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.tasks.model.TasksEntry addTasksEntry(long userId,
+		java.lang.String title, int priority, long assigneeUserId,
+		int dueDateMonth, int dueDateDay, int dueDateYear, int dueDateHour,
+		int dueDateMinute, boolean addDueDate,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName6,
+					_methodParameterTypes6,
+					new Object[] {
+						userId,
+						
+					ClpSerializer.translateInput(title),
+						
+					priority,
+						
+					assigneeUserId,
+						
+					dueDateMonth,
+						
+					dueDateDay,
+						
+					dueDateYear,
+						
+					dueDateHour,
+						
+					dueDateMinute,
+						
+					addDueDate,
+						
+					ClpSerializer.translateInput(serviceContext)
+					});
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
 			}
 
 			if (t instanceof RuntimeException) {
@@ -182,17 +437,18 @@ public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
 		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
 	}
 
+	@Override
 	public com.liferay.tasks.model.TasksEntry createTasksEntry(
 		long tasksEntryId) {
 		Object returnObj = null;
 
-		MethodHandler methodHandler = new MethodHandler(_createTasksEntryMethodKey1,
-				tasksEntryId);
-
 		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
+			returnObj = _invokableLocalService.invokeMethod(_methodName7,
+					_methodParameterTypes7, new Object[] { tasksEntryId });
 		}
 		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
 			if (t instanceof RuntimeException) {
 				throw (RuntimeException)t;
 			}
@@ -205,77 +461,22 @@ public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
 		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
 	}
 
-	public void deleteTasksEntry(long tasksEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		MethodHandler methodHandler = new MethodHandler(_deleteTasksEntryMethodKey2,
-				tasksEntryId);
-
-		try {
-			_classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
-				throw (com.liferay.portal.kernel.exception.PortalException)t;
-			}
-
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-	}
-
-	public void deleteTasksEntry(com.liferay.tasks.model.TasksEntry tasksEntry)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		MethodHandler methodHandler = new MethodHandler(_deleteTasksEntryMethodKey3,
-				ClpSerializer.translateInput(tasksEntry));
-
-		try {
-			_classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
-				throw (com.liferay.portal.kernel.exception.PortalException)t;
-			}
-
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	@Override
+	public com.liferay.tasks.model.TasksEntry deleteTasksEntry(
+		com.liferay.tasks.model.TasksEntry tasksEntry)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		Object returnObj = null;
 
-		MethodHandler methodHandler = new MethodHandler(_dynamicQueryMethodKey4,
-				ClpSerializer.translateInput(dynamicQuery));
-
 		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
+			returnObj = _invokableLocalService.invokeMethod(_methodName8,
+					_methodParameterTypes8,
+					new Object[] { ClpSerializer.translateInput(tasksEntry) });
 		}
 		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
 			}
 
 			if (t instanceof RuntimeException) {
@@ -287,25 +488,515 @@ public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
 			}
 		}
 
-		return (java.util.List)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
+	@Override
+	public com.liferay.tasks.model.TasksEntry deleteTasksEntry(
+		long tasksEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName9,
+					_methodParameterTypes9, new Object[] { tasksEntryId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.tasks.model.TasksEntry fetchTasksEntry(long tasksEntryId) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName10,
+					_methodParameterTypes10, new Object[] { tasksEntryId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.tasks.model.TasksEntry getTasksEntry(long tasksEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName11,
+					_methodParameterTypes11, new Object[] { tasksEntryId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.tasks.model.TasksEntry updateTasksEntry(
+		com.liferay.tasks.model.TasksEntry tasksEntry) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName12,
+					_methodParameterTypes12,
+					new Object[] { ClpSerializer.translateInput(tasksEntry) });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.tasks.model.TasksEntry updateTasksEntry(
+		long tasksEntryId, java.lang.String title, int priority,
+		long assigneeUserId, long resolverUserId, int dueDateMonth,
+		int dueDateDay, int dueDateYear, int dueDateHour, int dueDateMinute,
+		boolean addDueDate, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName13,
+					_methodParameterTypes13,
+					new Object[] {
+						tasksEntryId,
+						
+					ClpSerializer.translateInput(title),
+						
+					priority,
+						
+					assigneeUserId,
+						
+					resolverUserId,
+						
+					dueDateMonth,
+						
+					dueDateDay,
+						
+					dueDateYear,
+						
+					dueDateHour,
+						
+					dueDateMinute,
+						
+					addDueDate,
+						
+					status,
+						
+					ClpSerializer.translateInput(serviceContext)
+					});
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public com.liferay.tasks.model.TasksEntry updateTasksEntryStatus(
+		long tasksEntryId, long resolverUserId, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName14,
+					_methodParameterTypes14,
+					new Object[] {
+						tasksEntryId,
+						
+					resolverUserId,
+						
+					status,
+						
+					ClpSerializer.translateInput(serviceContext)
+					});
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
+				throw (com.liferay.portal.kernel.exception.PortalException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public int getAssigneeTasksEntriesCount(long assigneeUserId) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName15,
+					_methodParameterTypes15, new Object[] { assigneeUserId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public int getGroupAssigneeTasksEntriesCount(long groupId,
+		long assigneeUserId) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName16,
+					_methodParameterTypes16,
+					new Object[] { groupId, assigneeUserId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public int getGroupResolverTasksEntriesCount(long groupId,
+		long resolverUserId) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName17,
+					_methodParameterTypes17,
+					new Object[] { groupId, resolverUserId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public int getGroupUserTasksEntriesCount(long groupId, long userId) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName18,
+					_methodParameterTypes18, new Object[] { groupId, userId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public int getResolverTasksEntriesCount(long resolverUserId) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName19,
+					_methodParameterTypes19, new Object[] { resolverUserId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public int getTasksEntriesCount() {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName20,
+					_methodParameterTypes20, new Object[] {  });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public int getTasksEntriesCount(long groupId) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName21,
+					_methodParameterTypes21, new Object[] { groupId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public int getTasksEntriesCount(long groupId, long userId, int priority,
+		long assigneeUserId, int status, long[] tagsEntryIds,
+		long[] notTagsEntryIds) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName22,
+					_methodParameterTypes22,
+					new Object[] {
+						groupId,
+						
+					userId,
+						
+					priority,
+						
+					assigneeUserId,
+						
+					status,
+						
+					ClpSerializer.translateInput(tagsEntryIds),
+						
+					ClpSerializer.translateInput(notTagsEntryIds)
+					});
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public int getUserTasksEntriesCount(long userId) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName23,
+					_methodParameterTypes23, new Object[] { userId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return ((Integer)returnObj).intValue();
+	}
+
+	@Override
+	public java.lang.Object invokeMethod(java.lang.String name,
+		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
+		throws java.lang.Throwable {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public java.lang.String getOSGiServiceIdentifier() {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName25,
+					_methodParameterTypes25, new Object[] {  });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.lang.String)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName26,
+					_methodParameterTypes26,
+					new Object[] { ClpSerializer.translateInput(dynamicQuery) });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<T>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException {
+		int end) {
 		Object returnObj = null;
 
-		MethodHandler methodHandler = new MethodHandler(_dynamicQueryMethodKey5,
-				ClpSerializer.translateInput(dynamicQuery), start, end);
-
 		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
+			returnObj = _invokableLocalService.invokeMethod(_methodName27,
+					_methodParameterTypes27,
+					new Object[] {
+						ClpSerializer.translateInput(dynamicQuery),
+						
+					start,
+						
+					end
+					});
 		}
 		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
+			t = ClpSerializer.translateThrowable(t);
 
 			if (t instanceof RuntimeException) {
 				throw (RuntimeException)t;
@@ -316,28 +1007,31 @@ public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
 			}
 		}
 
-		return (java.util.List)ClpSerializer.translateOutput(returnObj);
+		return (java.util.List<T>)ClpSerializer.translateOutput(returnObj);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
+	@Override
+	public <T> java.util.List<T> dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		Object returnObj = null;
 
-		MethodHandler methodHandler = new MethodHandler(_dynamicQueryMethodKey6,
-				ClpSerializer.translateInput(dynamicQuery), start, end,
-				ClpSerializer.translateInput(orderByComparator));
-
 		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
+			returnObj = _invokableLocalService.invokeMethod(_methodName28,
+					_methodParameterTypes28,
+					new Object[] {
+						ClpSerializer.translateInput(dynamicQuery),
+						
+					start,
+						
+					end,
+						
+					ClpSerializer.translateInput(orderByComparator)
+					});
 		}
 		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
+			t = ClpSerializer.translateThrowable(t);
 
 			if (t instanceof RuntimeException) {
 				throw (RuntimeException)t;
@@ -348,24 +1042,264 @@ public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
 			}
 		}
 
-		return (java.util.List)ClpSerializer.translateOutput(returnObj);
+		return (java.util.List<T>)ClpSerializer.translateOutput(returnObj);
 	}
 
-	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getAssigneeTasksEntries(
+		long assigneeUserId, int start, int end) {
 		Object returnObj = null;
 
-		MethodHandler methodHandler = new MethodHandler(_dynamicQueryCountMethodKey7,
-				ClpSerializer.translateInput(dynamicQuery));
-
 		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
+			returnObj = _invokableLocalService.invokeMethod(_methodName29,
+					_methodParameterTypes29,
+					new Object[] { assigneeUserId, start, end });
 		}
 		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
 			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getGroupAssigneeTasksEntries(
+		long groupId, long assigneeUserId, int start, int end) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName30,
+					_methodParameterTypes30,
+					new Object[] { groupId, assigneeUserId, start, end });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getGroupResolverTasksEntries(
+		long groupId, long resolverUserId, int start, int end) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName31,
+					_methodParameterTypes31,
+					new Object[] { groupId, resolverUserId, start, end });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getGroupUserTasksEntries(
+		long groupId, long userId, int start, int end) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName32,
+					_methodParameterTypes32,
+					new Object[] { groupId, userId, start, end });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getResolverTasksEntries(
+		long resolverUserId, int start, int end) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName33,
+					_methodParameterTypes33,
+					new Object[] { resolverUserId, start, end });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getTasksEntries(
+		int start, int end) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName34,
+					_methodParameterTypes34, new Object[] { start, end });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getTasksEntries(
+		long groupId, int start, int end) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName35,
+					_methodParameterTypes35,
+					new Object[] { groupId, start, end });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getTasksEntries(
+		long groupId, long userId, int priority, long assigneeUserId,
+		int status, long[] assetTagIds, long[] notAssetTagIds, int start,
+		int end) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName36,
+					_methodParameterTypes36,
+					new Object[] {
+						groupId,
+						
+					userId,
+						
+					priority,
+						
+					assigneeUserId,
+						
+					status,
+						
+					ClpSerializer.translateInput(assetTagIds),
+						
+					ClpSerializer.translateInput(notAssetTagIds),
+						
+					start,
+						
+					end
+					});
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.tasks.model.TasksEntry> getUserTasksEntries(
+		long userId, int start, int end) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName37,
+					_methodParameterTypes37, new Object[] { userId, start, end });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName38,
+					_methodParameterTypes38,
+					new Object[] { ClpSerializer.translateInput(dynamicQuery) });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
 
 			if (t instanceof RuntimeException) {
 				throw (RuntimeException)t;
@@ -379,25 +1313,23 @@ public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
 		return ((Long)returnObj).longValue();
 	}
 
-	public com.liferay.tasks.model.TasksEntry getTasksEntry(long tasksEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+	@Override
+	public long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
 		Object returnObj = null;
 
-		MethodHandler methodHandler = new MethodHandler(_getTasksEntryMethodKey8,
-				tasksEntryId);
-
 		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
+			returnObj = _invokableLocalService.invokeMethod(_methodName39,
+					_methodParameterTypes39,
+					new Object[] {
+						ClpSerializer.translateInput(dynamicQuery),
+						
+					ClpSerializer.translateInput(projection)
+					});
 		}
 		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
-				throw (com.liferay.portal.kernel.exception.PortalException)t;
-			}
-
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
+			t = ClpSerializer.translateThrowable(t);
 
 			if (t instanceof RuntimeException) {
 				throw (RuntimeException)t;
@@ -408,664 +1340,32 @@ public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
 			}
 		}
 
-		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
+		return ((Long)returnObj).longValue();
 	}
 
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getTasksEntries(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getTasksEntriesMethodKey9,
-				start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public int getTasksEntriesCount()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getTasksEntriesCountMethodKey10);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
-	public com.liferay.tasks.model.TasksEntry updateTasksEntry(
-		com.liferay.tasks.model.TasksEntry tasksEntry)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_updateTasksEntryMethodKey11,
-				ClpSerializer.translateInput(tasksEntry));
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public com.liferay.tasks.model.TasksEntry updateTasksEntry(
-		com.liferay.tasks.model.TasksEntry tasksEntry, boolean merge)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_updateTasksEntryMethodKey12,
-				ClpSerializer.translateInput(tasksEntry), merge);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public java.lang.String getBeanIdentifier() {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getBeanIdentifierMethodKey13);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.lang.String)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public void setBeanIdentifier(java.lang.String beanIdentifier) {
-		MethodHandler methodHandler = new MethodHandler(_setBeanIdentifierMethodKey14,
-				ClpSerializer.translateInput(beanIdentifier));
-
-		try {
-			_classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-	}
-
-	public com.liferay.tasks.model.TasksEntry addTasksEntry(long userId,
-		java.lang.String title, int priority, long assigneeUserId,
-		int dueDateMonth, int dueDateDay, int dueDateYear, int dueDateHour,
-		int dueDateMinute, boolean neverDue,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_addTasksEntryMethodKey15,
-				userId, ClpSerializer.translateInput(title), priority,
-				assigneeUserId, dueDateMonth, dueDateDay, dueDateYear,
-				dueDateHour, dueDateMinute, neverDue,
-				ClpSerializer.translateInput(serviceContext));
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
-				throw (com.liferay.portal.kernel.exception.PortalException)t;
-			}
-
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getAssigneeTasksEntries(
-		long userId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getAssigneeTasksEntriesMethodKey16,
-				userId, start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public int getAssigneeTasksEntriesCount(long userId)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getAssigneeTasksEntriesCountMethodKey17,
-				userId);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getGroupAssigneeTasksEntries(
-		long groupId, long userId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getGroupAssigneeTasksEntriesMethodKey18,
-				groupId, userId, start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public int getGroupAssigneeTasksEntriesCount(long groupId, long userId)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getGroupAssigneeTasksEntriesCountMethodKey19,
-				groupId, userId);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getGroupResolverTasksEntries(
-		long groupId, long userId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getGroupResolverTasksEntriesMethodKey20,
-				groupId, userId, start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public int getGroupResolverTasksEntriesCount(long groupId, long userId)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getGroupResolverTasksEntriesCountMethodKey21,
-				groupId, userId);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getGroupUserTasksEntries(
-		long groupId, long userId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getGroupUserTasksEntriesMethodKey22,
-				groupId, userId, start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public int getGroupUserTasksEntriesCount(long groupId, long userId)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getGroupUserTasksEntriesCountMethodKey23,
-				groupId, userId);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getResolverTasksEntries(
-		long userId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getResolverTasksEntriesMethodKey24,
-				userId, start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public int getResolverTasksEntriesCount(long userId)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getResolverTasksEntriesCountMethodKey25,
-				userId);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getTasksEntries(
-		long groupId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getTasksEntriesMethodKey26,
-				groupId, start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getTasksEntries(
-		long groupId, int priority, long assigneeUserId, long reporterUserId,
-		int status, long[] assetTagIds, long[] notAssetTagIds, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getTasksEntriesMethodKey27,
-				groupId, priority, assigneeUserId, reporterUserId, status,
-				ClpSerializer.translateInput(assetTagIds),
-				ClpSerializer.translateInput(notAssetTagIds), start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public int getTasksEntriesCount(long groupId)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getTasksEntriesCountMethodKey28,
-				groupId);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
-	public int getTasksEntriesCount(long groupId, int priority,
-		long assigneeUserId, long reporterUserId, int status,
-		long[] tagsEntryIds, long[] notTagsEntryIds)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getTasksEntriesCountMethodKey29,
-				groupId, priority, assigneeUserId, reporterUserId, status,
-				ClpSerializer.translateInput(tagsEntryIds),
-				ClpSerializer.translateInput(notTagsEntryIds));
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
-	public java.util.List<com.liferay.tasks.model.TasksEntry> getUserTasksEntries(
-		long userId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getUserTasksEntriesMethodKey30,
-				userId, start, end);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (java.util.List<com.liferay.tasks.model.TasksEntry>)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public int getUserTasksEntriesCount(long userId)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_getUserTasksEntriesCountMethodKey31,
-				userId);
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return ((Integer)returnObj).intValue();
-	}
-
+	@Override
 	public void updateAsset(long userId,
 		com.liferay.tasks.model.TasksEntry tasksEntry, long[] assetCategoryIds,
 		java.lang.String[] assetTagNames)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		MethodHandler methodHandler = new MethodHandler(_updateAssetMethodKey32,
-				userId, ClpSerializer.translateInput(tasksEntry),
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			_invokableLocalService.invokeMethod(_methodName40,
+				_methodParameterTypes40,
+				new Object[] {
+					userId,
+					
+				ClpSerializer.translateInput(tasksEntry),
+					
 				ClpSerializer.translateInput(assetCategoryIds),
-				ClpSerializer.translateInput(assetTagNames));
-
-		try {
-			_classLoaderProxy.invoke(methodHandler);
+					
+				ClpSerializer.translateInput(assetTagNames)
+				});
 		}
 		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
 			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
 				throw (com.liferay.portal.kernel.exception.PortalException)t;
-			}
-
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
 			}
 
 			if (t instanceof RuntimeException) {
@@ -1078,119 +1378,85 @@ public class TasksEntryLocalServiceClp implements TasksEntryLocalService {
 		}
 	}
 
-	public com.liferay.tasks.model.TasksEntry updateTasksEntry(
-		long tasksEntryId, java.lang.String title, int priority,
-		long assigneeUserId, long resolverUserId, int dueDateMonth,
-		int dueDateDay, int dueDateYear, int dueDateHour, int dueDateMinute,
-		boolean neverDue, int status,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_updateTasksEntryMethodKey33,
-				tasksEntryId, ClpSerializer.translateInput(title), priority,
-				assigneeUserId, resolverUserId, dueDateMonth, dueDateDay,
-				dueDateYear, dueDateHour, dueDateMinute, neverDue, status,
-				ClpSerializer.translateInput(serviceContext));
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
-				throw (com.liferay.portal.kernel.exception.PortalException)t;
-			}
-
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public com.liferay.tasks.model.TasksEntry updateTasksEntryStatus(
-		long tasksEntryId, long resolverUserId, int status,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		Object returnObj = null;
-
-		MethodHandler methodHandler = new MethodHandler(_updateTasksEntryStatusMethodKey34,
-				tasksEntryId, resolverUserId, status,
-				ClpSerializer.translateInput(serviceContext));
-
-		try {
-			returnObj = _classLoaderProxy.invoke(methodHandler);
-		}
-		catch (Throwable t) {
-			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
-				throw (com.liferay.portal.kernel.exception.PortalException)t;
-			}
-
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
-
-		return (com.liferay.tasks.model.TasksEntry)ClpSerializer.translateOutput(returnObj);
-	}
-
-	public ClassLoaderProxy getClassLoaderProxy() {
-		return _classLoaderProxy;
-	}
-
-	private ClassLoaderProxy _classLoaderProxy;
-	private MethodKey _addTasksEntryMethodKey0;
-	private MethodKey _createTasksEntryMethodKey1;
-	private MethodKey _deleteTasksEntryMethodKey2;
-	private MethodKey _deleteTasksEntryMethodKey3;
-	private MethodKey _dynamicQueryMethodKey4;
-	private MethodKey _dynamicQueryMethodKey5;
-	private MethodKey _dynamicQueryMethodKey6;
-	private MethodKey _dynamicQueryCountMethodKey7;
-	private MethodKey _getTasksEntryMethodKey8;
-	private MethodKey _getTasksEntriesMethodKey9;
-	private MethodKey _getTasksEntriesCountMethodKey10;
-	private MethodKey _updateTasksEntryMethodKey11;
-	private MethodKey _updateTasksEntryMethodKey12;
-	private MethodKey _getBeanIdentifierMethodKey13;
-	private MethodKey _setBeanIdentifierMethodKey14;
-	private MethodKey _addTasksEntryMethodKey15;
-	private MethodKey _getAssigneeTasksEntriesMethodKey16;
-	private MethodKey _getAssigneeTasksEntriesCountMethodKey17;
-	private MethodKey _getGroupAssigneeTasksEntriesMethodKey18;
-	private MethodKey _getGroupAssigneeTasksEntriesCountMethodKey19;
-	private MethodKey _getGroupResolverTasksEntriesMethodKey20;
-	private MethodKey _getGroupResolverTasksEntriesCountMethodKey21;
-	private MethodKey _getGroupUserTasksEntriesMethodKey22;
-	private MethodKey _getGroupUserTasksEntriesCountMethodKey23;
-	private MethodKey _getResolverTasksEntriesMethodKey24;
-	private MethodKey _getResolverTasksEntriesCountMethodKey25;
-	private MethodKey _getTasksEntriesMethodKey26;
-	private MethodKey _getTasksEntriesMethodKey27;
-	private MethodKey _getTasksEntriesCountMethodKey28;
-	private MethodKey _getTasksEntriesCountMethodKey29;
-	private MethodKey _getUserTasksEntriesMethodKey30;
-	private MethodKey _getUserTasksEntriesCountMethodKey31;
-	private MethodKey _updateAssetMethodKey32;
-	private MethodKey _updateTasksEntryMethodKey33;
-	private MethodKey _updateTasksEntryStatusMethodKey34;
+	private InvokableLocalService _invokableLocalService;
+	private String _methodName0;
+	private String[] _methodParameterTypes0;
+	private String _methodName1;
+	private String[] _methodParameterTypes1;
+	private String _methodName2;
+	private String[] _methodParameterTypes2;
+	private String _methodName3;
+	private String[] _methodParameterTypes3;
+	private String _methodName4;
+	private String[] _methodParameterTypes4;
+	private String _methodName5;
+	private String[] _methodParameterTypes5;
+	private String _methodName6;
+	private String[] _methodParameterTypes6;
+	private String _methodName7;
+	private String[] _methodParameterTypes7;
+	private String _methodName8;
+	private String[] _methodParameterTypes8;
+	private String _methodName9;
+	private String[] _methodParameterTypes9;
+	private String _methodName10;
+	private String[] _methodParameterTypes10;
+	private String _methodName11;
+	private String[] _methodParameterTypes11;
+	private String _methodName12;
+	private String[] _methodParameterTypes12;
+	private String _methodName13;
+	private String[] _methodParameterTypes13;
+	private String _methodName14;
+	private String[] _methodParameterTypes14;
+	private String _methodName15;
+	private String[] _methodParameterTypes15;
+	private String _methodName16;
+	private String[] _methodParameterTypes16;
+	private String _methodName17;
+	private String[] _methodParameterTypes17;
+	private String _methodName18;
+	private String[] _methodParameterTypes18;
+	private String _methodName19;
+	private String[] _methodParameterTypes19;
+	private String _methodName20;
+	private String[] _methodParameterTypes20;
+	private String _methodName21;
+	private String[] _methodParameterTypes21;
+	private String _methodName22;
+	private String[] _methodParameterTypes22;
+	private String _methodName23;
+	private String[] _methodParameterTypes23;
+	private String _methodName25;
+	private String[] _methodParameterTypes25;
+	private String _methodName26;
+	private String[] _methodParameterTypes26;
+	private String _methodName27;
+	private String[] _methodParameterTypes27;
+	private String _methodName28;
+	private String[] _methodParameterTypes28;
+	private String _methodName29;
+	private String[] _methodParameterTypes29;
+	private String _methodName30;
+	private String[] _methodParameterTypes30;
+	private String _methodName31;
+	private String[] _methodParameterTypes31;
+	private String _methodName32;
+	private String[] _methodParameterTypes32;
+	private String _methodName33;
+	private String[] _methodParameterTypes33;
+	private String _methodName34;
+	private String[] _methodParameterTypes34;
+	private String _methodName35;
+	private String[] _methodParameterTypes35;
+	private String _methodName36;
+	private String[] _methodParameterTypes36;
+	private String _methodName37;
+	private String[] _methodParameterTypes37;
+	private String _methodName38;
+	private String[] _methodParameterTypes38;
+	private String _methodName39;
+	private String[] _methodParameterTypes39;
+	private String _methodName40;
+	private String[] _methodParameterTypes40;
 }

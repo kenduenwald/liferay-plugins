@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This file is part of Liferay Social Office. Liferay Social Office is free
  * software: you can redistribute it and/or modify it under the terms of the GNU
@@ -9,7 +9,7 @@
  *
  * Liferay Social Office is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -19,20 +19,30 @@
 
 <%@ include file="/init.jsp" %>
 
+<%@ page import="com.liferay.message.boards.kernel.model.MBMessage" %><%@
+page import="com.liferay.message.boards.kernel.service.MBMessageLocalServiceUtil" %><%@
+page import="com.liferay.microblogs.model.MicroblogsEntry" %><%@
+page import="com.liferay.microblogs.model.MicroblogsEntryConstants" %><%@
+page import="com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.service.ServiceContext" %><%@
+page import="com.liferay.portal.kernel.service.ServiceContextFactory" %><%@
+page import="com.liferay.portal.kernel.util.PropsKeys" %><%@
+page import="com.liferay.portal.kernel.util.PropsUtil" %><%@
+page import="com.liferay.portal.kernel.util.Time" %><%@
+page import="com.liferay.so.activities.util.ActivitiesUtil" %><%@
+page import="com.liferay.social.kernel.model.SocialActivity" %><%@
+page import="com.liferay.social.kernel.model.SocialActivitySet" %><%@
+page import="com.liferay.social.kernel.service.SocialActivityLocalServiceUtil" %><%@
+page import="com.liferay.social.kernel.service.SocialActivitySetLocalServiceUtil" %>
+
+<%@ page import="java.util.Objects" %>
+
 <%
-PortletPreferences preferences = renderRequest.getPreferences();
+String tabs1 = ParamUtil.getString(request, "tabs1", "all");
 
-String portletResource = ParamUtil.getString(request, "portletResource");
+Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
+%>
 
-if (Validator.isNotNull(portletResource)) {
-	preferences = PortletPreferencesFactoryUtil.getPortletSetup(request, portletResource);
-}
-
-String defaultTabs1 = preferences.getValue("defaultTabs1", "friends");
-
-String tabs1 = ParamUtil.getString(request, "tabs1", defaultTabs1);
-
-preferences.setValue("defaultTabs1", tabs1);
-
-preferences.store();
+<%!
+private static final int _DELTA = 10;
 %>

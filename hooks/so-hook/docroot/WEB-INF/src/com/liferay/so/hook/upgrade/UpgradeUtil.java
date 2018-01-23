@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This file is part of Liferay Social Office. Liferay Social Office is free
  * software: you can redistribute it and/or modify it under the terms of the GNU
@@ -8,7 +8,7 @@
  *
  * Liferay Social Office is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -17,8 +17,8 @@
 
 package com.liferay.so.hook.upgrade;
 
-import com.liferay.portal.model.Company;
-import com.liferay.portal.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.so.util.InstanceUtil;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class UpgradeUtil {
 	protected static boolean isFirstRun() throws Exception {
 		List<Company> companies = CompanyLocalServiceUtil.getCompanies();
 
-		if (companies.isEmpty() || companies.size() > 1) {
+		if (companies.isEmpty() || (companies.size() > 1)) {
 			return false;
 		}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,7 +15,6 @@
 package com.liferay.socialcoding.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.socialcoding.model.SVNRepository;
@@ -23,7 +22,6 @@ import com.liferay.socialcoding.service.base.SVNRepositoryLocalServiceBaseImpl;
 import com.liferay.socialcoding.svn.util.SVNConstants;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -41,20 +39,16 @@ public class SVNRepositoryLocalServiceImpl
 
 	@Override
 	public SVNRepository getSVNRepository(long svnRepositoryId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return svnRepositoryPersistence.findByPrimaryKey(svnRepositoryId);
 	}
 
-	public SVNRepository getSVNRepository(String url)
-		throws PortalException, SystemException {
-
+	public SVNRepository getSVNRepository(String url) throws PortalException {
 		return svnRepositoryPersistence.findByUrl(url);
 	}
 
-	public void updateSVNRepository(String url)
-		throws PortalException, SystemException {
-
+	public void updateSVNRepository(String url) throws PortalException {
 		SVNRepository svnRepository = svnRepositoryPersistence.fetchByUrl(url);
 
 		if (svnRepository == null) {
@@ -64,7 +58,7 @@ public class SVNRepositoryLocalServiceImpl
 
 			svnRepository.setUrl(url);
 
-			svnRepositoryPersistence.update(svnRepository, false);
+			svnRepositoryPersistence.update(svnRepository);
 		}
 
 		org.tmatesoft.svn.core.io.SVNRepository repository = null;
@@ -94,21 +88,21 @@ public class SVNRepositoryLocalServiceImpl
 			Collection<SVNLogEntry> svnLogEntries = repository.log(
 				null, null, startRevision, endRevision, false, true);
 
-			Iterator<SVNLogEntry> itr = svnLogEntries.iterator();
+			if (!svnLogEntries.isEmpty()) {
+				SVNLogEntry lastSvnLogEntry = null;
 
-			while (itr.hasNext()) {
-				SVNLogEntry svnLogEntry = itr.next();
+				for (SVNLogEntry svnLogEntry : svnLogEntries) {
+					svnRevisionLocalService.addSVNRevision(
+						svnLogEntry.getAuthor(), svnLogEntry.getDate(),
+						svnRepository.getSvnRepositoryId(),
+						svnLogEntry.getRevision(), svnLogEntry.getMessage());
 
-				svnRevisionLocalService.addSVNRevision(
-					svnLogEntry.getAuthor(), svnLogEntry.getDate(),
-					svnRepository.getSvnRepositoryId(),
-					svnLogEntry.getRevision(), svnLogEntry.getMessage());
-
-				if (!itr.hasNext()) {
-					svnRepository.setRevisionNumber(svnLogEntry.getRevision());
-
-					svnRepositoryPersistence.update(svnRepository, false);
+					lastSvnLogEntry = svnLogEntry;
 				}
+
+				svnRepository.setRevisionNumber(lastSvnLogEntry.getRevision());
+
+				svnRepositoryPersistence.update(svnRepository);
 			}
 		}
 		catch (SVNException svne) {

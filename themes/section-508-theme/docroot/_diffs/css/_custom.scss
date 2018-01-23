@@ -1,0 +1,126 @@
+/* ---------- Global ---------- */
+
+#skip-to-content,
+#heading .community-title,
+#heading .page-title,
+#navigation h1 {
+	clip: rect(0 0 0 0);
+	position: absolute;
+}
+
+#heading .company-title,
+#navigation,
+#content {
+	margin: 10px;
+}
+
+#navigation,
+.portlet {
+	border: 5px solid #777;
+}
+
+/* ---------- Links ---------- */
+
+a {
+	color: #039;
+}
+
+/* ---------- Wrapper / Skip / Sign-in ---------- */
+
+#wrapper {
+	font-size: 12px;
+	padding: 10px;
+}
+
+#skip-to-content,
+#sign-in {
+	color: #000;
+	right: 2em;
+}
+
+#skip-to-content {
+	top: 3.25em;
+}
+
+#skip-to-content:active,
+#skip-to-content:focus {
+	clip: auto;
+}
+
+#sign-in {
+	position: absolute;
+	top: 1.5em;
+}
+
+/* ---------- Heading ---------- */
+
+#heading .company-title a {
+	margin: 0;
+}
+
+/* ---------- Navigation ---------- */
+
+#navigation {
+	background: #020509;
+	padding: 10px;
+}
+
+#navigation ul {
+	list-style: none;
+	margin: 0;
+}
+
+#navigation ul:after {
+	clear: both;
+	content: ".";
+	display: block;
+	height: 0;
+	line-height: 0;
+	visibility: hidden;
+}
+
+#navigation li,
+#navigation a {
+	float: left;
+}
+
+#navigation a {
+	color: #FFF;
+	display: block;
+	font-weight: bold;
+	padding: 5px 20px;
+	text-decoration: none;
+}
+
+#navigation a:active,
+#navigation a:focus,
+#navigation a:hover {
+	background-color: #555;
+}
+
+#navigation .selected a {
+	background: url(../images/navigation/bullet_selected.png) no-repeat 0 50%;
+	padding-left: 10px;
+}
+
+/* ---------- Content ---------- */
+
+#breadcrumbs {
+	display: none;
+}
+
+/* ---------- Portlet ---------- */
+
+.portlet {
+	background: #FFF;
+	margin: 0 0 20px;
+}
+
+.portlet-topper {
+	background: #020509;
+}
+
+.portlet-title {
+	color: #FFF;
+	padding: 5px;
+}

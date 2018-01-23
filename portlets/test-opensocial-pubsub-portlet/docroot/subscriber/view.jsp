@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,27 +18,27 @@
 
 <h3>Subscribe</h3>
 
-<div>
-	<aui:select name="subscribeTopic" label="">
-		<aui:option label="String"/>
-		<aui:option label="Array"/>
+<aui:fieldset>
+	<aui:select label="" name="subscribeTopic">
+		<aui:option label="String" />
+		<aui:option label="Array" />
 	</aui:select>
 
 	<aui:button name="subscribe" value="Subscribe" />
-</div>
+</aui:fieldset>
 
 <h3>Unsubscribe</h3>
 
-<div>
-	<aui:select name="unsubscribeTopic" label="">
-		<aui:option value="string_callback_fn" label="String with Callback Function" />
-		<aui:option value="string" label="String without Callback Function" />
-		<aui:option value="handle" label="Topic Handle" />
-		<aui:option value="handle_detach" label="Handle.detach();" />
+<aui:fieldset>
+	<aui:select label="" name="unsubscribeTopic">
+		<aui:option label="String with Callback Function" value="string_callback_fn" />
+		<aui:option label="String without Callback Function" value="string" />
+		<aui:option label="Topic Handle" value="handle" />
+		<aui:option label="Handle.detach();" value="handle_detach" />
 	</aui:select>
 
 	<aui:button name="unsubscribe" value="Unsubscribe" />
-</div>
+</aui:fieldset>
 
 <div id="<portlet:namespace />message"></div>
 
@@ -51,7 +51,7 @@
 
 	A.one('#<portlet:namespace />subscribe').on(
 		'click',
-		function () {
+		function() {
 			var subscribeTopic = 'gadget:org.apache.shindig.random-number';
 
 			var topicType = A.one('#<portlet:namespace />subscribeTopic').val();
@@ -66,7 +66,7 @@
 
 	A.one('#<portlet:namespace />unsubscribe').on(
 		'click',
-		function () {
+		function() {
 			var lfrDetach = false;
 
 			var unsubscribeFn;

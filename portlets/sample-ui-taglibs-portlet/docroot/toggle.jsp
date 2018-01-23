@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,10 +35,10 @@ Result:
 
 <div>
 	<liferay-ui:toggle
+		defaultShowContent="true"
+		hideImage='<%= themeDisplay.getPathThemeImages() + "/arrows/01_right.png" %>'
 		id="toggle_id_sample_ui_taglibs_test"
 		showImage='<%= themeDisplay.getPathThemeImages() + "/arrows/01_down.png" %>'
-		hideImage='<%= themeDisplay.getPathThemeImages() + "/arrows/01_right.png" %>'
-		defaultShowContent="true"
 	/>
 </div>
 

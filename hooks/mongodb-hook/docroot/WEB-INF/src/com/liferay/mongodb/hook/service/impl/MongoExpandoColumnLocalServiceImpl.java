@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,18 +14,17 @@
 
 package com.liferay.mongodb.hook.service.impl;
 
+import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.expando.kernel.model.ExpandoTable;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceWrapper;
+import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
 import com.liferay.mongodb.lang.MongoOperator;
 import com.liferay.mongodb.util.MongoDBUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portlet.expando.model.ExpandoColumn;
-import com.liferay.portlet.expando.model.ExpandoColumnConstants;
-import com.liferay.portlet.expando.model.ExpandoTable;
-import com.liferay.portlet.expando.service.ExpandoColumnLocalService;
-import com.liferay.portlet.expando.service.ExpandoColumnLocalServiceWrapper;
-import com.liferay.portlet.expando.service.ExpandoTableLocalServiceUtil;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -47,7 +46,7 @@ public class MongoExpandoColumnLocalServiceImpl
 	@Override
 	public ExpandoColumn updateColumn(
 			long columnId, String name, int type, Object defaultData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ExpandoColumn expandoColumn = super.updateColumn(
 			columnId, name, type, defaultData);
@@ -68,7 +67,7 @@ public class MongoExpandoColumnLocalServiceImpl
 
 	@Override
 	public ExpandoColumn updateTypeSettings(long columnId, String typeSettings)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ExpandoColumn expandoColumn = super.updateTypeSettings(
 			columnId, typeSettings);

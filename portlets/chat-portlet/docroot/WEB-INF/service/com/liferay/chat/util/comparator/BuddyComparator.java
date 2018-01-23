@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,7 @@
 
 package com.liferay.chat.util.comparator;
 
-import com.liferay.portal.model.ContactConstants;
+import com.liferay.portal.kernel.model.ContactConstants;
 
 import java.util.Comparator;
 
@@ -31,14 +31,25 @@ public class BuddyComparator implements Comparator<Object[]> {
 		_asc = asc;
 	}
 
+	@Override
 	public int compare(Object[] buddy1, Object[] buddy2) {
-		long userId1 = (Long)buddy1[0];
+		long userId1 = 0;
+
+		if (buddy1[0] instanceof Long) {
+			userId1 = (Long)buddy1[0];
+		}
+
 		String firstName1 = (String)buddy1[2];
 		String middleName1 = (String)buddy1[3];
 		String lastName1 = (String)buddy1[4];
 		boolean awake1 = (Boolean)buddy1[6];
 
-		long userId2 = (Long)buddy2[0];
+		long userId2 = 0;
+
+		if (buddy2[0] instanceof Long) {
+			userId2 = (Long)buddy2[0];
+		}
+
 		String firstName2 = (String)buddy2[2];
 		String middleName2 = (String)buddy2[3];
 		String lastName2 = (String)buddy2[4];

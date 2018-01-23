@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,8 @@
 
 package com.liferay.microblogs.service.messaging;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.microblogs.service.ClpSerializer;
 import com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil;
 import com.liferay.microblogs.service.MicroblogsEntryServiceUtil;
@@ -24,11 +26,13 @@ import com.liferay.portal.kernel.messaging.Message;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class ClpMessageListener extends BaseMessageListener {
 	public static String getServletContextName() {
 		return ClpSerializer.getServletContextName();
 	}
 
+	@Override
 	protected void doReceive(Message message) throws Exception {
 		String command = message.getString("command");
 		String servletContextName = message.getString("servletContextName");

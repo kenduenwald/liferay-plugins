@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,6 @@ import com.liferay.samplehibernate.util.FoodItemUtil;
 import com.liferay.util.xml.BeanToXMLUtil;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,29 +34,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Charles May
  */
 public class FoodItemComponentImpl {
-
-	public String process(HttpServletRequest req) {
-		String result = null;
-
-		try {
-			String cmd = ParamUtil.getString(req, "cmd");
-
-			if (cmd.equals("getFoodItemXml")) {
-				long foodItemId = ParamUtil.getLong(req, "foodItemId", 0);
-
-				result = getFoodItemXml(foodItemId);
-			}
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		if (Validator.isNull(result)) {
-			result = "<result />";
-		}
-
-		return result;
-	}
 
 	public String getFoodItemXml(long foodItemId) throws Exception {
 		List foodItems = null;
@@ -83,15 +59,34 @@ public class FoodItemComponentImpl {
 
 		Element root = doc.addElement("result");
 
-		Iterator itr = list.iterator();
-
-		while (itr.hasNext()) {
-			Object obj = itr.next();
-
+		for (Object obj : list) {
 			BeanToXMLUtil.addBean(obj, root);
 		}
 
 		return doc.asXML();
+	}
+
+	public String process(HttpServletRequest req) {
+		String result = null;
+
+		try {
+			String cmd = ParamUtil.getString(req, "cmd");
+
+			if (cmd.equals("getFoodItemXml")) {
+				long foodItemId = ParamUtil.getLong(req, "foodItemId", 0);
+
+				result = getFoodItemXml(foodItemId);
+			}
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+		}
+
+		if (Validator.isNull(result)) {
+			result = "<result />";
+		}
+
+		return result;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(

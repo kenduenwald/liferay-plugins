@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -27,10 +27,6 @@ public class WCEntry implements Serializable {
 		_proofs = proofs;
 	}
 
-	public String getQuestion() {
-		return _question;
-	}
-
 	public String getAnswer() {
 		return _answer;
 	}
@@ -39,12 +35,16 @@ public class WCEntry implements Serializable {
 		return _proofs;
 	}
 
+	public String getQuestion() {
+		return _question;
+	}
+
 	public void setProofs(String[][] proofs) {
 		_proofs = proofs;
 	}
 
-	private String _question;
 	private String _answer;
 	private String[][] _proofs;
+	private String _question;
 
 }

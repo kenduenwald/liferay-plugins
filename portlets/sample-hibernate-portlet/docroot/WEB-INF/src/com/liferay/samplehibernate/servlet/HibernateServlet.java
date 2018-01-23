@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,10 +17,10 @@ package com.liferay.samplehibernate.servlet;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
+import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.samplehibernate.FoodItemComponentImpl;
-import com.liferay.util.servlet.ServletResponseUtil;
 
 import java.io.IOException;
 
@@ -46,7 +46,7 @@ public class HibernateServlet extends HttpServlet {
 		}
 
 		if ((contentType != null) &&
-			(contentType.startsWith(ContentTypes.MULTIPART_FORM_DATA))) {
+			contentType.startsWith(ContentTypes.MULTIPART_FORM_DATA)) {
 
 			request = PortalUtil.getUploadServletRequest(request);
 		}

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,34 +19,27 @@
 <%
 PortletURL portletURL = renderResponse.createRenderURL();
 
-portletURL.setParameter("jspPage", "/advanced.jsp");
+portletURL.setParameter("mvcPath", "/advanced.jsp");
 %>
 
 <liferay-ui:search-container
 	delta="<%= 5 %>"
 	headerNames="email-address,screen-name,user-id"
 	iteratorURL="<%= portletURL %>"
+	total="<%= UserLocalServiceUtil.getUsersCount() %>"
 >
-	<liferay-ui:search-container-results>
-
-		<%
-		results = UserLocalServiceUtil.getUsers(searchContainer.getStart(), searchContainer.getEnd());
-		total = UserLocalServiceUtil.getUsersCount();
-
-		pageContext.setAttribute("results", results);
-		pageContext.setAttribute("total", total);
-		%>
-
-	</liferay-ui:search-container-results>
+	<liferay-ui:search-container-results
+		results="<%= UserLocalServiceUtil.getUsers(searchContainer.getStart(), searchContainer.getEnd()) %>"
+	/>
 
 	<liferay-ui:search-container-row
-		className="com.liferay.portal.model.User"
+		className="com.liferay.portal.kernel.model.User"
 		escapedModel="<%= true %>"
 		keyProperty="userId"
 		modelVar="curUser"
 	>
-		<liferay-portlet:renderURL windowState="<%= WindowState.MAXIMIZED.toString() %>" varImpl="rowURL">
-			<portlet:param name="jspPage" value="/advanced_user_display.jsp" />
+		<liferay-portlet:renderURL varImpl="rowURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
+			<portlet:param name="mvcPath" value="/advanced_user_display.jsp" />
 			<portlet:param name="redirect" value="<%= currentURL %>" />
 			<portlet:param name="userId" value="<%= String.valueOf(curUser.getUserId()) %>" />
 		</liferay-portlet:renderURL>

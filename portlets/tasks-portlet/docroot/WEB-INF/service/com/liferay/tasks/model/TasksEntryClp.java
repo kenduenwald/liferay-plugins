@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,215 +14,694 @@
 
 package com.liferay.tasks.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.impl.BaseModelImpl;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.impl.BaseModelImpl;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringPool;
+
+import com.liferay.tasks.service.ClpSerializer;
+import com.liferay.tasks.service.TasksEntryLocalServiceUtil;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Proxy;
+import java.lang.reflect.Method;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * @author Ryan Park
+ * @generated
  */
+@ProviderType
 public class TasksEntryClp extends BaseModelImpl<TasksEntry>
 	implements TasksEntry {
 	public TasksEntryClp() {
 	}
 
+	@Override
 	public Class<?> getModelClass() {
 		return TasksEntry.class;
 	}
 
+	@Override
 	public String getModelClassName() {
 		return TasksEntry.class.getName();
 	}
 
+	@Override
 	public long getPrimaryKey() {
 		return _tasksEntryId;
 	}
 
+	@Override
 	public void setPrimaryKey(long primaryKey) {
 		setTasksEntryId(primaryKey);
 	}
 
+	@Override
 	public Serializable getPrimaryKeyObj() {
-		return new Long(_tasksEntryId);
+		return _tasksEntryId;
 	}
 
+	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		setPrimaryKey(((Long)primaryKeyObj).longValue());
 	}
 
+	@Override
+	public Map<String, Object> getModelAttributes() {
+		Map<String, Object> attributes = new HashMap<String, Object>();
+
+		attributes.put("tasksEntryId", getTasksEntryId());
+		attributes.put("groupId", getGroupId());
+		attributes.put("companyId", getCompanyId());
+		attributes.put("userId", getUserId());
+		attributes.put("userName", getUserName());
+		attributes.put("createDate", getCreateDate());
+		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("title", getTitle());
+		attributes.put("priority", getPriority());
+		attributes.put("assigneeUserId", getAssigneeUserId());
+		attributes.put("resolverUserId", getResolverUserId());
+		attributes.put("dueDate", getDueDate());
+		attributes.put("finishDate", getFinishDate());
+		attributes.put("status", getStatus());
+
+		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
+		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
+
+		return attributes;
+	}
+
+	@Override
+	public void setModelAttributes(Map<String, Object> attributes) {
+		Long tasksEntryId = (Long)attributes.get("tasksEntryId");
+
+		if (tasksEntryId != null) {
+			setTasksEntryId(tasksEntryId);
+		}
+
+		Long groupId = (Long)attributes.get("groupId");
+
+		if (groupId != null) {
+			setGroupId(groupId);
+		}
+
+		Long companyId = (Long)attributes.get("companyId");
+
+		if (companyId != null) {
+			setCompanyId(companyId);
+		}
+
+		Long userId = (Long)attributes.get("userId");
+
+		if (userId != null) {
+			setUserId(userId);
+		}
+
+		String userName = (String)attributes.get("userName");
+
+		if (userName != null) {
+			setUserName(userName);
+		}
+
+		Date createDate = (Date)attributes.get("createDate");
+
+		if (createDate != null) {
+			setCreateDate(createDate);
+		}
+
+		Date modifiedDate = (Date)attributes.get("modifiedDate");
+
+		if (modifiedDate != null) {
+			setModifiedDate(modifiedDate);
+		}
+
+		String title = (String)attributes.get("title");
+
+		if (title != null) {
+			setTitle(title);
+		}
+
+		Integer priority = (Integer)attributes.get("priority");
+
+		if (priority != null) {
+			setPriority(priority);
+		}
+
+		Long assigneeUserId = (Long)attributes.get("assigneeUserId");
+
+		if (assigneeUserId != null) {
+			setAssigneeUserId(assigneeUserId);
+		}
+
+		Long resolverUserId = (Long)attributes.get("resolverUserId");
+
+		if (resolverUserId != null) {
+			setResolverUserId(resolverUserId);
+		}
+
+		Date dueDate = (Date)attributes.get("dueDate");
+
+		if (dueDate != null) {
+			setDueDate(dueDate);
+		}
+
+		Date finishDate = (Date)attributes.get("finishDate");
+
+		if (finishDate != null) {
+			setFinishDate(finishDate);
+		}
+
+		Integer status = (Integer)attributes.get("status");
+
+		if (status != null) {
+			setStatus(status);
+		}
+
+		_entityCacheEnabled = GetterUtil.getBoolean("entityCacheEnabled");
+		_finderCacheEnabled = GetterUtil.getBoolean("finderCacheEnabled");
+	}
+
+	@Override
 	public long getTasksEntryId() {
 		return _tasksEntryId;
 	}
 
+	@Override
 	public void setTasksEntryId(long tasksEntryId) {
 		_tasksEntryId = tasksEntryId;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setTasksEntryId", long.class);
+
+				method.invoke(_tasksEntryRemoteModel, tasksEntryId);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public long getGroupId() {
 		return _groupId;
 	}
 
+	@Override
 	public void setGroupId(long groupId) {
 		_groupId = groupId;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setGroupId", long.class);
+
+				method.invoke(_tasksEntryRemoteModel, groupId);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public long getCompanyId() {
 		return _companyId;
 	}
 
+	@Override
 	public void setCompanyId(long companyId) {
 		_companyId = companyId;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setCompanyId", long.class);
+
+				method.invoke(_tasksEntryRemoteModel, companyId);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public long getUserId() {
 		return _userId;
 	}
 
+	@Override
 	public void setUserId(long userId) {
 		_userId = userId;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setUserId", long.class);
+
+				method.invoke(_tasksEntryRemoteModel, userId);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
-	public String getUserUuid() throws SystemException {
-		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
+	@Override
+	public String getUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return StringPool.BLANK;
+		}
 	}
 
+	@Override
 	public void setUserUuid(String userUuid) {
-		_userUuid = userUuid;
 	}
 
+	@Override
 	public String getUserName() {
 		return _userName;
 	}
 
+	@Override
 	public void setUserName(String userName) {
 		_userName = userName;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setUserName", String.class);
+
+				method.invoke(_tasksEntryRemoteModel, userName);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public Date getCreateDate() {
 		return _createDate;
 	}
 
+	@Override
 	public void setCreateDate(Date createDate) {
 		_createDate = createDate;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setCreateDate", Date.class);
+
+				method.invoke(_tasksEntryRemoteModel, createDate);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
 	}
 
+	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		_modifiedDate = modifiedDate;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setModifiedDate", Date.class);
+
+				method.invoke(_tasksEntryRemoteModel, modifiedDate);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public String getTitle() {
 		return _title;
 	}
 
+	@Override
 	public void setTitle(String title) {
 		_title = title;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setTitle", String.class);
+
+				method.invoke(_tasksEntryRemoteModel, title);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public int getPriority() {
 		return _priority;
 	}
 
+	@Override
 	public void setPriority(int priority) {
 		_priority = priority;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setPriority", int.class);
+
+				method.invoke(_tasksEntryRemoteModel, priority);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public long getAssigneeUserId() {
 		return _assigneeUserId;
 	}
 
+	@Override
 	public void setAssigneeUserId(long assigneeUserId) {
 		_assigneeUserId = assigneeUserId;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setAssigneeUserId", long.class);
+
+				method.invoke(_tasksEntryRemoteModel, assigneeUserId);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
-	public String getAssigneeUserUuid() throws SystemException {
-		return PortalUtil.getUserValue(getAssigneeUserId(), "uuid",
-			_assigneeUserUuid);
+	@Override
+	public String getAssigneeUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getAssigneeUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return StringPool.BLANK;
+		}
 	}
 
+	@Override
 	public void setAssigneeUserUuid(String assigneeUserUuid) {
-		_assigneeUserUuid = assigneeUserUuid;
 	}
 
+	@Override
 	public long getResolverUserId() {
 		return _resolverUserId;
 	}
 
+	@Override
 	public void setResolverUserId(long resolverUserId) {
 		_resolverUserId = resolverUserId;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setResolverUserId", long.class);
+
+				method.invoke(_tasksEntryRemoteModel, resolverUserId);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
-	public String getResolverUserUuid() throws SystemException {
-		return PortalUtil.getUserValue(getResolverUserId(), "uuid",
-			_resolverUserUuid);
+	@Override
+	public String getResolverUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getResolverUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return StringPool.BLANK;
+		}
 	}
 
+	@Override
 	public void setResolverUserUuid(String resolverUserUuid) {
-		_resolverUserUuid = resolverUserUuid;
 	}
 
+	@Override
 	public Date getDueDate() {
 		return _dueDate;
 	}
 
+	@Override
 	public void setDueDate(Date dueDate) {
 		_dueDate = dueDate;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setDueDate", Date.class);
+
+				method.invoke(_tasksEntryRemoteModel, dueDate);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public Date getFinishDate() {
 		return _finishDate;
 	}
 
+	@Override
 	public void setFinishDate(Date finishDate) {
 		_finishDate = finishDate;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setFinishDate", Date.class);
+
+				method.invoke(_tasksEntryRemoteModel, finishDate);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
+	@Override
 	public int getStatus() {
 		return _status;
 	}
 
+	@Override
 	public void setStatus(int status) {
 		_status = status;
+
+		if (_tasksEntryRemoteModel != null) {
+			try {
+				Class<?> clazz = _tasksEntryRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setStatus", int.class);
+
+				method.invoke(_tasksEntryRemoteModel, status);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
 	}
 
-	public java.lang.String getAssigneeFullName() {
-		throw new UnsupportedOperationException();
-	}
-
-	public java.lang.String getPriorityLabel() {
-		throw new UnsupportedOperationException();
-	}
-
+	@Override
 	public java.lang.String getReporterFullName() {
-		throw new UnsupportedOperationException();
+		try {
+			String methodName = "getReporterFullName";
+
+			Class<?>[] parameterTypes = new Class<?>[] {  };
+
+			Object[] parameterValues = new Object[] {  };
+
+			java.lang.String returnObj = (java.lang.String)invokeOnRemoteModel(methodName,
+					parameterTypes, parameterValues);
+
+			return returnObj;
+		}
+		catch (Exception e) {
+			throw new UnsupportedOperationException(e);
+		}
 	}
 
+	@Override
+	public java.lang.String getPriorityLabel() {
+		try {
+			String methodName = "getPriorityLabel";
+
+			Class<?>[] parameterTypes = new Class<?>[] {  };
+
+			Object[] parameterValues = new Object[] {  };
+
+			java.lang.String returnObj = (java.lang.String)invokeOnRemoteModel(methodName,
+					parameterTypes, parameterValues);
+
+			return returnObj;
+		}
+		catch (Exception e) {
+			throw new UnsupportedOperationException(e);
+		}
+	}
+
+	@Override
 	public java.lang.String getStatusLabel() {
-		throw new UnsupportedOperationException();
+		try {
+			String methodName = "getStatusLabel";
+
+			Class<?>[] parameterTypes = new Class<?>[] {  };
+
+			Object[] parameterValues = new Object[] {  };
+
+			java.lang.String returnObj = (java.lang.String)invokeOnRemoteModel(methodName,
+					parameterTypes, parameterValues);
+
+			return returnObj;
+		}
+		catch (Exception e) {
+			throw new UnsupportedOperationException(e);
+		}
+	}
+
+	@Override
+	public java.lang.String getAssigneeFullName() {
+		try {
+			String methodName = "getAssigneeFullName";
+
+			Class<?>[] parameterTypes = new Class<?>[] {  };
+
+			Object[] parameterValues = new Object[] {  };
+
+			java.lang.String returnObj = (java.lang.String)invokeOnRemoteModel(methodName,
+					parameterTypes, parameterValues);
+
+			return returnObj;
+		}
+		catch (Exception e) {
+			throw new UnsupportedOperationException(e);
+		}
+	}
+
+	public BaseModel<?> getTasksEntryRemoteModel() {
+		return _tasksEntryRemoteModel;
+	}
+
+	public void setTasksEntryRemoteModel(BaseModel<?> tasksEntryRemoteModel) {
+		_tasksEntryRemoteModel = tasksEntryRemoteModel;
+	}
+
+	public Object invokeOnRemoteModel(String methodName,
+		Class<?>[] parameterTypes, Object[] parameterValues)
+		throws Exception {
+		Object[] remoteParameterValues = new Object[parameterValues.length];
+
+		for (int i = 0; i < parameterValues.length; i++) {
+			if (parameterValues[i] != null) {
+				remoteParameterValues[i] = ClpSerializer.translateInput(parameterValues[i]);
+			}
+		}
+
+		Class<?> remoteModelClass = _tasksEntryRemoteModel.getClass();
+
+		ClassLoader remoteModelClassLoader = remoteModelClass.getClassLoader();
+
+		Class<?>[] remoteParameterTypes = new Class[parameterTypes.length];
+
+		for (int i = 0; i < parameterTypes.length; i++) {
+			if (parameterTypes[i].isPrimitive()) {
+				remoteParameterTypes[i] = parameterTypes[i];
+			}
+			else {
+				String parameterTypeName = parameterTypes[i].getName();
+
+				remoteParameterTypes[i] = remoteModelClassLoader.loadClass(parameterTypeName);
+			}
+		}
+
+		Method method = remoteModelClass.getMethod(methodName,
+				remoteParameterTypes);
+
+		Object returnValue = method.invoke(_tasksEntryRemoteModel,
+				remoteParameterValues);
+
+		if (returnValue != null) {
+			returnValue = ClpSerializer.translateOutput(returnValue);
+		}
+
+		return returnValue;
+	}
+
+	@Override
+	public void persist() {
+		if (this.isNew()) {
+			TasksEntryLocalServiceUtil.addTasksEntry(this);
+		}
+		else {
+			TasksEntryLocalServiceUtil.updateTasksEntry(this);
+		}
 	}
 
 	@Override
 	public TasksEntry toEscapedModel() {
-		if (isEscapedModel()) {
-			return this;
-		}
-		else {
-			return (TasksEntry)Proxy.newProxyInstance(TasksEntry.class.getClassLoader(),
-				new Class[] { TasksEntry.class },
-				new AutoEscapeBeanHandler(this));
-		}
+		return (TasksEntry)ProxyUtil.newProxyInstance(TasksEntry.class.getClassLoader(),
+			new Class[] { TasksEntry.class }, new AutoEscapeBeanHandler(this));
 	}
 
 	@Override
@@ -247,6 +726,7 @@ public class TasksEntryClp extends BaseModelImpl<TasksEntry>
 		return clone;
 	}
 
+	@Override
 	public int compareTo(TasksEntry tasksEntry) {
 		int value = 0;
 
@@ -281,18 +761,15 @@ public class TasksEntryClp extends BaseModelImpl<TasksEntry>
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof TasksEntryClp)) {
 			return false;
 		}
 
-		TasksEntryClp tasksEntry = null;
-
-		try {
-			tasksEntry = (TasksEntryClp)obj;
-		}
-		catch (ClassCastException cce) {
-			return false;
-		}
+		TasksEntryClp tasksEntry = (TasksEntryClp)obj;
 
 		long primaryKey = tasksEntry.getPrimaryKey();
 
@@ -304,9 +781,23 @@ public class TasksEntryClp extends BaseModelImpl<TasksEntry>
 		}
 	}
 
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
+	}
+
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
+	}
+
+	@Override
+	public boolean isEntityCacheEnabled() {
+		return _entityCacheEnabled;
+	}
+
+	@Override
+	public boolean isFinderCacheEnabled() {
+		return _finderCacheEnabled;
 	}
 
 	@Override
@@ -346,6 +837,7 @@ public class TasksEntryClp extends BaseModelImpl<TasksEntry>
 		return sb.toString();
 	}
 
+	@Override
 	public String toXmlString() {
 		StringBundler sb = new StringBundler(46);
 
@@ -419,17 +911,18 @@ public class TasksEntryClp extends BaseModelImpl<TasksEntry>
 	private long _groupId;
 	private long _companyId;
 	private long _userId;
-	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private String _title;
 	private int _priority;
 	private long _assigneeUserId;
-	private String _assigneeUserUuid;
 	private long _resolverUserId;
-	private String _resolverUserUuid;
 	private Date _dueDate;
 	private Date _finishDate;
 	private int _status;
+	private BaseModel<?> _tasksEntryRemoteModel;
+	private Class<?> _clpSerializerClass = com.liferay.tasks.service.ClpSerializer.class;
+	private boolean _entityCacheEnabled;
+	private boolean _finderCacheEnabled;
 }

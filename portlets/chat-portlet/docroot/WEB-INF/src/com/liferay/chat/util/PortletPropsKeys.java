@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,11 +16,18 @@ package com.liferay.chat.util;
 
 /**
  * @author Brian Wing Shun Chan
+ * @author Tibor Lipusz
  */
 public interface PortletPropsKeys {
 
+	public static final String BUDDY_LIST_ALLOWED_SOCIAL_RELATION_TYPES =
+		"buddy.list.allowed.social.relation.types";
+
 	public static final String BUDDY_LIST_MAX_BUDDIES =
 		"buddy.list.max.buddies";
+
+	public static final String BUDDY_LIST_SITE_EXCLUDES =
+		"buddy.list.site.excludes";
 
 	public static final String BUDDY_LIST_STRATEGY = "buddy.list.strategy";
 

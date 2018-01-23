@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,16 @@
 
 package com.liferay.stocks.portlet;
 
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.util.bridges.mvc.MVCPortlet;
+import com.liferay.stocks.util.PortletKeys;
 
 import java.io.IOException;
 
@@ -28,9 +31,7 @@ import java.util.Arrays;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
-import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
 import javax.portlet.ValidatorException;
 
@@ -44,9 +45,7 @@ public class StocksPortlet extends MVCPortlet {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws IOException, PortletException {
 
-		if (actionRequest.getPortletMode().equals(PortletMode.EDIT)) {
-			updatePreferences(actionRequest, actionResponse);
-		}
+		updatePreferences(actionRequest, actionResponse);
 	}
 
 	protected void updatePreferences(
@@ -59,18 +58,29 @@ public class StocksPortlet extends MVCPortlet {
 			return;
 		}
 
-		PortletPreferences preferences = actionRequest.getPreferences();
+		PortletPreferences portletPreferences = null;
+
+		try {
+			portletPreferences =
+				PortletPreferencesFactoryUtil.getPortletPreferences(
+					PortalUtil.getHttpServletRequest(actionRequest),
+					PortletKeys.STOCKS);
+		}
+		catch (Exception e) {
+			throw new PortletException(e);
+		}
 
 		String[] symbols = StringUtil.split(
-			ParamUtil.getString(actionRequest, "symbols").toUpperCase(),
+			StringUtil.toUpperCase(
+				ParamUtil.getString(actionRequest, "symbols")),
 			StringPool.SPACE);
 
 		Arrays.sort(symbols);
 
-		preferences.setValues("symbols", symbols);
+		portletPreferences.setValues("symbols", symbols);
 
 		try {
-			preferences.store();
+			portletPreferences.store();
 		}
 		catch (ValidatorException ve) {
 			SessionErrors.add(
@@ -79,10 +89,10 @@ public class StocksPortlet extends MVCPortlet {
 			return;
 		}
 
-		PortletConfig portletConfig = getPortletConfig();
-
 		SessionMessages.add(
-			actionRequest, portletConfig.getPortletName() + ".doEdit");
+			actionRequest,
+			PortalUtil.getPortletId(actionRequest) +
+				SessionMessages.KEY_SUFFIX_UPDATED_PREFERENCES);
 	}
 
 }

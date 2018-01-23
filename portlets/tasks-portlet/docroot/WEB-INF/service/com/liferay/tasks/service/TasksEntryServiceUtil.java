@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,17 +14,19 @@
 
 package com.liferay.tasks.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
-import com.liferay.portal.kernel.util.ClassLoaderProxy;
-import com.liferay.portal.kernel.util.MethodCache;
+import com.liferay.portal.kernel.service.InvokableService;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 
 /**
- * The utility for the tasks entry remote service. This utility wraps {@link com.liferay.tasks.service.impl.TasksEntryServiceImpl} and is the primary access point for service operations in application layer code running on a remote server.
- *
- * <p>
- * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
- * </p>
+ * Provides the remote service utility for TasksEntry. This utility wraps
+ * {@link com.liferay.tasks.service.impl.TasksEntryServiceImpl} and is the
+ * primary access point for service operations in application layer code running
+ * on a remote server. Methods of this service are expected to have security
+ * checks based on the propagated JAAS credentials because this service can be
+ * accessed remotely.
  *
  * @author Ryan Park
  * @see TasksEntryService
@@ -32,6 +34,7 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
  * @see com.liferay.tasks.service.impl.TasksEntryServiceImpl
  * @generated
  */
+@ProviderType
 public class TasksEntryServiceUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -42,19 +45,23 @@ public class TasksEntryServiceUtil {
 		java.lang.String title, int priority, long assigneeUserId,
 		int dueDateMonth, int dueDateDay, int dueDateYear, int dueDateHour,
 		int dueDateMinute, boolean neverDue,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addTasksEntry(title, priority, assigneeUserId,
 			dueDateMonth, dueDateDay, dueDateYear, dueDateHour, dueDateMinute,
 			neverDue, serviceContext);
 	}
 
+	public static com.liferay.tasks.model.TasksEntry deleteTasksEntry(
+		long tasksEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deleteTasksEntry(tasksEntryId);
+	}
+
 	public static com.liferay.tasks.model.TasksEntry getTasksEntry(
 		long tasksEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getTasksEntry(tasksEntryId);
 	}
 
@@ -63,14 +70,37 @@ public class TasksEntryServiceUtil {
 		long assigneeUserId, long resolverUserId, int dueDateMonth,
 		int dueDateDay, int dueDateYear, int dueDateHour, int dueDateMinute,
 		boolean neverDue, int status,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .updateTasksEntry(tasksEntryId, title, priority,
 			assigneeUserId, resolverUserId, dueDateMonth, dueDateDay,
 			dueDateYear, dueDateHour, dueDateMinute, neverDue, status,
 			serviceContext);
+	}
+
+	public static com.liferay.tasks.model.TasksEntry updateTasksEntryStatus(
+		long tasksEntryId, long resolverUserId, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateTasksEntryStatus(tasksEntryId, resolverUserId,
+			status, serviceContext);
+	}
+
+	public static java.lang.Object invokeMethod(java.lang.String name,
+		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
+		throws java.lang.Throwable {
+		return getService().invokeMethod(name, parameterTypes, arguments);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static java.lang.String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
 	}
 
 	public static void clearService() {
@@ -79,34 +109,21 @@ public class TasksEntryServiceUtil {
 
 	public static TasksEntryService getService() {
 		if (_service == null) {
-			Object object = PortletBeanLocatorUtil.locate(ClpSerializer.getServletContextName(),
+			InvokableService invokableService = (InvokableService)PortletBeanLocatorUtil.locate(ClpSerializer.getServletContextName(),
 					TasksEntryService.class.getName());
-			ClassLoader portletClassLoader = (ClassLoader)PortletBeanLocatorUtil.locate(ClpSerializer.getServletContextName(),
-					"portletClassLoader");
 
-			ClassLoaderProxy classLoaderProxy = new ClassLoaderProxy(object,
-					TasksEntryService.class.getName(), portletClassLoader);
-
-			_service = new TasksEntryServiceClp(classLoaderProxy);
-
-			ClpSerializer.setClassLoader(portletClassLoader);
+			if (invokableService instanceof TasksEntryService) {
+				_service = (TasksEntryService)invokableService;
+			}
+			else {
+				_service = new TasksEntryServiceClp(invokableService);
+			}
 
 			ReferenceRegistry.registerReference(TasksEntryServiceUtil.class,
 				"_service");
-			MethodCache.remove(TasksEntryService.class);
 		}
 
 		return _service;
-	}
-
-	public void setService(TasksEntryService service) {
-		MethodCache.remove(TasksEntryService.class);
-
-		_service = service;
-
-		ReferenceRegistry.registerReference(TasksEntryServiceUtil.class,
-			"_service");
-		MethodCache.remove(TasksEntryService.class);
 	}
 
 	private static TasksEntryService _service;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,17 @@
 
 package com.liferay.sampleservicebuilder.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.GroupedModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.GroupedModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.model.StagedAuditedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -39,7 +43,9 @@ import java.util.Date;
  * @see com.liferay.sampleservicebuilder.model.impl.FooModelImpl
  * @generated
  */
-public interface FooModel extends BaseModel<Foo>, GroupedModel {
+@ProviderType
+public interface FooModel extends BaseModel<Foo>, GroupedModel, ShardedModel,
+	StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -66,6 +72,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 * @return the uuid of this foo
 	 */
 	@AutoEscape
+	@Override
 	public String getUuid();
 
 	/**
@@ -73,6 +80,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @param uuid the uuid of this foo
 	 */
+	@Override
 	public void setUuid(String uuid);
 
 	/**
@@ -94,6 +102,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @return the group ID of this foo
 	 */
+	@Override
 	public long getGroupId();
 
 	/**
@@ -101,6 +110,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @param groupId the group ID of this foo
 	 */
+	@Override
 	public void setGroupId(long groupId);
 
 	/**
@@ -108,6 +118,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @return the company ID of this foo
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -115,6 +126,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @param companyId the company ID of this foo
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**
@@ -122,6 +134,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @return the user ID of this foo
 	 */
+	@Override
 	public long getUserId();
 
 	/**
@@ -129,21 +142,23 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @param userId the user ID of this foo
 	 */
+	@Override
 	public void setUserId(long userId);
 
 	/**
 	 * Returns the user uuid of this foo.
 	 *
 	 * @return the user uuid of this foo
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid() throws SystemException;
+	@Override
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this foo.
 	 *
 	 * @param userUuid the user uuid of this foo
 	 */
+	@Override
 	public void setUserUuid(String userUuid);
 
 	/**
@@ -152,6 +167,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 * @return the user name of this foo
 	 */
 	@AutoEscape
+	@Override
 	public String getUserName();
 
 	/**
@@ -159,6 +175,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @param userName the user name of this foo
 	 */
+	@Override
 	public void setUserName(String userName);
 
 	/**
@@ -166,6 +183,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @return the create date of this foo
 	 */
+	@Override
 	public Date getCreateDate();
 
 	/**
@@ -173,6 +191,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @param createDate the create date of this foo
 	 */
+	@Override
 	public void setCreateDate(Date createDate);
 
 	/**
@@ -180,6 +199,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @return the modified date of this foo
 	 */
+	@Override
 	public Date getModifiedDate();
 
 	/**
@@ -187,6 +207,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 *
 	 * @param modifiedDate the modified date of this foo
 	 */
+	@Override
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
@@ -212,7 +233,7 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	public boolean getField2();
 
 	/**
-	 * Determines if this foo is field2.
+	 * Returns <code>true</code> if this foo is field2.
 	 *
 	 * @return <code>true</code> if this foo is field2; <code>false</code> otherwise
 	 */
@@ -268,35 +289,60 @@ public interface FooModel extends BaseModel<Foo>, GroupedModel {
 	 */
 	public void setField5(String field5);
 
+	@Override
 	public boolean isNew();
 
+	@Override
 	public void setNew(boolean n);
 
+	@Override
 	public boolean isCachedModel();
 
+	@Override
 	public void setCachedModel(boolean cachedModel);
 
+	@Override
 	public boolean isEscapedModel();
 
-	public void setEscapedModel(boolean escapedModel);
-
+	@Override
 	public Serializable getPrimaryKeyObj();
 
+	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj);
 
+	@Override
 	public ExpandoBridge getExpandoBridge();
 
+	@Override
+	public void setExpandoBridgeAttributes(BaseModel<?> baseModel);
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge);
+
+	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
+	@Override
 	public Object clone();
 
+	@Override
 	public int compareTo(Foo foo);
 
+	@Override
 	public int hashCode();
 
+	@Override
+	public CacheModel<Foo> toCacheModel();
+
+	@Override
 	public Foo toEscapedModel();
 
+	@Override
+	public Foo toUnescapedModel();
+
+	@Override
 	public String toString();
 
+	@Override
 	public String toXmlString();
 }

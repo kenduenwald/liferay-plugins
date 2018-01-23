@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,8 +31,9 @@ import java.util.List;
 public class NetvibesWidgetUtil {
 
 	public static String[][] getCategories() throws Exception {
-		String jsonString = HttpUtil.URLtoString(HtmlUtil.stripComments(
-			"http://api.eco.netvibes.com/categories?format=json"));
+		String jsonString = HttpUtil.URLtoString(
+			HtmlUtil.stripComments(
+				"http://api.eco.netvibes.com/categories?format=json"));
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(jsonString);
 
@@ -82,7 +83,7 @@ public class NetvibesWidgetUtil {
 
 		JSONArray jsonArray = jsonObject.getJSONArray("items");
 
-		List<Object[]> results = new ArrayList<Object[]>();
+		List<Object[]> results = new ArrayList<>();
 		int total = 0;
 
 		if (jsonArray != null) {

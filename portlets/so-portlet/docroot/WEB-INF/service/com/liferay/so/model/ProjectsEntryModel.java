@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,16 @@
 
 package com.liferay.so.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.AuditedModel;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.AuditedModel;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -39,8 +42,9 @@ import java.util.Date;
  * @see com.liferay.so.model.impl.ProjectsEntryModelImpl
  * @generated
  */
+@ProviderType
 public interface ProjectsEntryModel extends AuditedModel,
-	BaseModel<ProjectsEntry> {
+	BaseModel<ProjectsEntry>, ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -80,6 +84,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @return the company ID of this projects entry
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -87,6 +92,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @param companyId the company ID of this projects entry
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**
@@ -94,6 +100,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @return the user ID of this projects entry
 	 */
+	@Override
 	public long getUserId();
 
 	/**
@@ -101,21 +108,23 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @param userId the user ID of this projects entry
 	 */
+	@Override
 	public void setUserId(long userId);
 
 	/**
 	 * Returns the user uuid of this projects entry.
 	 *
 	 * @return the user uuid of this projects entry
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid() throws SystemException;
+	@Override
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this projects entry.
 	 *
 	 * @param userUuid the user uuid of this projects entry
 	 */
+	@Override
 	public void setUserUuid(String userUuid);
 
 	/**
@@ -124,6 +133,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 * @return the user name of this projects entry
 	 */
 	@AutoEscape
+	@Override
 	public String getUserName();
 
 	/**
@@ -131,6 +141,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @param userName the user name of this projects entry
 	 */
+	@Override
 	public void setUserName(String userName);
 
 	/**
@@ -138,6 +149,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @return the create date of this projects entry
 	 */
+	@Override
 	public Date getCreateDate();
 
 	/**
@@ -145,6 +157,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @param createDate the create date of this projects entry
 	 */
+	@Override
 	public void setCreateDate(Date createDate);
 
 	/**
@@ -152,6 +165,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @return the modified date of this projects entry
 	 */
+	@Override
 	public Date getModifiedDate();
 
 	/**
@@ -159,6 +173,7 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 *
 	 * @param modifiedDate the modified date of this projects entry
 	 */
+	@Override
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
@@ -234,35 +249,60 @@ public interface ProjectsEntryModel extends AuditedModel,
 	 */
 	public void setData(String data);
 
+	@Override
 	public boolean isNew();
 
+	@Override
 	public void setNew(boolean n);
 
+	@Override
 	public boolean isCachedModel();
 
+	@Override
 	public void setCachedModel(boolean cachedModel);
 
+	@Override
 	public boolean isEscapedModel();
 
-	public void setEscapedModel(boolean escapedModel);
-
+	@Override
 	public Serializable getPrimaryKeyObj();
 
+	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj);
 
+	@Override
 	public ExpandoBridge getExpandoBridge();
 
+	@Override
+	public void setExpandoBridgeAttributes(BaseModel<?> baseModel);
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge);
+
+	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
+	@Override
 	public Object clone();
 
-	public int compareTo(ProjectsEntry projectsEntry);
+	@Override
+	public int compareTo(com.liferay.so.model.ProjectsEntry projectsEntry);
 
+	@Override
 	public int hashCode();
 
-	public ProjectsEntry toEscapedModel();
+	@Override
+	public CacheModel<com.liferay.so.model.ProjectsEntry> toCacheModel();
 
+	@Override
+	public com.liferay.so.model.ProjectsEntry toEscapedModel();
+
+	@Override
+	public com.liferay.so.model.ProjectsEntry toUnescapedModel();
+
+	@Override
 	public String toString();
 
+	@Override
 	public String toXmlString();
 }

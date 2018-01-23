@@ -1,4 +1,4 @@
-AUI().add(
+AUI.add(
 	'liferay-so-site-list',
 	function(A) {
 		var SiteList = A.Base.create(
@@ -9,8 +9,10 @@ AUI().add(
 				initializer: function(config) {
 					this._listNode = A.one(config.listNode);
 
-					this._bindUIACBase();
-					this._syncUIACBase();
+					if (this._listNode) {
+						this._bindUIACBase();
+						this._syncUIACBase();
+					}
 				}
 			}
 		);
@@ -21,23 +23,84 @@ AUI().add(
 	},
 	'',
 	{
-		requires: ['aui-base', 'autocomplete-base']
+		requires: ['aui-base', 'autocomplete-base', 'node-core']
+	}
+);
+
+AUI.add(
+	'liferay-so-user-menu',
+	function(A) {
+		var UserMenu = function(config) {
+			var hideClass = config.hideClass;
+			var hideOn = config.hideOn || 'close-menus';
+			var showClass = config.showClass;
+			var showOn = config.showOn || 'click';
+
+			var node = A.one(config.node);
+
+			var target = A.one(config.target) || node;
+
+			target.on(
+				'clickoutside',
+				function(event) {
+					if (hideClass && !target.hasClass(hideClass)) {
+						target.addClass(hideClass);
+					}
+
+					if (showClass && target.hasClass(showClass)) {
+						target.removeClass(showClass);
+					}
+				}
+			);
+
+			var trigger = A.one(config.trigger) || node;
+
+			trigger.on(
+				showOn,
+				function(event) {
+					if (hideClass && target.hasClass(hideClass)) {
+						setTimeout(
+							function() {
+								target.removeClass(hideClass);
+							},
+							10
+						);
+					}
+
+					if (showClass && !target.hasClass(showClass)) {
+						target.addClass(showClass);
+					}
+				}
+			);
+		};
+
+		Liferay.namespace('SO');
+
+		Liferay.SO.UserMenu = UserMenu;
+	},
+	'',
+	{
+		requires: ['aui-base', 'node-core']
 	}
 );
 
 AUI().use(
 	'aui-base',
-	'aui-dialog',
-	'aui-io-plugin',
+	'aui-io-plugin-deprecated',
 	'datasource-io',
 	'json-parse',
 	'liferay-so-site-list',
+	'liferay-util-window',
 	function(A) {
+		var Lang = A.Lang;
+
 		Liferay.namespace('SO');
 
 		Liferay.SO.Sites = {
 			init: function(config) {
 				var instance = this;
+
+				instance._namespace = config.namespace;
 
 				instance._createSiteList(config);
 				instance._assignEvents();
@@ -53,20 +116,39 @@ AUI().use(
 				}
 			},
 
-			createDataSource: function(url) {
+			createDataSource: function(url, namespace) {
+				var instance = this;
+
+				if (namespace) {
+					instance._namespace = namespace;
+				}
+
 				return new A.DataSource.IO(
 					{
+						ioConfig: {
+							method: 'POST'
+						},
 						on: {
 							request: function(event) {
+								var sitesTabsContainer = A.one('.so-portlet-sites .sites-tabs');
+
+								var tabs1 = 'all-sites';
+
+								if (sitesTabsContainer) {
+									tabs1 = sitesTabsContainer.one('select').get('value');
+								}
+
+								var eventData = {};
+
 								var data = event.request;
 
-								event.cfg.data = {
-									directory: data.directory || false,
-									end: data.end || 0,
-									keywords: data.keywords || '',
-									start: data.start || 0,
-									userGroups: data.userGroups || false
-								}
+								eventData[instance._namespace + 'directory'] = data[instance._namespace + 'directory'] || false;
+								eventData[instance._namespace + 'end'] = data[instance._namespace + 'end'] || 10;
+								eventData[instance._namespace + 'keywords'] = data[instance._namespace + 'keywords'] || '';
+								eventData[instance._namespace + 'searchTab'] = data[instance._namespace + 'searchTab'] || tabs1;
+								eventData[instance._namespace + 'start'] = data[instance._namespace + 'start'] || 0;
+
+								event.cfg.data = eventData;
 							}
 						},
 						source: url
@@ -74,24 +156,26 @@ AUI().use(
 				);
 			},
 
-			disableButton: function(button) {
-				button = button.one('input') || button;
+			createDirectoryList: function(directoryList) {
+				var instance = this;
 
+				instance._directoryList = directoryList;
+			},
+
+			disableButton: function(button) {
 				button.set('disabled', true);
-				button.ancestor('.aui-button').addClass('aui-button-disabled');
+
+				button.addClass('disabled');
 			},
 
 			displayPopup: function(url, title, data) {
 				var instance = this;
 
-				var viewportRegion = A.getBody().get('viewportRegion');
-
 				var popup = instance.getPopup();
 
-				popup.show();
+				popup.titleNode.html(title);
 
-				popup.set('title', title);
-				popup.set('xy', [viewportRegion.left + 20, viewportRegion.top + 20]);
+				popup.show();
 
 				popup.io.set('uri', url);
 				popup.io.set('data', data);
@@ -100,35 +184,62 @@ AUI().use(
 			},
 
 			enableButton: function(button) {
-				button = button.one('input') || button;
-
 				button.set('disabled', false);
-				button.ancestor('.aui-button').removeClass('aui-button-disabled');
+
+				button.removeClass('disabled');
 			},
 
 			getPopup: function() {
 				var instance = this;
 
 				if (!instance._popup) {
-					instance._popup = new A.Dialog(
+					instance._popup = Liferay.Util.Window.getWindow(
 						{
-							cssClass: 'so-portlet-sites-dialog',
-							resizable: false,
-							width: 526
+							dialog: {
+								align: {
+									node: null,
+									points: ['tc', 'tc']
+								},
+								constrain2view: true,
+								cssClass: 'so-portlet-sites-dialog',
+								modal: true,
+								resizable: true,
+								width: 650
+							}
 						}
 					).plug(
 						A.Plugin.IO,
-						{autoLoad: false}
+						{
+							autoLoad: false
+						}
 					).render();
 				}
 
 				return instance._popup;
 			},
 
-			updateSites: function() {
+			setTitle: function(title) {
 				var instance = this;
 
-				instance._siteList.sendRequest();
+				var popup = instance.getPopup();
+
+				popup.titleNode.html(title);
+			},
+
+			updateSites: function(showSuccessMessage, keywordsInput, requestTemplate) {
+				var instance = this;
+
+				if (instance._directoryList) {
+					instance._directoryList.sendRequest(keywordsInput, requestTemplate);
+				}
+
+				if (instance._siteList) {
+					instance._siteList.sendRequest();
+				}
+
+				if (showSuccessMessage && instance._messages) {
+					instance._messages.html('<span class="portlet-msg-success">' + Liferay.Language.get('your-request-completed-successfully') + '</span>');
+				}
 			},
 
 			_assignEvents: function() {
@@ -167,17 +278,30 @@ AUI().use(
 				var siteListURL = config.siteListURL;
 				var siteSearchInput = config.siteSearchInput;
 
-				var siteList = new Liferay.SO.SiteList(
+				siteList = new Liferay.SO.SiteList(
 					{
-						requestTemplate: function(query) {
-							return {
-								keywords: query
-							}
-						},
-
 						inputNode: siteSearchInput,
 						listNode: siteList,
 						minQueryLength: 0,
+						requestTemplate: function(query) {
+							var data = {};
+
+							data[instance._namespace + 'keywords'] = query;
+
+							return data;
+						},
+						resultTextLocator: function(response) {
+							var result = '';
+
+							if (!Lang.isUndefined(response.toString)) {
+								result = response.toString();
+							}
+							else if (!Lang.isUndefined(response.responseText)) {
+								result = response.responseText;
+							}
+
+							return result;
+						},
 						source: instance.createDataSource(siteListURL)
 					}
 				);
@@ -185,17 +309,36 @@ AUI().use(
 				siteList.on('results', instance._updateSiteList);
 
 				instance._siteList = siteList;
+
+				instance._messages = A.one(config.messages);
 			},
 
 			_updateSiteList: function(event) {
 				var instance = this;
 
-				var data = A.JSON.parse(event.data.responseText);
+				var data = JSON.parse(event.data.responseText);
 
-				var results = data.sites;
 				var count = data.count;
+				var results = data.sites;
 
 				var buffer = [];
+
+				var getSiteActionHtml = function(actionClassNames, actionLinkClassName, actionTitle, actionURL) {
+					var siteActionTemplate = '<span class="{actionClassNames}" title="{actionTitle}">' +
+							'<a class="{actionLinkClassName}" href="{actionURL}">' +
+							'</a>' +
+						'</span>';
+
+					return	A.Lang.sub(
+						siteActionTemplate,
+						{
+							actionClassNames: actionClassNames,
+							actionLinkClassName: actionLinkClassName,
+							actionTitle: actionTitle,
+							actionURL: actionURL
+						}
+					);
+				};
 
 				if (results.length == 0) {
 					buffer.push(
@@ -203,38 +346,54 @@ AUI().use(
 					);
 				}
 				else {
-					var siteTemplate =
-						'<li class="{classNames}">' +
-							'{joinHtml}' +
+					var siteTemplate = '<li class="{classNames}">' +
+							'{favoriteHTML}' +
 							'<span class="name">{siteName}</span>' +
 						'</li>';
 
 					buffer.push(
-						A.Array.map(
-							results,
+						results.map(
 							function(result) {
 								var classNames = [];
-								var joinHtml = '';
 
-								if (result.socialOfficeEnabled) {
+								if (result.socialOfficeGroup) {
 									classNames.push('social-office-enabled');
 								}
 
-								if (!result.joinUrl) {
+								if (!result.joinURL) {
 									classNames.push('member');
+								}
+
+								var favoriteHTML;
+
+								if (result.favoriteURL == '') {
+									favoriteHTML = getSiteActionHtml('favorite', 'disabled', Liferay.Language.get('you-must-be-a-member-of-the-site-to-add-to-favorites'), '#');
+								}
+								else if (result.favoriteURL) {
+									favoriteHTML = getSiteActionHtml('action favorite', '', Liferay.Language.get('add-to-favorites'), result.favoriteURL);
+								}
+								else {
+									favoriteHTML = getSiteActionHtml('action unfavorite', '', Liferay.Language.get('remove-from-favorites'), result.unfavoriteURL);
 								}
 
 								var name = result.name;
 
-								if (result.url) {
-									name = '<a href="' + result.url + '">' + name + '</a>';
+								if (result.publicLayoutsURL) {
+									name = '<a href="' + result.publicLayoutsURL + '">' + name + '</a>';
+
+									if (result.privateLayoutsURL) {
+										name += '<a class="private-pages" href="' + result.privateLayoutsURL + '"> (' + Liferay.Language.get('private-pages') + ')</a>';
+									}
+								}
+								else if (!result.publicLayoutsURL && result.privateLayoutsURL) {
+									name = '<a href="' + result.privateLayoutsURL + '">' + name + '</a>';
 								}
 
 								return A.Lang.sub(
 									siteTemplate,
 									{
 										classNames: classNames.join(' '),
-										joinHtml: (result.joinUrl ? '<span class="join"><a href="' + result.joinUrl + '">' + Liferay.Language.get('join') + '</a></span>' : ''),
+										favoriteHTML: favoriteHTML,
 										siteName: name
 									}
 								);
@@ -251,7 +410,9 @@ AUI().use(
 					}
 				}
 
-				instance._listNode.html(buffer.join(''));
+				if (instance._listNode) {
+					instance._listNode.html(buffer.join(''));
+				}
 			}
 		};
 

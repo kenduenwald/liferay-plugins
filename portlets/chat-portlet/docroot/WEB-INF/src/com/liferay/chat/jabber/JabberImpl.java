@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,24 +18,27 @@ import com.liferay.chat.model.Status;
 import com.liferay.chat.service.StatusLocalServiceUtil;
 import com.liferay.chat.util.PortletPropsValues;
 import com.liferay.chat.util.comparator.BuddyComparator;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ContactConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ContactConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.UserLocalServiceUtil;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.Chat;
@@ -56,6 +59,7 @@ import org.jivesoftware.smack.packet.Presence;
  */
 public class JabberImpl implements Jabber {
 
+	@Override
 	public void disconnect(long userId) {
 		Connection connection = getConnection(userId);
 
@@ -66,20 +70,29 @@ public class JabberImpl implements Jabber {
 		connection.disconnect();
 
 		_connections.remove(userId);
+
+		_onlineUserIds.remove(userId);
 	}
 
+	@Override
 	public String getResource(String jabberId) {
 		String resource = StringUtil.extractLast(jabberId, StringPool.AT);
 
-		resource = StringUtil.extractLast(jabberId, StringPool.SLASH);
+		resource = StringUtil.extractLast(resource, StringPool.SLASH);
+
+		if (resource == null) {
+			return StringPool.BLANK;
+		}
 
 		return resource;
 	}
 
+	@Override
 	public String getScreenName(String jabberId) {
 		return StringUtil.extractFirst(jabberId, StringPool.AT);
 	}
 
+	@Override
 	public List<Object[]> getStatuses(
 		long companyId, long userId, List<Object[]> buddies) {
 
@@ -94,7 +107,7 @@ public class JabberImpl implements Jabber {
 				return buddies;
 			}
 
-			List<Object[]> jabberBuddies = new ArrayList<Object[]>();
+			List<Object[]> jabberBuddies = new ArrayList<>();
 
 			jabberBuddies.addAll(buddies);
 
@@ -104,10 +117,10 @@ public class JabberImpl implements Jabber {
 
 			if (PortletPropsValues.JABBER_IMPORT_USER_ENABLED) {
 				for (Object[] buddy : buddies) {
-					String screenName = (String)buddy[1];
-					String firstName = (String)buddy[2];
-					String middleName = (String)buddy[3];
-					String lastName = (String)buddy[4];
+					String firstName = (String)buddy[1];
+					String lastName = (String)buddy[3];
+					String middleName = (String)buddy[5];
+					String screenName = (String)buddy[7];
 
 					String fullName = ContactConstants.getFullName(
 						firstName, middleName, lastName);
@@ -132,15 +145,18 @@ public class JabberImpl implements Jabber {
 				User user = UserLocalServiceUtil.getUserByScreenName(
 					companyId, getScreenName(rosterEntry.getUser()));
 
-				Object[] jabberBuddy = new Object[7];
+				Object[] jabberBuddy = new Object[10];
 
-				jabberBuddy[0] = user.getUserId();
-				jabberBuddy[1] = user.getScreenName();
-				jabberBuddy[2] = user.getFirstName();
-				jabberBuddy[3] = user.getMiddleName();
-				jabberBuddy[4] = user.getLastName();
-				jabberBuddy[5] = user.getPortraitId();
-				jabberBuddy[6] = true;
+				jabberBuddy[0] = true;
+				jabberBuddy[1] = user.getFirstName();
+				jabberBuddy[2] = user.getGroupId();
+				jabberBuddy[3] = user.getLastName();
+				jabberBuddy[4] = user.isMale();
+				jabberBuddy[5] = user.getMiddleName();
+				jabberBuddy[6] = user.getPortraitId();
+				jabberBuddy[7] = user.getScreenName();
+				jabberBuddy[8] = user.getUserId();
+				jabberBuddy[9] = user.getUserUuid();
 
 				if (Collections.binarySearch(
 						jabberBuddies, jabberBuddy, buddyComparator) < 0) {
@@ -160,6 +176,7 @@ public class JabberImpl implements Jabber {
 		}
 	}
 
+	@Override
 	public void login(long userId, String password) {
 		try {
 			connect(userId, password);
@@ -187,6 +204,7 @@ public class JabberImpl implements Jabber {
 
 				try {
 					importUser(userId, password);
+
 					connect(userId, password);
 				}
 				catch (XMPPException xmppe2) {
@@ -208,6 +226,7 @@ public class JabberImpl implements Jabber {
 		}
 	}
 
+	@Override
 	public void sendMessage(long fromUserId, long toUserId, String content) {
 		try {
 			if (Validator.isNull(content)) {
@@ -219,8 +238,8 @@ public class JabberImpl implements Jabber {
 			if (connection == null) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
-						"User " + fromUserId + " is not connected to Jabber" +
-							" and cannot send messages");
+						"User " + fromUserId + " is not connected to Jabber " +
+							"and cannot send messages");
 				}
 
 				return;
@@ -245,8 +264,8 @@ public class JabberImpl implements Jabber {
 
 				String resource = getResource(from);
 
-				if (resource.equalsIgnoreCase(
-						PortletPropsValues.JABBER_RESOURCE)) {
+				if (StringUtil.equalsIgnoreCase(
+						resource, PortletPropsValues.JABBER_RESOURCE)) {
 
 					continue;
 				}
@@ -269,16 +288,16 @@ public class JabberImpl implements Jabber {
 					}
 				}
 			}
-
 		}
 		catch (Exception e) {
 			_log.error(e, e);
 		}
 	}
 
+	@Override
 	public void updatePassword(long userId, String password) {
 		if (!PortletPropsValues.JABBER_IMPORT_USER_ENABLED ||
-			password == null) {
+			(password == null)) {
 
 			return;
 		}
@@ -299,13 +318,12 @@ public class JabberImpl implements Jabber {
 		}
 	}
 
+	@Override
 	public void updateStatus(long userId, int online) {
 		updateStatus(userId, online, null);
 	}
 
-	protected Connection connect()
-		throws PortalException, SystemException, XMPPException {
-
+	protected Connection connect() throws Exception {
 		long userId = -1;
 		String password = null;
 
@@ -313,7 +331,7 @@ public class JabberImpl implements Jabber {
 	}
 
 	protected Connection connect(long userId, String password)
-		throws PortalException, SystemException, XMPPException {
+		throws Exception {
 
 		Connection connection = getConnection(userId);
 
@@ -356,13 +374,23 @@ public class JabberImpl implements Jabber {
 		return _connections.get(userId);
 	}
 
-	protected ConnectionConfiguration getConnectionConfiguration() {
+	protected ConnectionConfiguration getConnectionConfiguration()
+		throws UnknownHostException {
+
 		if (_connectionConfiguration != null) {
 			return _connectionConfiguration;
 		}
 
+		String jabberHost = PortletPropsValues.JABBER_HOST;
+
+		if (!Validator.isIPAddress(jabberHost)) {
+			InetAddress inetAddress = InetAddress.getByName(jabberHost);
+
+			jabberHost = inetAddress.getHostAddress();
+		}
+
 		_connectionConfiguration = new ConnectionConfiguration(
-			PortletPropsValues.JABBER_HOST, PortletPropsValues.JABBER_PORT,
+			jabberHost, PortletPropsValues.JABBER_PORT,
 			PortletPropsValues.JABBER_SERVICE_NAME);
 
 		_connectionConfiguration.setSendPresence(false);
@@ -387,9 +415,7 @@ public class JabberImpl implements Jabber {
 			PortletPropsValues.JABBER_SERVICE_NAME);
 	}
 
-	protected void importUser(long userId, String password)
-		throws PortalException, SystemException, XMPPException {
-
+	protected void importUser(long userId, String password) throws Exception {
 		Connection connection = connect();
 
 		AccountManager accountManager = connection.getAccountManager();
@@ -402,7 +428,7 @@ public class JabberImpl implements Jabber {
 
 		User user = UserLocalServiceUtil.getUserById(userId);
 
-		Map<String, String> attributes = new HashMap<String, String>();
+		Map<String, String> attributes = new HashMap<>();
 
 		attributes.put("email", user.getEmailAddress());
 		attributes.put("first", user.getFirstName());
@@ -430,15 +456,19 @@ public class JabberImpl implements Jabber {
 				}
 			}
 
-			if (online == 1) {
+			if ((online == 1) && !_onlineUserIds.contains(userId)) {
 				Presence presence = new Presence(Presence.Type.available);
 
 				connection.sendPacket(presence);
+
+				_onlineUserIds.add(userId);
 			}
-			else if (online == 0) {
+			else if ((online == 0) && _onlineUserIds.contains(userId)) {
 				Presence presence = new Presence(Presence.Type.unavailable);
 
 				connection.sendPacket(presence);
+
+				_onlineUserIds.remove(userId);
 			}
 		}
 		catch (Exception e) {
@@ -448,9 +478,8 @@ public class JabberImpl implements Jabber {
 
 	private static Log _log = LogFactoryUtil.getLog(JabberImpl.class);
 
-	private static Map<Long, Connection> _connections =
-		new HashMap<Long, Connection>();
-
 	private ConnectionConfiguration _connectionConfiguration;
+	private Map<Long, Connection> _connections = new HashMap<>();
+	private Set<Long> _onlineUserIds = new HashSet<>();
 
 }

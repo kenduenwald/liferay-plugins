@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This file is part of Liferay Social Office. Liferay Social Office is free
  * software: you can redistribute it and/or modify it under the terms of the GNU
@@ -8,7 +8,7 @@
  *
  * Liferay Social Office is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -18,11 +18,10 @@
 package com.liferay.so.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.User;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.so.ProjectsEntryEndDateException;
-import com.liferay.so.ProjectsEntryStartDateException;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.so.exception.ProjectsEntryEndDateException;
+import com.liferay.so.exception.ProjectsEntryStartDateException;
 import com.liferay.so.model.ProjectsEntry;
 import com.liferay.so.service.base.ProjectsEntryLocalServiceBaseImpl;
 
@@ -39,20 +38,20 @@ public class ProjectsEntryLocalServiceImpl
 			long userId, String title, String description, int startDateMonth,
 			int startDateDay, int startDateYear, int endDateMonth,
 			int endDateDay, int endDateYear, boolean current, String data)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		User user = userLocalService.getUserById(userId);
 
 		Date startDate = PortalUtil.getDate(
 			startDateMonth, startDateDay, startDateYear, user.getTimeZone(),
-			new ProjectsEntryStartDateException());
+			ProjectsEntryStartDateException.class);
 
 		Date endDate = null;
 
 		if (!current) {
 			endDate = PortalUtil.getDate(
 				endDateMonth, endDateDay, endDateYear, user.getTimeZone(),
-				new ProjectsEntryEndDateException());
+				ProjectsEntryEndDateException.class);
 		}
 
 		Date now = new Date();
@@ -73,18 +72,16 @@ public class ProjectsEntryLocalServiceImpl
 		projectsEntry.setEndDate(endDate);
 		projectsEntry.setData(data);
 
-		projectsEntryPersistence.update(projectsEntry, false);
+		projectsEntryPersistence.update(projectsEntry);
 
 		return projectsEntry;
 	}
 
-	public List<ProjectsEntry> getUserProjectsEntries(long userId)
-		throws SystemException {
-
+	public List<ProjectsEntry> getUserProjectsEntries(long userId) {
 		return projectsEntryPersistence.findByUserId(userId);
 	}
 
-	public int getUserProjectsEntriesCount(long userId) throws SystemException {
+	public int getUserProjectsEntriesCount(long userId) {
 		return projectsEntryPersistence.countByUserId(userId);
 	}
 
@@ -93,7 +90,7 @@ public class ProjectsEntryLocalServiceImpl
 			int startDateMonth, int startDateDay, int startDateYear,
 			int endDateMonth, int endDateDay, int endDateYear, boolean current,
 			String data)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ProjectsEntry projectsEntry = projectsEntryPersistence.findByPrimaryKey(
 			projectsEntryId);
@@ -102,14 +99,14 @@ public class ProjectsEntryLocalServiceImpl
 
 		Date startDate = PortalUtil.getDate(
 			startDateMonth, startDateDay, startDateYear, user.getTimeZone(),
-			new ProjectsEntryStartDateException());
+			ProjectsEntryStartDateException.class);
 
 		Date endDate = null;
 
 		if (!current) {
 			endDate = PortalUtil.getDate(
 				endDateMonth, endDateDay, endDateYear, user.getTimeZone(),
-				new ProjectsEntryEndDateException());
+				ProjectsEntryEndDateException.class);
 		}
 
 		projectsEntry.setModifiedDate(new Date());
@@ -119,7 +116,7 @@ public class ProjectsEntryLocalServiceImpl
 		projectsEntry.setEndDate(endDate);
 		projectsEntry.setData(data);
 
-		projectsEntryPersistence.update(projectsEntry, false);
+		projectsEntryPersistence.update(projectsEntry);
 
 		return projectsEntry;
 	}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,21 +33,14 @@ import javax.portlet.RenderResponse;
 public class JSPPortlet extends GenericPortlet {
 
 	@Override
-	public void init() throws PortletException {
-		editJSP = getInitParameter("edit-jsp");
-		helpJSP = getInitParameter("help-jsp");
-		viewJSP = getInitParameter("view-jsp");
-	}
-
-	@Override
 	public void doDispatch(
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
-		String jspPage = renderRequest.getParameter("jspPage");
+		String mvcPath = renderRequest.getParameter("mvcPath");
 
-		if (jspPage != null) {
-			include(jspPage, renderRequest, renderResponse);
+		if (mvcPath != null) {
+			include(mvcPath, renderRequest, renderResponse);
 		}
 		else {
 			super.doDispatch(renderRequest, renderResponse);
@@ -81,6 +74,13 @@ public class JSPPortlet extends GenericPortlet {
 		throws IOException, PortletException {
 
 		include(viewJSP, renderRequest, renderResponse);
+	}
+
+	@Override
+	public void init() throws PortletException {
+		editJSP = getInitParameter("edit-jsp");
+		helpJSP = getInitParameter("help-jsp");
+		viewJSP = getInitParameter("view-jsp");
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,12 +33,12 @@ public class Verse implements Serializable {
 		return _location;
 	}
 
-	public void setLocation(String location) {
-		_location = location;
-	}
-
 	public String getText() {
 		return _text;
+	}
+
+	public void setLocation(String location) {
+		_location = location;
 	}
 
 	public void setText(String text) {

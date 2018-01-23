@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,14 +14,36 @@
 
 package com.liferay.socialcoding.model.impl;
 
-import com.liferay.socialcoding.model.JIRAIssue;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.socialcoding.model.JIRAProject;
+import com.liferay.socialcoding.service.JIRAProjectLocalServiceUtil;
 
 /**
  * @author Brian Wing Shun Chan
  */
-public class JIRAIssueImpl extends JIRAIssueModelImpl implements JIRAIssue {
+public class JIRAIssueImpl extends JIRAIssueBaseImpl {
 
 	public JIRAIssueImpl() {
 	}
+
+	public String getKey() {
+		if (Validator.isNotNull(_key)) {
+			return _key;
+		}
+
+		try {
+			JIRAProject jiraProject =
+				JIRAProjectLocalServiceUtil.getJIRAProject(getProjectId());
+
+			_key = jiraProject.getKey() + StringPool.DASH + getIssueNumber();
+		}
+		catch (Exception e) {
+		}
+
+		return _key;
+	}
+
+	private String _key;
 
 }

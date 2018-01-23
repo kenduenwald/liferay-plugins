@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,17 +14,17 @@
 
 package com.liferay.socialcoding.hook.events;
 
+import com.liferay.expando.kernel.exception.DuplicateColumnNameException;
+import com.liferay.expando.kernel.exception.DuplicateTableNameException;
+import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.expando.kernel.model.ExpandoTable;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
+import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
 import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.events.SimpleAction;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.model.User;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.expando.DuplicateColumnNameException;
-import com.liferay.portlet.expando.DuplicateTableNameException;
-import com.liferay.portlet.expando.model.ExpandoColumnConstants;
-import com.liferay.portlet.expando.model.ExpandoTable;
-import com.liferay.portlet.expando.service.ExpandoColumnLocalServiceUtil;
-import com.liferay.portlet.expando.service.ExpandoTableLocalServiceUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 
 /**
  * @author Brian Wing Shun Chan
@@ -43,11 +43,11 @@ public class StartupAction extends SimpleAction {
 
 	protected void doRun(long companyId) throws Exception {
 		if (companyId == PortalUtil.getDefaultCompanyId()) {
-			setupExpando(companyId);
+			setUpExpando(companyId);
 		}
 	}
 
-	protected void setupExpando(long companyId) throws Exception {
+	protected void setUpExpando(long companyId) throws Exception {
 		ExpandoTable table = null;
 
 		try {

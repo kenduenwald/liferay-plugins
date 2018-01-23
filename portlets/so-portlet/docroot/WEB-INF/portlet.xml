@@ -1,17 +1,12 @@
 <?xml version="1.0"?>
 
-<portlet-app
-	version="2.0"
-	xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
->
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" version="2.0">
 	<portlet>
 		<portlet-name>1</portlet-name>
 		<display-name>Activities</display-name>
-		<portlet-class>com.liferay.util.bridges.mvc.MVCPortlet</portlet-class>
+		<portlet-class>com.liferay.so.activities.portlet.ActivitiesPortlet</portlet-class>
 		<init-param>
-			<name>view-jsp</name>
+			<name>view-template</name>
 			<value>/activities/view.jsp</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
@@ -42,7 +37,7 @@
 		<display-name>Invite Members</display-name>
 		<portlet-class>com.liferay.so.invitemembers.portlet.InviteMembersPortlet</portlet-class>
 		<init-param>
-			<name>view-jsp</name>
+			<name>view-template</name>
 			<value>/invite_members/view.jsp</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
@@ -71,17 +66,17 @@
 	</portlet>
 	<portlet>
 		<portlet-name>4</portlet-name>
-		<display-name>Expertise</display-name>
-		<portlet-class>com.liferay.util.bridges.mvc.MVCPortlet</portlet-class>
+		<display-name>Projects</display-name>
+		<portlet-class>com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet</portlet-class>
 		<expiration-cache>0</expiration-cache>
 		<supports>
 			<mime-type>text/html</mime-type>
 		</supports>
 		<resource-bundle>content.Language</resource-bundle>
 		<portlet-info>
-			<title>Expertise</title>
-			<short-title>Expertise</short-title>
-			<keywords>Expertise</keywords>
+			<title>Projects</title>
+			<short-title>Projects</short-title>
+			<keywords>Projects</keywords>
 		</portlet-info>
 		<security-role-ref>
 			<role-name>administrator</role-name>
@@ -101,11 +96,15 @@
 		<display-name>Sites</display-name>
 		<portlet-class>com.liferay.so.sites.portlet.SitesPortlet</portlet-class>
 		<init-param>
-			<name>config-jsp</name>
+			<name>add-process-action-success-action</name>
+			<value>false</value>
+		</init-param>
+		<init-param>
+			<name>config-template</name>
 			<value>/sites/configuration.jsp</value>
 		</init-param>
 		<init-param>
-			<name>view-jsp</name>
+			<name>view-template</name>
 			<value>/sites/view.jsp</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
@@ -132,12 +131,12 @@
 		</security-role-ref>
 	</portlet>
 	<portlet>
-		<portlet-name>6</portlet-name>
-		<display-name>Notification</display-name>
-		<portlet-class>com.liferay.so.notifications.portlet.NotificationsPortlet</portlet-class>
+		<portlet-name>7</portlet-name>
+		<display-name>Dockbar Notification</display-name>
+		<portlet-class>com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet</portlet-class>
 		<init-param>
-			<name>view-jsp</name>
-			<value>/notifications/view.jsp</value>
+			<name>view-template</name>
+			<value>/dockbar_notifications/view.jsp</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
@@ -145,9 +144,40 @@
 		</supports>
 		<resource-bundle>content.Language</resource-bundle>
 		<portlet-info>
-			<title>Notifications</title>
-			<short-title>Notifications</short-title>
-			<keywords>Notifications</keywords>
+			<title>Dockbar Notifications</title>
+			<short-title>Dockbar Notifications</short-title>
+			<keywords>Dockbar Notifications</keywords>
+		</portlet-info>
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>
+	<portlet>
+		<portlet-name>8</portlet-name>
+		<display-name>User Bar</display-name>
+		<portlet-class>com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet</portlet-class>
+		<init-param>
+			<name>view-template</name>
+			<value>/user_bar/view.jsp</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+		</supports>
+		<resource-bundle>content.Language</resource-bundle>
+		<portlet-info>
+			<title>User Bar</title>
+			<short-title>User Bar</short-title>
+			<keywords>User Bar</keywords>
 		</portlet-info>
 		<security-role-ref>
 			<role-name>administrator</role-name>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,14 @@
 
 package com.liferay.chat.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -36,6 +38,7 @@ import java.io.Serializable;
  * @see com.liferay.chat.model.impl.EntryModelImpl
  * @generated
  */
+@ProviderType
 public interface EntryModel extends BaseModel<Entry> {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -103,9 +106,8 @@ public interface EntryModel extends BaseModel<Entry> {
 	 * Returns the from user uuid of this entry.
 	 *
 	 * @return the from user uuid of this entry
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getFromUserUuid() throws SystemException;
+	public String getFromUserUuid();
 
 	/**
 	 * Sets the from user uuid of this entry.
@@ -132,9 +134,8 @@ public interface EntryModel extends BaseModel<Entry> {
 	 * Returns the to user uuid of this entry.
 	 *
 	 * @return the to user uuid of this entry
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getToUserUuid() throws SystemException;
+	public String getToUserUuid();
 
 	/**
 	 * Sets the to user uuid of this entry.
@@ -158,35 +159,74 @@ public interface EntryModel extends BaseModel<Entry> {
 	 */
 	public void setContent(String content);
 
+	/**
+	 * Returns the flag of this entry.
+	 *
+	 * @return the flag of this entry
+	 */
+	public int getFlag();
+
+	/**
+	 * Sets the flag of this entry.
+	 *
+	 * @param flag the flag of this entry
+	 */
+	public void setFlag(int flag);
+
+	@Override
 	public boolean isNew();
 
+	@Override
 	public void setNew(boolean n);
 
+	@Override
 	public boolean isCachedModel();
 
+	@Override
 	public void setCachedModel(boolean cachedModel);
 
+	@Override
 	public boolean isEscapedModel();
 
-	public void setEscapedModel(boolean escapedModel);
-
+	@Override
 	public Serializable getPrimaryKeyObj();
 
+	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj);
 
+	@Override
 	public ExpandoBridge getExpandoBridge();
 
+	@Override
+	public void setExpandoBridgeAttributes(BaseModel<?> baseModel);
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge);
+
+	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
+	@Override
 	public Object clone();
 
-	public int compareTo(Entry entry);
+	@Override
+	public int compareTo(com.liferay.chat.model.Entry entry);
 
+	@Override
 	public int hashCode();
 
-	public Entry toEscapedModel();
+	@Override
+	public CacheModel<com.liferay.chat.model.Entry> toCacheModel();
 
+	@Override
+	public com.liferay.chat.model.Entry toEscapedModel();
+
+	@Override
+	public com.liferay.chat.model.Entry toUnescapedModel();
+
+	@Override
 	public String toString();
 
+	@Override
 	public String toXmlString();
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,8 @@
 
 package com.liferay.tasks.service.http;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -22,13 +24,11 @@ import com.liferay.tasks.service.TasksEntryServiceUtil;
 import java.rmi.RemoteException;
 
 /**
- * <p>
- * This class provides a SOAP utility for the
- * {@link com.liferay.tasks.service.TasksEntryServiceUtil} service utility. The
+ * Provides the SOAP utility for the
+ * {@link TasksEntryServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
- * </p>
  *
  * <p>
  * ServiceBuilder follows certain rules in translating the methods. For example,
@@ -48,9 +48,8 @@ import java.rmi.RemoteException;
  * </p>
  *
  * <p>
- * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * You can see a list of services at http://localhost:8080/api/axis. Set the
+ * property <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -58,24 +57,39 @@ import java.rmi.RemoteException;
  * The SOAP utility is only generated for remote services.
  * </p>
  *
- * @author    Ryan Park
- * @see       TasksEntryServiceHttp
- * @see       com.liferay.tasks.model.TasksEntrySoap
- * @see       com.liferay.tasks.service.TasksEntryServiceUtil
+ * @author Ryan Park
+ * @see TasksEntryServiceHttp
+ * @see com.liferay.tasks.model.TasksEntrySoap
+ * @see TasksEntryServiceUtil
  * @generated
  */
+@ProviderType
 public class TasksEntryServiceSoap {
 	public static com.liferay.tasks.model.TasksEntrySoap addTasksEntry(
 		java.lang.String title, int priority, long assigneeUserId,
 		int dueDateMonth, int dueDateDay, int dueDateYear, int dueDateHour,
 		int dueDateMinute, boolean neverDue,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.tasks.model.TasksEntry returnValue = TasksEntryServiceUtil.addTasksEntry(title,
 					priority, assigneeUserId, dueDateMonth, dueDateDay,
 					dueDateYear, dueDateHour, dueDateMinute, neverDue,
 					serviceContext);
+
+			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.tasks.model.TasksEntrySoap deleteTasksEntry(
+		long tasksEntryId) throws RemoteException {
+		try {
+			com.liferay.tasks.model.TasksEntry returnValue = TasksEntryServiceUtil.deleteTasksEntry(tasksEntryId);
 
 			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
 		}
@@ -105,13 +119,30 @@ public class TasksEntryServiceSoap {
 		long assigneeUserId, long resolverUserId, int dueDateMonth,
 		int dueDateDay, int dueDateYear, int dueDateHour, int dueDateMinute,
 		boolean neverDue, int status,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.tasks.model.TasksEntry returnValue = TasksEntryServiceUtil.updateTasksEntry(tasksEntryId,
 					title, priority, assigneeUserId, resolverUserId,
 					dueDateMonth, dueDateDay, dueDateYear, dueDateHour,
 					dueDateMinute, neverDue, status, serviceContext);
+
+			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.tasks.model.TasksEntrySoap updateTasksEntryStatus(
+		long tasksEntryId, long resolverUserId, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.tasks.model.TasksEntry returnValue = TasksEntryServiceUtil.updateTasksEntryStatus(tasksEntryId,
+					resolverUserId, status, serviceContext);
 
 			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
 		}

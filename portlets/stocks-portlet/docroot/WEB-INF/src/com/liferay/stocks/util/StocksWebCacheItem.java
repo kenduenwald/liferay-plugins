@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,6 +33,7 @@ public class StocksWebCacheItem implements WebCacheItem {
 		_symbol = symbol;
 	}
 
+	@Override
 	public Object convert(String key) throws WebCacheException {
 		String symbol = _symbol;
 		double lastTrade = 0.0;
@@ -47,8 +48,8 @@ public class StocksWebCacheItem implements WebCacheItem {
 
 		try {
 			String text = HttpUtil.URLtoString(
-				"http://finance.yahoo.com/d/quotes.csv?s=" +
-					symbol + "&f=sl1d1t1c1ohgv&e=.csv");
+				"http://finance.yahoo.com/d/quotes.csv?s=" + symbol +
+					"&f=sl1d1t1c1ohgv&e=.csv");
 
 			StringTokenizer st = new StringTokenizer(text, StringPool.COMMA);
 
@@ -57,8 +58,11 @@ public class StocksWebCacheItem implements WebCacheItem {
 			st.nextToken();
 
 			try {
-				lastTrade = GetterUtil.getDouble(
-					st.nextToken().replace('"', ' ').trim());
+				String token = st.nextToken();
+
+				token = token.replace('"', ' ');
+
+				lastTrade = GetterUtil.getDouble(token.trim());
 
 				stocks.setLastTrade(lastTrade);
 			}
@@ -72,8 +76,11 @@ public class StocksWebCacheItem implements WebCacheItem {
 			st.nextToken();
 
 			try {
-				change = GetterUtil.getDouble(
-					st.nextToken().replace('"', ' ').trim());
+				String token = st.nextToken();
+
+				token = token.replace('"', ' ');
+
+				change = GetterUtil.getDouble(token.trim());
 
 				stocks.setChange(change);
 			}
@@ -82,8 +89,11 @@ public class StocksWebCacheItem implements WebCacheItem {
 			}
 
 			try {
-				open = GetterUtil.getDouble(
-					st.nextToken().replace('"', ' ').trim());
+				String token = st.nextToken();
+
+				token = token.replace('"', ' ');
+
+				open = GetterUtil.getDouble(token.trim());
 
 				stocks.setOpen(open);
 			}
@@ -92,8 +102,11 @@ public class StocksWebCacheItem implements WebCacheItem {
 			}
 
 			try {
-				dayHigh = GetterUtil.getDouble(
-					st.nextToken().replace('"', ' ').trim());
+				String token = st.nextToken();
+
+				token = token.replace('"', ' ');
+
+				dayHigh = GetterUtil.getDouble(token.trim());
 
 				stocks.setDayHigh(dayHigh);
 			}
@@ -102,8 +115,11 @@ public class StocksWebCacheItem implements WebCacheItem {
 			}
 
 			try {
-				dayLow = GetterUtil.getDouble(
-					st.nextToken().replace('"', ' ').trim());
+				String token = st.nextToken();
+
+				token = token.replace('"', ' ');
+
+				dayLow = GetterUtil.getDouble(token.trim());
 
 				stocks.setDayLow(dayLow);
 			}
@@ -112,8 +128,11 @@ public class StocksWebCacheItem implements WebCacheItem {
 			}
 
 			try {
-				volume = GetterUtil.getLong(
-					st.nextToken().replace('"', ' ').trim());
+				String token = st.nextToken();
+
+				token = token.replace('"', ' ');
+
+				volume = GetterUtil.getLong(token.trim());
 
 				stocks.setVolume(volume);
 			}
@@ -132,6 +151,7 @@ public class StocksWebCacheItem implements WebCacheItem {
 		return stocks;
 	}
 
+	@Override
 	public long getRefreshTime() {
 		return _REFRESH_TIME;
 	}

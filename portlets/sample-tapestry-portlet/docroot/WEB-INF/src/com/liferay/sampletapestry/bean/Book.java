@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -28,36 +28,36 @@ public class Book implements Serializable {
 		return _author;
 	}
 
-	public void setAuthor(String author) {
-		_author = author;
-	}
-
 	public String getDescription() {
 		return _description;
-	}
-
-	public void setDescription(String description) {
-		_description= description;
-	}
-
-	public boolean isRecommended() {
-		return _recommended;
-	}
-
-	public void setRecommended(boolean recommended) {
-		_recommended = recommended;
 	}
 
 	public String getTitle() {
 		return _title;
 	}
 
-	public void setTitle(String title) {
-		_title = title;
-	}
-
 	public int getYear() {
 		return _year;
+	}
+
+	public boolean isRecommended() {
+		return _recommended;
+	}
+
+	public void setAuthor(String author) {
+		_author = author;
+	}
+
+	public void setDescription(String description) {
+		_description = description;
+	}
+
+	public void setRecommended(boolean recommended) {
+		_recommended = recommended;
+	}
+
+	public void setTitle(String title) {
+		_title = title;
 	}
 
 	public void setYear(int year) {

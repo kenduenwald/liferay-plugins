@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.tich.util;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.webcache.WebCacheException;
@@ -31,39 +32,29 @@ import java.util.List;
  */
 public class EventsWebCacheItem implements WebCacheItem {
 
+	@Override
 	public Object convert(String key) throws WebCacheException {
-		List<Event> events = new ArrayList<Event>();
+		List<Event> events = new ArrayList<>();
 
 		try {
 			String text = HttpUtil.URLtoString(
 				"http://www.studylight.org/his/tich");
 
-			int x = text.indexOf("<table cellpadding=3 cellspacing=3>");
-			x = text.indexOf("<tr>", x);
+			int x = text.indexOf("<div class=\"border_bottom_medium\"");
 
-			int y = text.indexOf("<tr><td align=center", x);
+			int y = text.indexOf("<p class=\"small\">", x);
 
-			text = HtmlUtil.stripComments(text.substring(x, y)).trim();
+			text = HtmlUtil.stripHtml(text.substring(x, y));
 
-			String[] array = StringUtil.split(text, "<tr>");
+			String[] entries = StringUtil.split(
+				text, "\n" + StringPool.DOUBLE_SPACE + "\n\t");
 
-			for (int i = 0; i < array.length; i++) {
-				x = array[i].indexOf("<b>");
-				y = array[i].indexOf("</b>");
+			for (String entry : entries) {
+				String[] entryArray = StringUtil.split(entry, "\n\t");
 
-				if (x != -1 && y != -1) {
-					int year = GetterUtil.getInteger(StringUtil.extractDigits(
-						array[i].substring(x + 3, y)));
-
-					String description = HtmlUtil.extractText(
-						array[i].substring(y, array[i].length())).trim();
-
-					if (description.startsWith("- ")) {
-						description = description.substring(
-							2, description.length());
-					}
-
-					Event event = new Event(year, description);
+				if (entryArray.length > 1) {
+					Event event = new Event(
+						GetterUtil.getInteger(entryArray[0]), entryArray[1]);
 
 					events.add(event);
 				}
@@ -76,6 +67,7 @@ public class EventsWebCacheItem implements WebCacheItem {
 		return events;
 	}
 
+	@Override
 	public long getRefreshTime() {
 		return _REFRESH_TIME;
 	}

@@ -1,16 +1,19 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * This file is part of Liferay Social Office. Liferay Social Office is free
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * Liferay Social Office is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Liferay Social Office. If not, see http://www.gnu.org/licenses/agpl-3.0.html.
  */
 --%>
 
@@ -21,189 +24,218 @@ User user2 = (User)request.getAttribute("view_user.jsp-user");
 
 Contact contact2 = user2.getContact();
 
+boolean incompleteProfile = false;
+
+List<AssetTag> assetTags = AssetTagLocalServiceUtil.getTags(User.class.getName(), user2.getUserId());
+
+if (assetTags.isEmpty()) {
+	incompleteProfile = true;
+}
+
+if (Validator.isNull(user2.getComments())) {
+	incompleteProfile = true;
+}
+%>
+
+<c:if test="<%= showComments && Validator.isNotNull(user2.getComments()) %>">
+	<div class="field-group lfr-user-comments section" data-sectionId="comments" data-title="<%= LanguageUtil.get(request, "introduction") %>">
+		<i class="icon-edit"></i>
+
+		<h3><liferay-ui:message key="introduction" />:</h3>
+
+		<ul class="property-list">
+			<li>
+				<span class="property"><%= user2.getComments() %></span>
+			</li>
+		</ul>
+	</div>
+</c:if>
+
+<%
 List<Phone> phones = PhoneServiceUtil.getPhones(Contact.class.getName(), contact2.getContactId());
+
+if (phones.isEmpty()) {
+	incompleteProfile = true;
+}
 %>
 
 <c:if test="<%= showPhones && !phones.isEmpty() %>">
-	<div class="section lfr-user-phones">
-		<h3><liferay-ui:message key="phones" /></h3>
+	<div class="field-group lfr-user-phones section" data-sectionId="phoneNumbers" data-title="<%= LanguageUtil.get(request, "phone-numbers") %>">
+		<i class="icon-edit"></i>
 
-		<dl class="property-list">
+		<h3><liferay-ui:message key="phones" />:</h3>
+
+		<ul class="property-list">
 
 			<%
-			for (Phone phone: phones) {
+			for (Phone phone : phones) {
 			%>
 
-				<dt class="<%= phone.isPrimary() ? "primary" : "" %>">
-					<%= LanguageUtil.get(pageContext, phone.getType().getName()) %>
-				</dt>
-				<dd class="<%= phone.isPrimary() ? "primary" : "" %>">
-					<%= phone.getNumber() %> <%= phone.getExtension() %>
-				</dd>
+				<li class="<%= phone.isPrimary() ? "primary" : "" %>">
+					<span class="property-type"><%= LanguageUtil.get(request, phone.getType().getName()) %></span>
+					<span class="property"><%= HtmlUtil.escape(phone.getNumber()) %> <%= phone.getExtension() %></span>
+				</li>
 
 			<%
 			}
 			%>
 
-		</dl>
+		</ul>
 	</div>
 </c:if>
 
 <%
 List<EmailAddress> emailAddresses = EmailAddressServiceUtil.getEmailAddresses(Contact.class.getName(), contact2.getContactId());
+
+if (emailAddresses.isEmpty()) {
+	incompleteProfile = true;
+}
 %>
 
 <c:if test="<%= showAdditionalEmailAddresses && !emailAddresses.isEmpty() %>">
-	<div class="section lfr-user-email-addresses">
-		<h3><liferay-ui:message key="additional-email-addresses" /></h3>
+	<div class="field-group lfr-user-email-addresses section" data-sectionId="additionalEmailAddresses" data-title="<%= LanguageUtil.get(request, "additional-email-addresses") %>">
+		<i class="icon-edit"></i>
 
-		<dl class="property-list">
+		<h3><liferay-ui:message key="additional-email-addresses" />:</h3>
+
+		<ul class="property-list">
 
 			<%
 			for (int i = 0; i < emailAddresses.size(); i++) {
 				EmailAddress emailAddress = emailAddresses.get(i);
 			%>
 
-				<dt class="<%= emailAddress.isPrimary() ? "primary" : "" %>">
-					<%= LanguageUtil.get(pageContext, emailAddress.getType().getName()) %>
-				</dt>
-				<dd class="<%= emailAddress.isPrimary() ? "primary" : "" %>">
-					<a href="mailto:<%= emailAddress.getAddress() %>"><%= emailAddress.getAddress() %></a>
-				</dd>
+				<li class="<%= emailAddress.isPrimary() ? "primary" : "" %>">
+					<span class="property-type"><%= LanguageUtil.get(request, emailAddress.getType().getName()) %></span>
+					<span class="property"><a href="mailto:<%= emailAddress.getAddress() %>"><%= emailAddress.getAddress() %></a></span>
+				</li>
 
 			<%
 			}
 			%>
 
-		</dl>
+		</ul>
 	</div>
 </c:if>
 
 <%
-String aim = contact2.getAimSn();
-String icq = contact2.getIcqSn();
-String jabber = contact2.getJabberSn();
-String msn = contact2.getMsnSn();
-String skype = contact2.getSkypeSn();
-String ym = contact2.getYmSn();
+String jabberSn = contact2.getJabberSn();
+String skypeSn = contact2.getSkypeSn();
+
+if (Validator.isNull(jabberSn) && Validator.isNull(skypeSn)) {
+	incompleteProfile = true;
+}
 %>
 
-<c:if test="<%= showInstantMessenger && (Validator.isNotNull(aim) || Validator.isNotNull(icq) || Validator.isNotNull(jabber) || Validator.isNotNull(msn) || Validator.isNotNull(skype) || Validator.isNotNull(ym)) %>">
-	<div class="section lfr-user-instant-messenger">
-		<h3><liferay-ui:message key="instant-messenger" /></h3>
+<c:if test="<%= showInstantMessenger && (Validator.isNotNull(jabberSn) || Validator.isNotNull(skypeSn)) %>">
+	<div class="field-group section" data-sectionId="instantMessenger" data-title="<%= LanguageUtil.get(request, "instant-messenger") %>">
+		<i class="icon-edit"></i>
 
-		<dl class="property-list">
-			<c:if test="<%= Validator.isNotNull(aim) %>">
-				<dt>
-					<liferay-ui:message key="aim" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(aim) %>
-				</dd>
+		<h3><liferay-ui:message key="instant-messenger" />:</h3>
+
+		<ul class="property-list">
+			<c:if test="<%= Validator.isNotNull(jabberSn) %>">
+				<li>
+					<span class="property-type"><liferay-ui:message key="jabber" /></span>
+
+					<span class="property"><%= HtmlUtil.escape(jabberSn) %></span>
+				</li>
 			</c:if>
 
-			<c:if test="<%= Validator.isNotNull(icq) %>">
-				<dt>
-					<liferay-ui:message key="icq" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(icq) %>
+			<c:if test="<%= Validator.isNotNull(skypeSn) %>">
+				<li>
+					<span class="property-type"><liferay-ui:message key="skype" /></span>
 
-					<img alt="" class="instant-messenger-logo" src="http://web.icq.com/whitepages/online?icq=<%= HtmlUtil.escapeAttribute(icq) %>&img=5" />
-				</dd>
-			</c:if>
+					<span class="property"><%= HtmlUtil.escape(skypeSn) %></span>
 
-			<c:if test="<%= Validator.isNotNull(jabber) %>">
-				<dt>
-					<liferay-ui:message key="jabber" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(jabber) %>
-				</dd>
+					<i class="icon-skype"></i>
+				</li>
 			</c:if>
-
-			<c:if test="<%= Validator.isNotNull(msn) %>">
-				<dt>
-					<liferay-ui:message key="msn" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(msn) %>
-				</dd>
-			</c:if>
-
-			<c:if test="<%= Validator.isNotNull(skype) %>">
-				<dt>
-					<liferay-ui:message key="skype" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(skype) %>
-				</dd>
-			</c:if>
-
-			<c:if test="<%= Validator.isNotNull(ym) %>">
-				<dt>
-					<liferay-ui:message key="ym" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(ym) %>
-					<img alt="" class="instant-messenger-logo" src="http://opi.yahoo.com/online?u=<%= HtmlUtil.escapeAttribute(ym) %>&m=g&t=0" />
-				</dd>
-			</c:if>
-		</dl>
+		</ul>
 	</div>
 </c:if>
 
 <%
 List<Address> addresses = AddressServiceUtil.getAddresses(Contact.class.getName(), contact2.getContactId());
+
+if (addresses.isEmpty()) {
+	incompleteProfile = true;
+}
 %>
 
 <c:if test="<%= showAddresses && !addresses.isEmpty() %>">
-	<div class="section lfr-user-addresses">
-		<h3><liferay-ui:message key="addresses" /></h3>
+	<div class="field-group lfr-user-addresses section" data-sectionId="addresses" data-title="<%= LanguageUtil.get(request, "addresses") %>">
+		<i class="icon-edit"></i>
+
+		<h3><liferay-ui:message key="addresses" />:</h3>
 
 		<ul class="property-list">
 
-		<%
-		for (Address address: addresses) {
-			String street1 = address.getStreet1();
-			String street2 = address.getStreet2();
-			String street3 = address.getStreet3();
+			<%
+			for (Address address : addresses) {
+				String street1 = address.getStreet1();
+				String street2 = address.getStreet2();
+				String street3 = address.getStreet3();
 
-			String zipCode = address.getZip();
-			String city = address.getCity();
+				String zipCode = address.getZip();
+				String city = address.getCity();
 
-			String mailingName = LanguageUtil.get(pageContext, address.getType().getName());
-		%>
+				Country country = address.getCountry();
 
-			<li class="<%= address.isPrimary() ? "primary" : "" %>">
-				<strong class="mailing-name"><%= mailingName %></strong><br />
+				String countryName = StringPool.BLANK;
 
-				<c:if test="<%= Validator.isNotNull(street1) %>">
-					<%= HtmlUtil.escape(street1) %><br />
-				</c:if>
+				if (country != null) {
+					countryName = country.getName(locale);
+				}
 
-				<c:if test="<%= Validator.isNotNull(street2) %>">
-					<%= HtmlUtil.escape(street2) %><br />
-				</c:if>
+				Region region = address.getRegion();
 
-				<c:if test="<%= Validator.isNotNull(street3) %>">
-					<%= HtmlUtil.escape(street3) %><br />
-				</c:if>
+				String regionName = StringPool.BLANK;
 
-				<c:if test="<%= Validator.isNotNull(zipCode) %>">
-					<%= zipCode %>,
-				</c:if>
+				if (region != null) {
+					regionName = region.getName();
+				}
 
-				<c:if test="<%= Validator.isNotNull(city) %>">
-					<%= HtmlUtil.escape(city) %>
-				</c:if>
+				String mailingName = LanguageUtil.get(request, address.getType().getName());
+			%>
 
-				<c:if test="<%= address.isMailing() %>">(<liferay-ui:message key="mailing" />)</c:if>
-			</li>
+				<li class="<%= address.isPrimary() ? "primary" : "" %>">
+					<span class="property-type"><%= mailingName %></span>
 
-		<%
-		}
-		%>
+					<c:if test="<%= Validator.isNotNull(street1) %>">
+						<%= HtmlUtil.escape(street1) %>,
+					</c:if>
+
+					<c:if test="<%= Validator.isNotNull(street2) %>">
+						<%= HtmlUtil.escape(street2) %>,
+					</c:if>
+
+					<c:if test="<%= Validator.isNotNull(street3) %>">
+						<%= HtmlUtil.escape(street3) %>,
+					</c:if>
+
+					<c:if test="<%= Validator.isNotNull(city) %>">
+						<%= HtmlUtil.escape(city) %>,
+					</c:if>
+
+					<c:if test="<%= Validator.isNotNull(zipCode) %>">
+						<%= HtmlUtil.escape(zipCode) %>,
+					</c:if>
+
+					<c:if test="<%= Validator.isNotNull(regionName) %>">
+						<%= regionName %>,
+					</c:if>
+
+					<c:if test="<%= Validator.isNotNull(countryName) %>">
+						<%= countryName %>
+					</c:if>
+
+					<c:if test="<%= address.isMailing() %>">(<liferay-ui:message key="mailing" />)</c:if>
+				</li>
+
+			<%
+			}
+			%>
 
 		</ul>
 	</div>
@@ -211,92 +243,94 @@ List<Address> addresses = AddressServiceUtil.getAddresses(Contact.class.getName(
 
 <%
 List<Website> websites = WebsiteServiceUtil.getWebsites(Contact.class.getName(), contact2.getContactId());
+
+if (websites.isEmpty()) {
+	incompleteProfile = true;
+}
 %>
 
 <c:if test="<%= showWebsites && !websites.isEmpty() %>">
-	<div class="section lfr-user-websites">
-		<h3><liferay-ui:message key="websites" /></h3>
+	<div class="field-group lfr-user-websites section" data-sectionId="websites" data-title="<%= LanguageUtil.get(request, "websites") %>">
+		<i class="icon-edit"></i>
 
-		<dl class="property-list">
+		<h3><liferay-ui:message key="websites" />:</h3>
+
+		<ul class="property-list">
 
 			<%
-			for (Website website: websites) {
+			for (Website website : websites) {
 				website = website.toEscapedModel();
 			%>
 
+				<li class="<%= website.isPrimary() ? "primary" : "" %>">
+					<span class="property-type"><%= LanguageUtil.get(request, website.getType().getName()) %></span>
 
-				<dt class="<%= website.isPrimary() ? "primary" : "" %>">
-					<%= LanguageUtil.get(pageContext, website.getType().getName()) %>
-				</dt>
-				<dd class="<%= website.isPrimary() ? "primary" : "" %>">
-					<a href="<%= website.getUrl() %>"><%= website.getUrl() %></a>
-				</dd>
+					<span class="property"><a href="<%= website.getUrl() %>"><%= website.getUrl() %></a></span>
+				</li>
 
 			<%
 			}
 			%>
 
-		</dl>
+		</ul>
 	</div>
 </c:if>
 
 <%
 String facebook = contact2.getFacebookSn();
-String mySpace = contact2.getMySpaceSn();
 String twitter = contact2.getTwitterSn();
+
+if (Validator.isNull(facebook) && Validator.isNull(twitter)) {
+	incompleteProfile = true;
+}
 %>
 
-<c:if test="<%= showSocialNetwork && (Validator.isNotNull(facebook) || Validator.isNotNull(mySpace) || Validator.isNotNull(twitter)) %>">
-	<div class="section lfr-user-social-network">
-		<h3><liferay-ui:message key="social-network" /></h3>
+<c:if test="<%= showSocialNetwork && (Validator.isNotNull(facebook) || Validator.isNotNull(twitter)) %>">
+	<div class="field-group lfr-user-social-network section" data-sectionId="socialNetwork" data-title="<%= LanguageUtil.get(request, "social-network") %>">
+		<i class="icon-edit"></i>
 
-		<dl class="property-list">
+		<h3><liferay-ui:message key="social-network" />:</h3>
+
+		<ul class="property-list">
 			<c:if test="<%= Validator.isNotNull(facebook) %>">
-				<dt>
-					<liferay-ui:message key="facebook" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(facebook) %>
-				</dd>
-			</c:if>
+				<li>
+					<span class="property-type"><liferay-ui:message key="facebook" /></span>
 
-			<c:if test="<%= Validator.isNotNull(mySpace) %>">
-				<dt>
-					<liferay-ui:message key="myspace" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(mySpace) %>
-				</dd>
+					<span class="property"><%= HtmlUtil.escape(facebook) %></span>
+				</li>
 			</c:if>
 
 			<c:if test="<%= Validator.isNotNull(twitter) %>">
-				<dt>
-					<liferay-ui:message key="twitter" />
-				</dt>
-				<dd>
-					<%= HtmlUtil.escape(twitter) %>
-				</dd>
+				<li>
+					<span class="property-type"><liferay-ui:message key="twitter" /></span>
+
+					<span class="property"><%= HtmlUtil.escape(twitter) %></span>
+				</li>
 			</c:if>
-		</dl>
-	</div>
-</c:if>
-
-<c:if test="<%= showSMS && Validator.isNotNull(contact2.getSmsSn()) %>">
-	<div class="section lfr-user-sms">
-		<h3><liferay-ui:message key="sms" /></h3>
-
-		<ul class="property-list">
-			<li><%= HtmlUtil.escape(contact2.getSmsSn()) %></li>
 		</ul>
 	</div>
 </c:if>
 
-<c:if test="<%= showComments && Validator.isNotNull(user2.getComments()) %>">
-	<div class="section lfr-user-comments">
-		<h3><liferay-ui:message key="comments" /></h3>
+<%
+if (Validator.isNull(contact2.getSmsSn())) {
+	incompleteProfile = true;
+}
+%>
 
-		<%= user2.getComments() %>
+<c:if test="<%= showSMS && Validator.isNotNull(contact2.getSmsSn()) %>">
+	<div class="field-group lfr-user-sms section" data-sectionId="sms" data-title="<%= LanguageUtil.get(request, "sms") %>">
+		<i class="icon-edit"></i>
+
+		<h3><liferay-ui:message key="sms" />:</h3>
+
+		<ul class="property-list">
+			<li class="property">
+				<%= HtmlUtil.escape(contact2.getSmsSn()) %>
+			</li>
+		</ul>
 	</div>
 </c:if>
 
-<div style="clear: both;"><!-- --></div>
+<c:if test="<%= incompleteProfile && showCompleteYourProfile && (themeDisplay.getUserId() == user2.getUserId()) %>">
+	<%@ include file="/contacts_center/complete_your_profile.jspf" %>
+</c:if>

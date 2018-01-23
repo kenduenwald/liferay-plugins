@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,16 @@
 
 package com.liferay.so.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.GroupedModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.GroupedModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -39,8 +42,9 @@ import java.util.Date;
  * @see com.liferay.so.model.impl.MemberRequestModelImpl
  * @generated
  */
+@ProviderType
 public interface MemberRequestModel extends BaseModel<MemberRequest>,
-	GroupedModel {
+	GroupedModel, ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -80,6 +84,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @return the group ID of this member request
 	 */
+	@Override
 	public long getGroupId();
 
 	/**
@@ -87,6 +92,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @param groupId the group ID of this member request
 	 */
+	@Override
 	public void setGroupId(long groupId);
 
 	/**
@@ -94,6 +100,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @return the company ID of this member request
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -101,6 +108,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @param companyId the company ID of this member request
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**
@@ -108,6 +116,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @return the user ID of this member request
 	 */
+	@Override
 	public long getUserId();
 
 	/**
@@ -115,21 +124,23 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @param userId the user ID of this member request
 	 */
+	@Override
 	public void setUserId(long userId);
 
 	/**
 	 * Returns the user uuid of this member request.
 	 *
 	 * @return the user uuid of this member request
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid() throws SystemException;
+	@Override
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this member request.
 	 *
 	 * @param userUuid the user uuid of this member request
 	 */
+	@Override
 	public void setUserUuid(String userUuid);
 
 	/**
@@ -138,6 +149,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 * @return the user name of this member request
 	 */
 	@AutoEscape
+	@Override
 	public String getUserName();
 
 	/**
@@ -145,6 +157,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @param userName the user name of this member request
 	 */
+	@Override
 	public void setUserName(String userName);
 
 	/**
@@ -152,6 +165,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @return the create date of this member request
 	 */
+	@Override
 	public Date getCreateDate();
 
 	/**
@@ -159,6 +173,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @param createDate the create date of this member request
 	 */
+	@Override
 	public void setCreateDate(Date createDate);
 
 	/**
@@ -166,6 +181,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @return the modified date of this member request
 	 */
+	@Override
 	public Date getModifiedDate();
 
 	/**
@@ -173,6 +189,7 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 *
 	 * @param modifiedDate the modified date of this member request
 	 */
+	@Override
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
@@ -208,9 +225,8 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 * Returns the receiver user uuid of this member request.
 	 *
 	 * @return the receiver user uuid of this member request
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getReceiverUserUuid() throws SystemException;
+	public String getReceiverUserUuid();
 
 	/**
 	 * Sets the receiver user uuid of this member request.
@@ -261,35 +277,60 @@ public interface MemberRequestModel extends BaseModel<MemberRequest>,
 	 */
 	public void setStatus(int status);
 
+	@Override
 	public boolean isNew();
 
+	@Override
 	public void setNew(boolean n);
 
+	@Override
 	public boolean isCachedModel();
 
+	@Override
 	public void setCachedModel(boolean cachedModel);
 
+	@Override
 	public boolean isEscapedModel();
 
-	public void setEscapedModel(boolean escapedModel);
-
+	@Override
 	public Serializable getPrimaryKeyObj();
 
+	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj);
 
+	@Override
 	public ExpandoBridge getExpandoBridge();
 
+	@Override
+	public void setExpandoBridgeAttributes(BaseModel<?> baseModel);
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge);
+
+	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
+	@Override
 	public Object clone();
 
-	public int compareTo(MemberRequest memberRequest);
+	@Override
+	public int compareTo(com.liferay.so.model.MemberRequest memberRequest);
 
+	@Override
 	public int hashCode();
 
-	public MemberRequest toEscapedModel();
+	@Override
+	public CacheModel<com.liferay.so.model.MemberRequest> toCacheModel();
 
+	@Override
+	public com.liferay.so.model.MemberRequest toEscapedModel();
+
+	@Override
+	public com.liferay.so.model.MemberRequest toUnescapedModel();
+
+	@Override
 	public String toString();
 
+	@Override
 	public String toXmlString();
 }

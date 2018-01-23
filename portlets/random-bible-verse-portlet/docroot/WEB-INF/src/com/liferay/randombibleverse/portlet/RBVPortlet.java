@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,12 @@
 
 package com.liferay.randombibleverse.portlet;
 
+import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.util.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.io.IOException;
 
@@ -37,24 +39,33 @@ public class RBVPortlet extends MVCPortlet {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws IOException, PortletException {
 
-		if (actionRequest.getPortletMode().equals(PortletMode.EDIT)) {
-			String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
+		PortletMode portletMode = actionRequest.getPortletMode();
 
-			if (cmd.equals(Constants.UPDATE)) {
-				String language = ParamUtil.getString(
-					actionRequest, "language");
-
-				PortletPreferences preferences = actionRequest.getPreferences();
-
-				preferences.setValue("language", language);
-
-				preferences.store();
-
-				SessionMessages.add(
-					actionRequest,
-					getPortletConfig().getPortletName() + ".doEdit");
-			}
+		if (!portletMode.equals(PortletMode.EDIT)) {
+			return;
 		}
+
+		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
+
+		if (!cmd.equals(Constants.UPDATE)) {
+			return;
+		}
+
+		String language = ParamUtil.getString(actionRequest, "language");
+
+		PortletPreferences preferences = actionRequest.getPreferences();
+
+		preferences.setValue("language", language);
+
+		preferences.store();
+
+		LiferayPortletConfig liferayPortletConfig =
+			(LiferayPortletConfig)getPortletConfig();
+
+		SessionMessages.add(
+			actionRequest,
+			PortalUtil.getPortletId(actionRequest) +
+				SessionMessages.KEY_SUFFIX_UPDATED_PREFERENCES);
 	}
 
 }

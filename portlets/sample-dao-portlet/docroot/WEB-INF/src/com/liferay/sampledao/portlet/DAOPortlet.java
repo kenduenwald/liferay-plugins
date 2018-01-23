@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,6 +40,54 @@ import javax.portlet.RenderResponse;
  * @author Brian Wing Shun Chan
  */
 public class DAOPortlet extends GenericPortlet {
+
+	@Override
+	public void destroy() {
+		if (_log.isInfoEnabled()) {
+			_log.info("Destroying portlet");
+		}
+
+		try {
+			ConnectionPool.destroy();
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+	}
+
+	@Override
+	public void doView(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws IOException, PortletException {
+
+		PortletContext portletContext = getPortletContext();
+
+		PortletRequestDispatcher portletRequestDispatcher =
+			portletContext.getRequestDispatcher("/view.jsp");
+
+		if (portletRequestDispatcher == null) {
+			_log.error("/view.jsp is not a valid include");
+		}
+		else {
+			try {
+				portletRequestDispatcher.include(renderRequest, renderResponse);
+			}
+			catch (Exception e) {
+				_log.error(e, e);
+
+				portletRequestDispatcher = portletContext.getRequestDispatcher(
+					"/error.jsp");
+
+				if (portletRequestDispatcher == null) {
+					_log.error("/error.jsp is not a valid include");
+				}
+				else {
+					portletRequestDispatcher.include(
+						renderRequest, renderResponse);
+				}
+			}
+		}
+	}
 
 	@Override
 	public void init(PortletConfig portletConfig) throws PortletException {
@@ -85,54 +133,6 @@ public class DAOPortlet extends GenericPortlet {
 		}
 		catch (SQLException sqle) {
 			throw new PortletException(sqle);
-		}
-	}
-
-	@Override
-	public void doView(
-			RenderRequest renderRequest, RenderResponse renderResponse)
-		throws IOException, PortletException {
-
-		PortletContext portletContext = getPortletContext();
-
-		PortletRequestDispatcher portletRequestDispatcher =
-			portletContext.getRequestDispatcher("/view.jsp");
-
-		if (portletRequestDispatcher == null) {
-			_log.error("/view.jsp is not a valid include");
-		}
-		else {
-			try {
-				portletRequestDispatcher.include(renderRequest, renderResponse);
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-
-				portletRequestDispatcher = portletContext.getRequestDispatcher(
-					"/error.jsp");
-
-				if (portletRequestDispatcher == null) {
-					_log.error("/error.jsp is not a valid include");
-				}
-				else {
-					portletRequestDispatcher.include(
-						renderRequest, renderResponse);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void destroy() {
-		if (_log.isInfoEnabled()) {
-			_log.info("Destroying portlet");
-		}
-
-		try {
-			ConnectionPool.destroy();
-		}
-		catch (Exception e) {
-			_log.error(e);
 		}
 	}
 

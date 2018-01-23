@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -23,22 +23,32 @@
 	%>
 
 	<liferay-util:html-top>
-		<link href="<%= PortalUtil.getStaticResourceURL(request, request.getContextPath() + "/css/main.jsp", portlet.getTimestamp()) %>" rel="stylesheet" type="text/css" />
+		<link data-senna-track="permanent" href="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathContext(request) + "/css/main.css", portlet.getTimestamp()) %>" rel="stylesheet" type="text/css" />
 	</liferay-util:html-top>
 
 	<liferay-util:html-bottom>
-		<script defer="defer" src="<%= PortalUtil.getStaticResourceURL(request, request.getContextPath() + "/js/main.js", portlet.getTimestamp()) %>" type="text/javascript"></script>
+		<script defer="defer" src="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathContext(request) + "/js/main.js", portlet.getTimestamp()) %>" type="text/javascript"></script>
 	</liferay-util:html-bottom>
 
 	<%
 	Status status = StatusLocalServiceUtil.getUserStatus(themeDisplay.getUserId());
 
 	boolean online = status.getOnline();
-	String activePanelId = status.getActivePanelId();
+
+	JSONObject activePanelIdsJSONObject = null;
+
+	String openPanelId = StringPool.BLANK;
+
+	if (Validator.isNotNull(status.getActivePanelIds())) {
+		activePanelIdsJSONObject = JSONFactoryUtil.createJSONObject(status.getActivePanelIds());
+
+		openPanelId = activePanelIdsJSONObject.getString("open");
+	}
+
 	String statusMessage = HtmlUtil.escape(status.getMessage());
 	boolean playSound = status.getPlaySound();
 
-	List<Object[]> buddies = ChatUtil.getBuddies(themeDisplay.getCompanyId(), themeDisplay.getUserId());
+	List<Object[]> buddies = BuddyFinderUtil.getBuddies(themeDisplay.getCompanyId(), themeDisplay.getUserId());
 
 	int buddiesCount = buddies.size();
 	%>
@@ -50,48 +60,51 @@
 			<div class="chat-status">
 				<div class="status-message">
 					<c:if test="<%= Validator.isNotNull(statusMessage) %>">
-						<%= LanguageUtil.format(pageContext, "you-are-x", "<strong>" + statusMessage + "</strong>", false) %>
+						<%= LanguageUtil.format(request, "you-are-x", "<strong>" + statusMessage + "</strong>", false) %>
 					</c:if>
 				</div>
 			</div>
 
 			<div class="chat-tabs-container">
 				<ul class="chat-tabs">
-					<li class="buddy-list <%= activePanelId.equals("buddylist") ? "selected" : "" %>">
-						<div class="panel-trigger" panelId="buddylist">
-							<span class="trigger-name"><%= LanguageUtil.format(pageContext, "online-friends-x", "(" + buddiesCount + ")", false) %></span>
+					<li class="buddy-list loading <%= openPanelId.equals("buddylist") ? "selected" : "" %>">
+						<div class="chat-panel-trigger" panelId="buddylist" tabindex="0">
+							<span class="trigger-name"><%= LanguageUtil.format(request, "online-friends-x", "(" + buddiesCount + ")", false) %></span>
 						</div>
 
 						<div class="chat-panel">
-							<div class="panel-window">
-								<div class="panel-button minimize"></div>
+							<div class="chat-panel-window">
+								<div class="chat-panel-button minimize"></div>
 
-								<div class="panel-title">
-									<%= LanguageUtil.format(pageContext, "online-friends-x", "(" + buddiesCount + ")", false) %>
+								<div class="chat-panel-title">
+									<%= LanguageUtil.format(request, "online-friends-x", "(" + buddiesCount + ")", false) %>
 								</div>
 
-								<aui:input cssClass="search-buddies" inputCssClass="search-buddies-field" label="" name="searchBuddies" />
+								<aui:input cssClass="search-buddies" label="" name="searchBuddies" placeholder="search" />
 
-								<div class="panel-content">
+								<div class="chat-panel-content">
 									<ul class="lfr-component online-users">
 
 										<%
 										for (Object[] buddy : buddies) {
-											long userId = (Long)buddy[0];
-											String firstName = (String)buddy[2];
-											String middleName = (String)buddy[3];
-											String lastName = (String)buddy[4];
-											long portraitId = (Long)buddy[5];
-											boolean awake = (Boolean)buddy[6];
+											String firstName = (String)buddy[1];
+											long groupId = (Long)buddy[2];
+											String lastName = (String)buddy[3];
+											boolean male = (Boolean)buddy[4];
+											String middleName = (String)buddy[5];
+											long portraitId = (Long)buddy[6];
+											String screenName = (String)buddy[7];
+											long userId = (Long)buddy[8];
+											String userUuid = (String)buddy[9];
 
-											String fullName = ContactConstants.getFullName(firstName, middleName, lastName);
+											Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 										%>
 
-											<li class="user active" userId="<%= userId %>">
-												<img alt="" src="<%= themeDisplay.getPathImage() %>/user_portrait?img_id=<%= portraitId %>">
+											<li class="active user" data-displayURL="<%= group.getDisplayURL(themeDisplay, false) %>" data-groupId="<%= groupId %>" data-userId="<%= userId %>" tabindex="0">
+												<img alt="<%= HtmlUtil.escape(ContactConstants.getFullName(firstName, middleName, lastName)) %>" src="<%= UserConstants.getPortraitURL(themeDisplay.getPathImage(), male, portraitId, userUuid) %>" />
 
 												<div class="name">
-													<%= fullName %>
+													<%= HtmlUtil.escape(ContactConstants.getFullName(firstName, middleName, lastName)) %>
 												</div>
 											</li>
 
@@ -106,20 +119,20 @@
 							</div>
 						</div>
 					</li>
-					<li class="chat-settings <%= activePanelId.equals("settings") ? "selected" : "" %>">
-						<div class="panel-trigger" panelId="settings">
+					<li class="chat-settings <%= openPanelId.equals("settings") ? "selected" : "" %>">
+						<div class="chat-panel-trigger" panelId="settings" tabindex="0">
 							<span class="trigger-name"><liferay-ui:message key="settings" /></span>
 						</div>
 
 						<div class="chat-panel">
-							<div class="panel-window">
-								<div class="panel-button minimize"></div>
+							<div class="chat-panel-window">
+								<div class="chat-panel-button minimize"></div>
 
-								<div class="panel-title"><liferay-ui:message key="settings" /></div>
+								<div class="chat-panel-title"><liferay-ui:message key="settings" /></div>
 
 								<ul class="lfr-component settings">
 									<li>
-										<label for="statusMessage"><%= LanguageUtil.format(pageContext, "x-is", user.getFullName(), false) %></label>
+										<label for="statusMessage"><%= LanguageUtil.format(request, "x-is", HtmlUtil.escape(user.getFullName()), false) %></label>
 
 										<input id="statusMessage" type="text" value="<%= statusMessage %>" />
 									</li>
@@ -128,6 +141,9 @@
 									</li>
 									<li>
 										<label for="playSound"><input <%= playSound ? "checked=\"checked\"" : "" %> id="playSound" type="checkbox" /> <liferay-ui:message key="play-a-sound-when-i-receive-a-new-message-in-a-hidden-window" /> </label>
+									</li>
+									<li class="show-notifications-setting">
+										<label for="showNotifications"><input disabled="disabled" id="showNotifications" type="checkbox" /> <liferay-ui:message key="enable-desktop-notifications-for-new-messages" /> </label>
 									</li>
 								</ul>
 
@@ -141,10 +157,10 @@
 			</div>
 		</div>
 
-		<input id="activePanelId" type="hidden" value="<%= activePanelId %>" />
+		<input id="activePanelIds" type="hidden" value="<%= HtmlUtil.escapeAttribute(status.getActivePanelIds()) %>" />
 		<input id="chatPortletId" type="hidden" value="<%= portletDisplay.getId() %>" />
 
-		<div class="chat-extensions aui-helper-hidden">
+		<div class="chat-extensions hide">
 
 			<%
 			Map<String, String> extensions = ChatExtensionsUtil.getExtensions();
@@ -164,4 +180,6 @@
 
 		</div>
 	</div>
+
+	<aui:input name="currentChatServerTime" type="hidden" useNamespace="false" value="<%= System.currentTimeMillis() %>" />
 </c:if>

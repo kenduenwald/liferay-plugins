@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This file is part of Liferay Social Office. Liferay Social Office is free
  * software: you can redistribute it and/or modify it under the terms of the GNU
@@ -8,7 +8,7 @@
  *
  * Liferay Social Office is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along with
@@ -17,13 +17,10 @@
 
 package com.liferay.so.model.impl;
 
-import com.liferay.so.model.MemberRequest;
-
 /**
  * @author Brian Wing Shun Chan
  */
-public class MemberRequestImpl extends MemberRequestModelImpl
-	implements MemberRequest {
+public class MemberRequestImpl extends MemberRequestBaseImpl {
 
 	public MemberRequestImpl() {
 	}

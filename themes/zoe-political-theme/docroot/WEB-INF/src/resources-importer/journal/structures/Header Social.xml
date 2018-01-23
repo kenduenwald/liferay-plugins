@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<root>
+	<dynamic-element index-type="" name="social-links" repeatable="true" type="text">
+		<dynamic-element index-type="" name="url-location" repeatable="false" type="text">
+			<meta-data>
+				<entry name="displayAsTooltip"><![CDATA[true]]></entry>
+				<entry name="required"><![CDATA[true]]></entry>
+				<entry name="instructions"><![CDATA[]]></entry>
+				<entry name="label"><![CDATA[Url Link]]></entry>
+				<entry name="predefinedValue"><![CDATA[]]></entry>
+			</meta-data>
+		</dynamic-element>
+		<meta-data>
+			<entry name="displayAsTooltip"><![CDATA[true]]></entry>
+			<entry name="required"><![CDATA[true]]></entry>
+			<entry name="instructions"><![CDATA[social name, no spaces (facebook, twitter, linkedin)]]></entry>
+			<entry name="label"><![CDATA[Social Name]]></entry>
+			<entry name="predefinedValue"><![CDATA[]]></entry>
+		</meta-data>
+	</dynamic-element>
+</root>

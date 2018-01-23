@@ -1,32 +1,36 @@
 /**
- * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * This file is part of Liferay Social Office. Liferay Social Office is free
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * Liferay Social Office is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Liferay Social Office. If not, see http://www.gnu.org/licenses/agpl-3.0.html.
  */
 
 package com.liferay.microblogs.microblogs.portlet;
 
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.microblogs.model.MicroblogsEntry;
+import com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil;
 import com.liferay.microblogs.service.MicroblogsEntryServiceUtil;
+import com.liferay.microblogs.util.MicroblogsUtil;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.util.bridges.mvc.MVCPortlet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -58,10 +62,8 @@ public class MicroblogsPortlet extends MVCPortlet {
 
 		String content = ParamUtil.getString(actionRequest, "content");
 		int type = ParamUtil.getInteger(actionRequest, "type");
-		long receiverUserId = ParamUtil.getLong(
-			actionRequest, "receiverUserId");
-		long receiverMicroblogsEntryId = ParamUtil.getLong(
-			actionRequest, "receiverMicroblogsEntryId");
+		long parentMicroblogsEntryId = ParamUtil.getLong(
+			actionRequest, "parentMicroblogsEntryId");
 		int socialRelationType = ParamUtil.getInteger(
 			actionRequest, "socialRelationType");
 
@@ -78,27 +80,38 @@ public class MicroblogsPortlet extends MVCPortlet {
 		}
 		else {
 			MicroblogsEntryServiceUtil.addMicroblogsEntry(
-				themeDisplay.getUserId(), content, type, receiverUserId,
-				receiverMicroblogsEntryId, socialRelationType, serviceContext);
+				themeDisplay.getUserId(), content, type,
+				parentMicroblogsEntryId, socialRelationType, serviceContext);
 		}
+	}
+
+	public void updateMicroblogsEntryViewCount(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long microblogsEntryId = ParamUtil.getLong(
+			actionRequest, "microblogsEntryId");
+
+		MicroblogsEntry microblogsEntry =
+			MicroblogsEntryLocalServiceUtil.fetchMicroblogsEntry(
+				microblogsEntryId);
+
+		if (microblogsEntry == null) {
+			return;
+		}
+
+		AssetEntryLocalServiceUtil.incrementViewCounter(
+			0, MicroblogsEntry.class.getName(), microblogsEntryId, 1);
 	}
 
 	protected String[] getAssetTagNames(String content) {
-		List<String> assetTagNames = new ArrayList<String>();
+		List<String> assetTagNames = new ArrayList<>();
 
-		Matcher matcher = _pattern.matcher(content);
+		assetTagNames.addAll(MicroblogsUtil.getHashtags(content));
 
-		while (matcher.find()) {
-			String assetTagName = matcher.group();
-
-			assetTagName = assetTagName.substring(1);
-
-			assetTagNames.add(assetTagName);
-		}
+		assetTagNames.addAll(MicroblogsUtil.getScreenNames(content));
 
 		return assetTagNames.toArray(new String[assetTagNames.size()]);
 	}
-
-	private Pattern _pattern = Pattern.compile("#\\w+");
 
 }
